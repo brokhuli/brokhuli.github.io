@@ -76,7 +76,7 @@ brokhuli.github.io/
 │   │   ├── fonts/
 │   │   └── img/
 │   ├── components/
-│   │   ├── primitives/         ← Card, Button, Pill, Icon, StatusDot, BarChart, SectionHeading
+│   │   ├── primitives/         ← Card, Button, Pill, Icon, StatusDot, ProjectMedia, BarChart, SectionHeading
 │   │   ├── sections/           ← HeaderCard, HeroCard, AboutCard, SkillsCard, DomainsCard,
 │   │   │                         ProjectsSection, ProjectCard, ArchitectureSection,
 │   │   │                         TechStackCard, ExperienceCard, ExperienceEntry, ContactCard
@@ -202,7 +202,7 @@ Every page receives the same chrome and the same hydration budget.
 | Theme toggle clicks | colocated `<script>` in `ThemeToggle.astro` | hydrated `client:load` | < 1 KB |
 | System Status popover | colocated `<script>` in `SystemStatus.astro` | after DOM ready | < 1 KB |
 | Log ticker | colocated `<script>` in `LogTicker.astro` | hydrated `client:idle` | < 2 KB |
-| ProjectCard chart entry animation | colocated `<script>` in `ProjectCard.astro` | after DOM ready (IntersectionObserver) | < 1 KB |
+| ProjectCard media entry animation + reduced-motion GIF swap | colocated `<script>` in `ProjectCard.astro` | after DOM ready (IntersectionObserver + `matchMedia`) | < 1 KB |
 | Email assembly | colocated `<script>` in `ContactCard.astro` | after DOM ready | < 0.5 KB |
 | `/system-fault` sequence | colocated `<script>` in `system-fault.astro` | after DOM ready | < 2 KB |
 
@@ -306,7 +306,7 @@ Three layers, strictly one-way:
 
 Rules:
 
-1. **Primitives know nothing about content collections.** They take typed props. `BarChart` takes a `data` array, not a project entry.
+1. **Primitives know nothing about content collections.** They take typed props. `BarChart` takes a `data` array (not a project entry); `ProjectMedia` takes a typed `media` object (not a project entry).
 2. **Sections own collection access.** Each section calls `getCollection(...)` itself; pages don't pass collection data through props.
 3. **Chrome and whimsy never import sections.** They wrap them via `<slot />`.
 4. **Pages compose sections in order.** No page logic beyond ordering and passing a `Astro.props` title/description to `BaseLayout`.

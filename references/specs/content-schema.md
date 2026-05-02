@@ -90,7 +90,7 @@ const skills = defineCollection({
   type: "data",
   schema: z.object({
     label: z.string().max(60),
-    icon: iconName,
+    icon: iconName.optional(),
     order: z.number().int().nonnegative(),
     group: z.enum(["architecture", "systems", "ai", "leadership"]).optional(),
   }),
@@ -101,7 +101,7 @@ const skills = defineCollection({
 
 - `label` — exactly as it should render. Resume-grounded examples: `"Microservices & Distributed Systems"`, `"API Design (REST, GraphQL)"`, `"CUDA & GPU Computing"`, `"Cloud Native Architecture (AWS, Azure)"`, `"Scalability & Performance Optimization"`, `"Design Patterns & SOLID Principles"`, `"Database Schema Design (SQL, NoSQL)"`.
 - `group` — optional grouping for future expansion (e.g., a richer skills layout). Current `SkillsCard` ignores it and just sorts by `order`.
-- `icon` — single Iconify identifier; chosen so the icon-only column scans cleanly.
+- `icon` — optional single Iconify identifier; chosen so the icon-only column scans cleanly. When omitted, `SkillsCard` renders the row without an icon (label-only).
 
 ---
 
@@ -116,7 +116,7 @@ const domains = defineCollection({
   type: "data",
   schema: z.object({
     label: z.string().max(40),
-    icon: iconName,
+    icon: iconName.optional(),
     order: z.number().int().nonnegative(),
     blurb: z.string().max(120).optional(),
   }),
@@ -129,7 +129,7 @@ const domains = defineCollection({
 Transportation, Energy, Robotics, Industrial Automation, MedTech, Simulation
 ```
 
-`blurb` is optional; `DomainsCard` shows it only at desktop breakpoints if at all.
+`blurb` is optional; `DomainsCard` shows it only at desktop breakpoints if at all. `icon` is optional — entries without one render as label-only rows.
 
 ---
 
@@ -155,15 +155,19 @@ const projects = defineCollection({
     // (validated by a build-time check, not Zod).
     tech: z.array(z.string()).min(1).max(8),
 
-    // Card chart — inline SVG <BarChart>.
-    chart: z.object({
-      caption: z.string().max(80).optional(),
-      axisLabel: z.string().max(40).optional(),
-      data: z.array(z.object({
-        label: z.string().max(20),
-        value: z.number(),
-        tone: z.enum(["low", "med", "high"]).optional(),
-      })).min(2).max(12),
+    // Card media — author-provided image or animated GIF that
+    // visually represents the project. Rendered inside ProjectCard.
+    // Static images are processed by astro:assets; GIFs are passed
+    // through unmodified (Sharp does not optimize animated GIFs).
+    media: z.object({
+      src: z.string(),               // resolved by astro:assets at build time
+      alt: z.string().min(1),        // required for a11y
+      kind: z.enum(["image", "gif"]).default("image"),
+      caption: z.string().max(120).optional(),
+      // Aspect ratio hint so the card reserves layout space and avoids CLS.
+      // Authors give the natural ratio of the source asset; the card crops
+      // or letterboxes as needed via CSS.
+      aspect: z.enum(["16:9", "4:3", "1:1", "3:2"]).default("16:9"),
     }).optional(),
 
     // Hero image for the case-study page (optimized via astro:assets).
@@ -207,7 +211,8 @@ const projects = defineCollection({
 
 - `featured` controls whether the project appears on the landing page; the schema allows up to N projects in the collection, but the `ProjectsSection` only renders `featured: true` ones (sorted by `order`). This satisfies the "3–5 featured projects, max" constraint without forcing me to delete prior work.
 - `problem` / `whyHard` / `outcome` are required because the failure mode of an architect's portfolio is "README clone" prose. Forcing the author (me) to fill three structured fields is the schema doing its job.
-- `chart` is optional but encouraged — the mockup shows every card with a chart.
+- `media` is optional but strongly encouraged — every project card should carry a visual (screenshot, render, or short looping GIF demo) that gives the card a recognizable identity at a glance. If `media` is omitted, the card falls back to a tech-tag-only layout.
+- `cover` (the case-study hero image) and `media` (the card visual) are independent. They can point to the same asset, but typically `media` is a tighter, card-sized crop or a short demo loop, while `cover` is the larger hero on `/projects/[slug]`.
 - `repo.entryPoints` matches the [purpose-and-content.md](purpose-and-content.md) §3 directive: point to specific modules, not whole repos.
 - `cover.alt` is required (a11y constraint).
 
@@ -276,7 +281,6 @@ const techStack = defineCollection({
     label: z.string().max(40),
     group: z.enum([
       "languages",
-      "realtime-embedded-gpu",
       "web-ui",
       "distributed-systems",
       "data-qa",
@@ -293,8 +297,7 @@ const techStack = defineCollection({
 
 | Group | Items |
 |---|---|
-| `languages` | C#, C++, Python, Java |
-| `realtime-embedded-gpu` | C++, CUDA, deterministic control, physics engines |
+| `languages` | C#, C++, Python, Java, CUDA |
 | `web-ui` | Blazor, React, Qt/QML, WPF, HTML5/CSS |
 | `distributed-systems` | gRPC, REST, GraphQL, OPC, HIL interfaces |
 | `data-qa` | SQL Server, MongoDB, V&V automation, unit testing |
@@ -386,7 +389,8 @@ This ordering comes directly from [purpose-and-content.md](purpose-and-content.m
 2. **Zod schemas** (per this doc) — validate frontmatter at build time. Bad frontmatter fails the build.
 3. **`validate-content.ts`** — cross-collection checks that Zod can't express:
    - Every `projects[].tech[]` references an existing `techStack[].label`.
-   - Every `projects[].cover.src` resolves to an existing image.
+   - Every `projects[].cover.src` and `projects[].media.src` resolves to an existing asset.
+   - `projects[].media.kind === "gif"` only when the source file extension is `.gif`.
    - Every `experience[].order` is unique.
    - At most 5 `projects[]` have `featured: true` (matches the `constraints.md` rule).
    - `about.headline` contains `about.accentPhrase`.
@@ -400,7 +404,7 @@ Per the constraint that adding a project takes < 15 minutes:
 
 1. `src/content/projects/<slug>.mdx` — drop the file.
 2. Fill in frontmatter (the schema is the form).
-3. Drop a cover image and any inline images alongside the MDX file.
+3. Drop the card `media` asset (image or GIF), the case-study `cover` image, and any inline images alongside the MDX file.
 4. If the project introduces a new tech, add an entry to `src/content/tech-stack/`.
 5. `npm run dev` — visual check.
 6. Commit and push. CI builds and deploys.

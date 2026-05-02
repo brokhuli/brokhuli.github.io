@@ -138,18 +138,23 @@ All `Card.astro` instances share these rules.
 ### Card hover
 
 - Inherits §4 (general card hover).
-- Additionally, the `<BarChart />` inside the card has its bars subtly intensify saturation by ~10% over `--motion-base`. Pure CSS; uses a `:hover` selector on the parent card.
+- Additionally, the `<ProjectMedia />` inside the card scales by ~1.02 over `--motion-base` with `--ease-out-quart`, clipped by the card's `overflow: hidden` so the lift reads as a subtle zoom into the visual rather than the card itself growing. Pure CSS; uses a `:hover` selector on the parent card.
 
 ### Click
 
 - The whole card is wrapped in an `<a href="/projects/<slug>">`. Click anywhere navigates.
 - Inner links (e.g., a tech-pill that links somewhere in the future) use `event.stopPropagation()` to avoid double-navigation. Currently no inner links exist, so this is just a guardrail.
 
-### Bar chart entry animation
+### Media entry animation
 
-- On first scroll into view (IntersectionObserver, threshold 0.4), each bar animates from `height: 0` to its target value over `--motion-slow` with `--ease-out-quart`, staggered 30 ms per bar.
-- Reduced-motion: bars render at full height instantly, no stagger.
+- On first scroll into view (IntersectionObserver, threshold 0.4), `<ProjectMedia />` fades from `opacity: 0` to `1` and translates up 8 px over `--motion-slow` with `--ease-out-quart`.
+- Reduced-motion: media renders at full opacity instantly, no translate.
 - Animation is keyed via a `data-animated="true"` attribute so it runs once per page load and not again on re-entry.
+
+### Animated GIFs
+
+- GIFs play at their authored cadence on load — no JS gating. Authors are expected to keep card GIFs short (≤ 4 s loop) and visually quiet.
+- Reduced-motion: GIFs are replaced by their first frame at runtime via a small inline script that swaps the `src` to a poster image when `prefers-reduced-motion: reduce` matches. Authors supply the poster as a sibling file (e.g., `demo.gif` + `demo.poster.webp`); if no poster exists, the GIF is left in place but `pause-animation` is attempted via CSS where supported.
 
 ### Status dot
 
@@ -252,7 +257,7 @@ All `Card.astro` instances share these rules.
 
 - Page mounts with a faux-crash banner: red bar fading in over `--motion-base`, text typing in at 30 ms per character.
 - After ~1.2 s, the banner shifts from red to amber and the text changes to `RECOVERING…`.
-- After ~2.5 s, settles to a green status. Mock observability charts then animate in using the same bar-chart entry behavior as `ProjectCard` charts (§6).
+- After ~2.5 s, settles to a green status. The page's mock observability `<BarChart />` instances then animate in: each bar grows from `height: 0` to its target value over `--motion-slow` with `--ease-out-quart`, staggered 30 ms per bar.
 - A `Return to safety →` link is always visible at the top, in case the visitor wants to exit before the sequence completes.
 - Reduced motion: skip the typing, no banner color shifts — render the green/recovered state immediately. Charts render at full size with no stagger.
 
@@ -332,8 +337,8 @@ None of these block primary tasks. A visitor can read the full portfolio without
 
 Every interaction in this document is implementable with:
 
-- **CSS** for §2 focus, §4 card hover, §5 buttons, §6 chart hover saturation, §7 theme transitions, §10 button hover spring, §11 node hover, §12 smooth scroll.
-- **One inline `<script>` per island** for §3 sidebar scroll-spy, §6 chart entry animation, §7 theme toggle clicks, §8 system-status open/close, §9 log ticker cycling, §10 fault-page sequence.
+- **CSS** for §2 focus, §4 card hover, §5 buttons, §6 project-card media zoom, §7 theme transitions, §10 button hover spring, §11 node hover, §12 smooth scroll.
+- **One inline `<script>` per island** for §3 sidebar scroll-spy, §6 media entry animation + reduced-motion GIF swap, §7 theme toggle clicks, §8 system-status open/close, §9 log ticker cycling, §10 fault-page sequence (including its bar-chart entry animation).
 - **One global `<script is:inline>`** in `BaseLayout` for §2 keyboard shortcuts, §7 theme init, §12 hash-on-load.
 
 Total hydration cost stays within the budget set in [constraints.md](constraints.md) (≤ 50 KB JS gzipped). No animation library, no motion framework, no scroll library is needed or permitted.

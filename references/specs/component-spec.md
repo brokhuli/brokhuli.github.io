@@ -80,10 +80,10 @@ The landing page is a single dashboard composed of these cards, each anchored by
   - Status dot (red / amber / green) reflecting "active / paused / shipped".
   - Short tagline (one line).
   - Tech-tag pills (e.g., `C++`, `CUDA`, `Qt/QML`, `gRPC`).
-  - Inline `<BarChart />` showing a project-relevant metric (perf gain, frame time, accuracy, etc.).
+  - `<ProjectMedia />` — an author-supplied image or short looping GIF that visually represents the project. Sourced from `projects[].media` in the content collection.
   - "Read case study →" link to `/projects/<slug>` for the full mini case study (problem / why-it's-hard / architecture / decisions / tradeoffs / outcome).
 - **Props:** Maps over the `projects` content collection (Zod-validated).
-- **Strategy:** Pure `.astro`. The `<BarChart />` is inline SVG, zero JS.
+- **Strategy:** Pure `.astro`. `<ProjectMedia />` uses `astro:assets` for static images and a plain `<img>` for animated GIFs (Sharp does not optimize animated GIFs). Zero JS.
 
 ### `ArchitectureSection.astro`
 
@@ -165,9 +165,20 @@ These are reused across the cards above.
 - **Props:** `name`, `size?`, `class?`.
 - **a11y:** `aria-hidden="true"` by default; `title`/`aria-label` only when the icon carries meaning on its own.
 
+### `ProjectMedia.astro`
+
+- **Purpose:** Renders the author-supplied card visual (image or animated GIF) inside `ProjectCard`. Reserves layout space from the declared aspect ratio to avoid CLS.
+- **Props:** `media: { src; alt; kind: "image" | "gif"; caption?; aspect: "16:9" | "4:3" | "1:1" | "3:2" }`.
+- **Behavior:**
+  - `kind: "image"` → uses `<Image />` from `astro:assets` (responsive sizes, AVIF/WebP, lazy-loaded below the fold).
+  - `kind: "gif"` → plain `<img loading="lazy" decoding="async">`; bypasses Sharp because animated GIFs lose their animation through it.
+  - Optional `caption` renders as a small caption beneath the visual using `--text-meta` tokens.
+- **a11y:** `alt` is required by schema. Decorative-only visuals (rare) should still set a meaningful alt or be omitted.
+- **Strategy:** Pure `.astro`. Zero JS.
+
 ### `BarChart.astro`
 
-- **Purpose:** Inline-SVG bar chart used inside `ProjectCard`.
+- **Purpose:** Inline-SVG bar chart used by the `/system-fault` page (whimsy §5) for mock observability charts. **Not** used on `ProjectCard` — project cards use `<ProjectMedia />`.
 - **Props:** `data: Array<{ label: string; value: number; tone?: "low" | "med" | "high" }>`, `axisLabel?`, `caption?`.
 - **Behavior:** Bar fills use CSS variables (`--chart-bar-low/med/high`) so they re-theme automatically. Animates on first paint via CSS only (`@keyframes` + `prefers-reduced-motion` short-circuit).
 - **Strategy:** Pure `.astro`. Zero JS.
@@ -248,7 +259,7 @@ Each item in `portfolio-whimsy.md` maps to one component below. All are visually
 | Section anchor | Components used |
 |---|---|
 | `#home` (top) | `HeaderCard`, `HeroCard`, `AboutCard`, `SkillsCard`, `DomainsCard` |
-| `#projects` | `ProjectsSection` → `ProjectCard` × N → `BarChart`, `Pill`, `StatusDot` |
+| `#projects` | `ProjectsSection` → `ProjectCard` × N → `ProjectMedia`, `Pill`, `StatusDot` |
 | `#architecture` | `ArchitectureSection` → `ArchitectureDiagram` + principles list |
 | `#tech-stack` | `TechStackCard` → grouped `TechPill` lists |
 | `#experience` | `ExperienceCard` → `ExperienceEntry` × 4 |

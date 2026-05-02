@@ -236,7 +236,7 @@ These exist purely to support [research/specs/portfolio-whimsy.md](portfolio-whi
 
 ### "Do Not Press" / fake fault page
 
-- A regular Astro route (`/system-fault`) styled to look like an observability dashboard. Reuses the bar-chart component.
+- A regular Astro route (`/system-fault`) styled to look like an observability dashboard. The `BarChart` component is used here (not on project cards) for mock metric panels.
 
 ---
 
@@ -245,7 +245,7 @@ These exist purely to support [research/specs/portfolio-whimsy.md](portfolio-whi
 Listing these so future-me doesn't re-litigate the choice.
 
 - **React / Next.js** — Astro already chosen; React-as-island would violate the "one framework, used sparingly" NFR.
-- **Chart.js / Recharts / D3** — too heavy for the handful of small bar charts in the mockups.
+- **Chart.js / Recharts / D3** — too heavy for the lone hand-rolled `BarChart` used on `/system-fault`. Project cards don't render charts at all — they show author-supplied images/GIFs.
 - **Client-rendered Mermaid / Cytoscape** — ships hundreds of KB for one diagram.
 - **CSS-in-JS (styled-components, Emotion)** — runtime cost, no SSR benefit on a static site, conflicts with Tailwind.
 - **Google Fonts (CDN)** — render-blocking third-party request; violates NFRs.
@@ -265,7 +265,8 @@ Listing these so future-me doesn't re-litigate the choice.
 | Styling     | Tailwind v4 + CSS variables                     | Utility classes + one-file theme swap  |
 | Fonts       | Fontsource (self-hosted, subset)                | No render-blocking third-party         |
 | Islands     | Vanilla `<script>` (Preact if needed)           | Smallest possible JS payload           |
-| Charts      | Hand-rolled inline SVG                          | Zero JS for static bar charts          |
+| Charts      | Hand-rolled inline SVG (only on `/system-fault`)| Zero JS for the one mock chart panel   |
+| Project visuals | `astro:assets` images + raw GIFs            | Author-supplied screenshots / demo loops on cards |
 | Diagram     | Hand-authored SVG (Mermaid build-time fallback) | Zero JS, themeable via CSS vars        |
 | Icons       | `astro-icon` + Iconify (single set)             | Tree-shaken, inlined SVG               |
 | Theme       | `data-theme` + CSS vars + inline init script    | No FOUC, no framework                  |

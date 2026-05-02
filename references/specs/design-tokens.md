@@ -155,7 +155,7 @@ Per [whimsical-elements.md](whimsical-elements.md) §5, the log ticker renders a
 
 ## 3. Chart & Diagram Tokens
 
-The mockup project cards show stacked bars in a low→high color ramp. Charts read these tokens, not the semantic state colors, so a redesigned palette doesn't accidentally change chart meaning.
+Charts are used by the `/system-fault` page (mock observability dashboard), **not** by `ProjectCard` — project cards render author-supplied images or GIFs via `<ProjectMedia />`. Charts still read these tokens (rather than the semantic state colors) so a redesigned palette doesn't accidentally change chart meaning.
 
 ```css
 :root {
