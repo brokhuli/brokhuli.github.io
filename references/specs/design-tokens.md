@@ -58,26 +58,26 @@ The palette is anchored to two themes. Both share a small set of semantic roles;
 
 ### Dark Mode (default)
 
-Inspired by the dark mockups: deep near-black background, navy card surfaces, indigo accent.
+Drawn from `references/mockups/mockup-retro-dark-01.png`: true-black page, near-black card surfaces, and a saturated indigo banner accent for section headers (Projects, Experience, Let's Connect).
 
 ```css
 [data-theme="dark"] {
-  --color-bg:             #0a0d14;   /* near-black, slight blue cast */
-  --color-surface-1:      #11151f;   /* card bg */
-  --color-surface-2:      #161b27;   /* nested surface */
-  --color-surface-3:      #1d2333;   /* highlight surface */
+  --color-bg:             #000000;   /* true black page */
+  --color-surface-1:      #0a0d14;   /* card bg, near-black with slight blue cast */
+  --color-surface-2:      #11151f;   /* nested surface (chart bg) */
+  --color-surface-3:      #1a2244;   /* indigo-tinted highlight (Projects/Experience banner) */
 
   --color-fg-default:     #e6e8ee;   /* off-white, never pure */
   --color-fg-muted:       #a3a9b8;
   --color-fg-subtle:      #6b7184;
-  --color-fg-on-accent:   #0a0d14;   /* dark text on bright accent */
+  --color-fg-on-accent:   #ffffff;   /* white text on indigo banner */
 
-  --color-accent:         #7c8cff;   /* indigo */
-  --color-accent-hover:   #93a0ff;
-  --color-accent-muted:   #1c2240;   /* tinted card surface */
+  --color-accent:         #3a4cd9;   /* saturated indigo banner / link */
+  --color-accent-hover:   #5566ee;
+  --color-accent-muted:   #1a2244;   /* tinted banner surface */
 
-  --color-border:         #232a3a;
-  --color-border-hover:   #2f384e;
+  --color-border:         #1f2535;
+  --color-border-hover:   #2c3447;
   --color-border-strong:  #3a4358;
 
   --color-success:        #4ade80;
@@ -86,33 +86,33 @@ Inspired by the dark mockups: deep near-black background, navy card surfaces, in
   --color-info:           #60a5fa;
   --color-debug:          #94a3b8;
 
-  --color-grid:           rgba(255, 255, 255, 0.04);
+  --color-grid:           rgba(255, 255, 255, 0.05);
 }
 ```
 
 ### Eric Mode (light)
 
-Slightly warmer than neutral white, per [whimsical-elements.md](whimsical-elements.md) §3 ("Eric Mode: For daylight clarity. Slightly warmer tone vs neutral white").
+Warm khaki/tan paper background with white card surfaces and a solid indigo accent — drawn directly from `research/mockups-deprecated/pre-mockup-retro-light.png`. Aligns with [whimsical-elements.md](whimsical-elements.md) §3 ("Eric Mode: For daylight clarity. Slightly warmer tone vs neutral white"); the saturated tan reads as drafting paper rather than neutral white.
 
 ```css
 [data-theme="light"] {
-  --color-bg:             #f7f4ee;   /* warm paper */
+  --color-bg:             #d9cdb0;   /* warm khaki paper, saturated tan */
   --color-surface-1:      #ffffff;
-  --color-surface-2:      #f1ede4;
-  --color-surface-3:      #e7e2d6;
+  --color-surface-2:      #f3ecd9;   /* soft cream nested surface */
+  --color-surface-3:      #e8dec4;   /* highlight surface, tinted tan */
 
   --color-fg-default:     #15181f;
   --color-fg-muted:       #4b5160;
   --color-fg-subtle:      #767c8c;
   --color-fg-on-accent:   #ffffff;
 
-  --color-accent:         #2f4dc9;   /* deeper indigo for contrast on warm bg */
-  --color-accent-hover:   #243da8;
-  --color-accent-muted:   #e2e7fb;
+  --color-accent:         #3346c4;   /* solid medium-indigo, matches mockup */
+  --color-accent-hover:   #2737a6;
+  --color-accent-muted:   #dde1f5;
 
-  --color-border:         #d8d2c4;
-  --color-border-hover:   #c4bdab;
-  --color-border-strong:  #a89f88;
+  --color-border:         #b8a980;   /* darker khaki stroke */
+  --color-border-hover:   #9c8d65;
+  --color-border-strong:  #786b48;
 
   --color-success:        #16a34a;
   --color-warning:        #c4881a;
@@ -120,7 +120,7 @@ Slightly warmer than neutral white, per [whimsical-elements.md](whimsical-elemen
   --color-info:           #2563eb;
   --color-debug:          #6b7280;
 
-  --color-grid:           rgba(0, 0, 0, 0.04);
+  --color-grid:           rgba(0, 0, 0, 0.06);
 }
 ```
 
