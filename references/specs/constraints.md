@@ -44,7 +44,7 @@ Each entry: the constraint, **why** it exists, and **what it forbids or forces**
 
 ### One island framework, used sparingly — or none
 
-- **Why:** The NFRs require zero JS by default and a deliberate hydration budget. The component spec's hydration table currently lists *zero* hydrated framework components.
+- **Why:** The NFRs require zero JS by default and a deliberate hydration budget. The component spec's hydration table currently lists _zero_ hydrated framework components.
 - **Forces:** Default to vanilla `<script>` islands. If a component genuinely needs a framework, **Preact** is the only option (per [tech-stack.md](tech-stack.md)).
 - **Forbids:** Mixing React + Vue + Svelte + Preact in one project. Reaching for a framework when a `<script>` block would do.
 
@@ -64,7 +64,7 @@ Each entry: the constraint, **why** it exists, and **what it forbids or forces**
 
 ## Performance Budget (hard caps)
 
-These are limits, not aspirations. Crossing them is a bug. The visible-quality targets (Lighthouse, LCP, CLS, INP, total page weight) live in [non-functional-requirements.md §Performance Budget](non-functional-requirements.md) — the items below are the additional, **harder** caps that apply specifically to *how the build is allowed to be assembled*:
+These are limits, not aspirations. Crossing them is a bug. The visible-quality targets (Lighthouse, LCP, CLS, INP, total page weight) live in [non-functional-requirements.md §Performance Budget](non-functional-requirements.md) — the items below are the additional, **harder** caps that apply specifically to _how the build is allowed to be assembled_:
 
 - **Total initial JS payload:** ≤ 50 KB gzipped (well under the NFR's ~200 KB total page-weight target).
 - **Total initial CSS payload:** ≤ 30 KB gzipped.
@@ -112,7 +112,7 @@ If a new dependency would push the build over either gzip cap, the dependency do
 
 ### Identity is fixed: Stephen Ullom — Senior Systems & Software Architect
 
-- **Why:** Anchored in [resume.md](../resume.md). Positioning is the *point* of the site.
+- **Why:** Anchored in [resume.md](../resume.md). Positioning is the _point_ of the site.
 - **Forces:** Every page reinforces the simulation / digital-twin / safety-critical / AI-augmented framing.
 - **Forbids:** Generic "full-stack developer" language. Buzzword padding. Drifting into adjacent identities (data scientist, ML engineer, etc.) that aren't true.
 
@@ -124,7 +124,7 @@ If a new dependency would push the build over either gzip cap, the dependency do
 
 - **Why:** It's a public site for a senior engineer; failing on accessibility is a credibility hit.
 - **Forces:** Color contrast ≥ 4.5:1 for body text in **both** themes (Dark and Eric Mode). Keyboard reachability for all interactive elements. Focus states visible. Alt text on all meaningful images. `prefers-reduced-motion` honored.
-- **Forbids:** Color as the *only* signal for state (status dots also get `aria-label`). Hover-only affordances. Animations that ignore the reduced-motion media query.
+- **Forbids:** Color as the _only_ signal for state (status dots also get `aria-label`). Hover-only affordances. Animations that ignore the reduced-motion media query.
 
 ### Must work in current Chrome, Firefox, Safari, and Edge
 
@@ -168,7 +168,7 @@ If a new dependency would push the build over either gzip cap, the dependency do
 
 ---
 
-## Scope (what this site is *not*)
+## Scope (what this site is _not_)
 
 - **Not a blog.** No `/blog`, no RSS feed (yet — could be added later as a separate collection).
 - **Not a CMS.** No admin UI; content is edited via the file system and Git.
@@ -214,11 +214,5 @@ If a future feature crosses one of these lines, it gets its own subdomain or its
 ### No confidential information from prior employers
 
 - **Why:** Obvious — and `resume.md` already follows this.
-- **Forces:** Project case studies on the site describe *generic* simulation/digital-twin patterns, not Alstom/Bombardier/B&W internals. Customer names, internal architectures, and proprietary code stay off the site.
+- **Forces:** Project case studies on the site describe _generic_ simulation/digital-twin patterns, not Alstom/Bombardier/B&W internals. Customer names, internal architectures, and proprietary code stay off the site.
 - **Forbids:** Screenshots of internal tools, code excerpts from employer repos, named customer references without permission.
-
-### Headshots are mine and self-licensed
-
-- **Why:** They live in [references/head-shots/](../head-shots/).
-- **Forces:** Use only assets from that folder for personal imagery.
-- **Forbids:** Stock photos of "a software architect," AI-generated portraits, photos of other people.
