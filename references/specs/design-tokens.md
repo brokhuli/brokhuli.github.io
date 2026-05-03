@@ -195,7 +195,7 @@ Architecture diagram (`ArchitectureDiagram`):
 
 Self-hosted via Fontsource (per [tech-stack.md](tech-stack.md)). Variable fonts where available so we ship one file per family.
 
-Final family choices (`Space Grotesk` for display, `Inter` for body, `JetBrains Mono` for mono) are tentative — substitution is a one-token edit. The constraint is: one sans (UI), one display, one mono. Three families, no more.
+Font families are **locked**: `Inter Variable` for body/UI, `Space Grotesk Variable` for display, `JetBrains Mono Variable` for monospace. The constraint is: one sans (UI), one display, one mono. Three families, no more.
 
 ### Type scale
 
@@ -496,7 +496,6 @@ A scheme that satisfies all four can be promoted by renaming its `data-theme` va
 
 These are noted-but-not-locked. Defer until concrete pressure arises:
 
-- **Final font choices.** `Inter` / `Space Grotesk` / `JetBrains Mono` are placeholders chosen to fit the blueprint aesthetic; substitution costs nothing but a single tokens.css edit.
 - **Whether to add a `--color-accent-2` for a secondary accent.** Currently the project tech pills use `--color-accent-muted`; a true second accent would only be needed if a future section requires color-coded categories.
 - **Print stylesheet.** The site doesn't currently have one. If `/resume` ever needs print fidelity beyond the PDF, add `@media print` overrides at the bottom of `tokens.css` rather than a separate file.
 

@@ -111,7 +111,7 @@ brokhuli.github.io/
 │       └── global.css
 ├── tests/
 │   ├── unit/                   ← Vitest
-│   └── e2e/                    ← Playwright (optional smoke set)
+│   └── e2e/                    ← Playwright smoke suite (v1)
 ├── astro.config.mjs
 ├── tsconfig.json
 ├── package.json
@@ -274,7 +274,8 @@ jobs:
       - astro check             ← TS + content schemas
       - vitest run              ← unit tests
       - astro build             ← reproduces production build
-      - playwright test         ← optional smoke suite (E2E)
+      - playwright test         ← smoke suite (E2E, v1)
+      - lighthouse-ci           ← treosh/lighthouse-ci-action; ≥ 95 all categories
   deploy:
     needs: build
     if: github.ref == 'refs/heads/main'
@@ -349,6 +350,7 @@ What can go wrong and how it's caught:
 | Missing image | astro:assets | build | Build fails; replace or remove reference |
 | Type error | `astro check` | CI | Build fails; fix the code |
 | Failing test | vitest / playwright | CI | Build fails; fix the test or the code |
+| Lighthouse score < 95 | treosh/lighthouse-ci-action | CI | Build fails; profile and fix the regression before merging |
 | Lint violation | eslint | CI + pre-commit | Build fails; auto-fix or rewrite |
 | FOUC on theme load | inline theme-init script | runtime | Cannot fail unless the script throws — it's wrapped in a try/catch that defaults to dark |
 | Whimsy widget JS error | window.onerror | runtime | Widget no-ops; static content remains intact (graceful-degradation NFR) |

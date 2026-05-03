@@ -29,7 +29,7 @@ Each entry: the constraint, **why** it exists, and **what it forbids or forces**
 ### Build must be fully reproducible
 
 - **Why:** Future-me needs to be able to redeploy cleanly months later.
-- **Forces:** Lockfile committed; Node version pinned in `.nvmrc`; no install-time network dependencies beyond the registry.
+- **Forces:** Lockfile committed; Node version pinned in `.nvmrc` (**Node 22 LTS**); no install-time network dependencies beyond the registry.
 - **Forbids:** `latest` tags in dependencies; postinstall scripts that pull from arbitrary URLs.
 
 ---
@@ -72,6 +72,8 @@ These are limits, not aspirations. Crossing them is a bug. The visible-quality t
 
 If a new dependency would push the build over either gzip cap, the dependency doesn't go in. If a feature would require a render-blocking third party, the feature is rejected.
 
+Lighthouse ≥ 95 across all four categories (Performance, Accessibility, Best Practices, SEO) is enforced in CI via **`treosh/lighthouse-ci-action`**, which runs against the built `dist/` on every push. A score below the threshold fails the build.
+
 ---
 
 ## Privacy & Third Parties
@@ -79,7 +81,7 @@ If a new dependency would push the build over either gzip cap, the dependency do
 ### No cookies. No cookie banner. No GDPR overhead.
 
 - **Why:** Personal portfolio; the moment a banner appears, the visitor experience is degraded for no benefit to me.
-- **Forces:** Analytics must be cookie-free (GoatCounter, Plausible self-hosted, or none).
+- **Forces:** Analytics must be cookie-free. **GoatCounter** is the chosen provider (see [tech-stack.md §Analytics](tech-stack.md)).
 - **Forbids:** Google Analytics, Hotjar, Meta Pixel, any tracker that sets a persistent cookie.
 
 ### No third-party JS in the critical path

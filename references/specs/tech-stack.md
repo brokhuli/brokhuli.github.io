@@ -58,17 +58,20 @@ Each entry lists **what** the dependency is, **why** it's chosen over alternativ
 - **Why:** The mockups are a dense dashboard with many small spacing/border variants — utility classes scale better than per-component CSS files. v4 supports CSS-variable-based theming, which is how "Eric Mode" (light) and dark mode swap.
 - **How:** Design tokens (colors, radii, spacing, font stacks) declared once in `src/styles/tokens.css` as CSS custom properties under `:root` and `[data-theme="light"]`. Tailwind theme reads those vars so a theme change is a one-file edit (per Maintainability NFR).
 
-### Tailwind Typography — `@tailwindcss/typography` (optional)
+### Tailwind Typography — `@tailwindcss/typography`
 
 - **What:** Prose styles for long-form Markdown content.
 - **Why:** Project case studies are MDX; `prose` classes give a sensible baseline without hand-rolling typography.
 - **How:** Applied to MDX content wrappers only.
 
-### Fontsource — `@fontsource-variable/jetbrains-mono`, `@fontsource-variable/inter` (or similar)
+### Fontsource — `@fontsource-variable/inter`, `@fontsource-variable/space-grotesk`, `@fontsource-variable/jetbrains-mono`
 
-- **What:** Self-hostable open-source font packages.
-- **Why:** NFRs forbid render-blocking third-party font requests. The mockups need a clean sans for body/UI and a monospace for the log ticker, code chips, and the "tech stack" pill list.
-- **How:** Imported in the root layout and subset to Latin. Final font choices TBD — a retro-leaning display font (e.g., Space Grotesk or IBM Plex Sans) for headings would match the blueprint aesthetic.
+- **What:** Self-hostable open-source variable font packages.
+- **Why:** NFRs forbid render-blocking third-party font requests. Variable fonts mean one file per family covers the full weight range.
+- **How:** Imported in `BaseLayout.astro` and subset to Latin. Three families, locked:
+  - **Inter Variable** — body text, UI labels, most headings.
+  - **Space Grotesk Variable** — hero headline, `HeaderCard` name, emphasized section titles. Retro-leaning geometric feel that matches the blueprint aesthetic.
+  - **JetBrains Mono Variable** — log ticker, tech pills, code chips, version chip, system-status panel values.
 
 ---
 
@@ -104,7 +107,7 @@ Skills, domains, contact, and sidebar nav all use icons (visible in mockups).
 
 - **What:** Astro integration that pulls icons from any Iconify icon set at build time and inlines them as SVG.
 - **Why:** No runtime icon font, no full-set bundle — only the icons actually used end up in the build. Pairs well with the static-first stance.
-- **How:** Use a single icon set for visual consistency (e.g., `lucide` or `tabler` — both have a clean, slightly technical look that fits the blueprint vibe).
+- **How:** Uses the **Lucide** icon set (`@iconify-json/lucide`) for visual consistency across all icons — nav, skills, domains, contact, theme toggle. All icon references use the `lucide:` prefix (e.g., `lucide:cpu`, `lucide:zap`, `lucide:train-front`).
 
 ---
 
@@ -160,9 +163,9 @@ Astro's underlying build tool. No direct config beyond the Tailwind plugin.
 - **Why:** Lightweight assertion API for island components if any get complex enough to warrant tests.
 - **How:** Skip until needed — vanilla `<script>` islands are simpler to test by exercising their public functions directly.
 
-### Playwright — `@playwright/test` (optional, recommended)
+### Playwright — `@playwright/test`
 
-- **What:** End-to-end browser testing.
+- **What:** End-to-end browser testing. Included in v1.
 - **Why:** A handful of smoke tests (page loads, theme toggle works, log ticker mounts, links resolve) catches the kinds of regressions unit tests miss on a static site.
 - **How:** One spec file with ~5 smoke tests, run in CI against the built `dist/`.
 
@@ -180,7 +183,13 @@ Astro's underlying build tool. No direct config beyond the Tailwind plugin.
 
 - **What:** Official Astro deploy action for GitHub Pages.
 - **Why:** Locked in by NFRs and existing repo setup (the workflow already uses it).
-- **How:** Workflow runs `npm ci → astro check → vitest run → eslint → astro build → deploy`. Broken builds block deploys.
+- **How:** Workflow runs `npm ci → astro check → vitest run → eslint → astro build → playwright test → lighthouse-ci → deploy`. Broken builds block deploys.
+
+### `treosh/lighthouse-ci-action`
+
+- **What:** GitHub Action that runs Lighthouse against the built `dist/` on every push.
+- **Why:** Lighthouse ≥ 95 (all four categories) is a hard cap per [constraints.md](constraints.md) §Performance Budget. Without CI enforcement it's a goal, not a constraint.
+- **How:** Runs after `astro build` in the CI job. Config in `.lighthouserc.json` at repo root: `assert` preset `lighthouse:recommended` with category floor overrides set to 0.95. Failure blocks the deploy.
 
 ### `lychee` or `lychee-action` (link checker)
 
@@ -192,7 +201,7 @@ Astro's underlying build tool. No direct config beyond the Tailwind plugin.
 
 - **What:** Pins the Node version.
 - **Why:** Reproducible builds (NFR).
-- **How:** Single file at repo root; CI and local devs read it.
+- **How:** Single file at repo root containing `22` (Node 22 LTS). CI and local devs read it via `setup-node`'s `node-version-file` input.
 
 ---
 
@@ -214,11 +223,11 @@ Astro's underlying build tool. No direct config beyond the Tailwind plugin.
 
 ## Analytics
 
-### GoatCounter or Plausible (self-hosted optional)
+### GoatCounter — `goatcounter.com`
 
 - **What:** Privacy-respecting, cookie-free analytics.
-- **Why:** NFRs forbid cookie banners and third-party trackers; both options are explicitly named.
-- **How:** Single `<script async>` tag in the base layout. GoatCounter is free for non-commercial sites; Plausible is paid but more polished. **Recommendation: GoatCounter** for a personal portfolio.
+- **Why:** Free for non-commercial/personal use, ~3 KB script, no cookies, no banner required. Satisfies the NFR and constraint rules with zero cost or self-hosting overhead.
+- **How:** Single `<script async>` tag in `BaseLayout.astro`. Create a free account at `goatcounter.com`, drop in the site-specific script tag. No other configuration needed.
 
 ---
 
@@ -262,16 +271,16 @@ Listing these so future-me doesn't re-litigate the choice.
 | Language    | TypeScript (strict)                             | Required by NFRs                       |
 | Content     | MDX + Zod content collections                   | Schema-validated case studies          |
 | Images      | `astro:assets` + Sharp                          | Build-time AVIF/WebP, responsive sizes |
-| Styling     | Tailwind v4 + CSS variables                     | Utility classes + one-file theme swap  |
+| Styling     | Tailwind v4 + CSS variables + Typography        | Utility classes + one-file theme swap + prose styles |
 | Fonts       | Fontsource (self-hosted, subset)                | No render-blocking third-party         |
 | Islands     | Vanilla `<script>` (Preact if needed)           | Smallest possible JS payload           |
 | Charts      | Hand-rolled inline SVG (only on `/system-fault`)| Zero JS for the one mock chart panel   |
 | Project visuals | `astro:assets` images + raw GIFs            | Author-supplied screenshots / demo loops on cards |
 | Diagram     | Hand-authored SVG (Mermaid build-time fallback) | Zero JS, themeable via CSS vars        |
-| Icons       | `astro-icon` + Iconify (single set)             | Tree-shaken, inlined SVG               |
+| Icons       | `astro-icon` + Iconify (`lucide` set)           | Tree-shaken, inlined SVG               |
 | Theme       | `data-theme` + CSS vars + inline init script    | No FOUC, no framework                  |
 | Lint/Format | ESLint, Prettier, Husky, lint-staged            | Pre-commit enforcement                 |
-| Tests       | Vitest + `astro check` (Playwright optional)    | NFR-mandated                           |
+| Tests       | Vitest + `astro check` + Playwright (v1)        | NFR-mandated                           |
 | Deploy      | GitHub Actions + `withastro/action`             | Already in repo                        |
 | Sitemap     | `@astrojs/sitemap`                              | NFR-mandated                           |
 | Analytics   | GoatCounter                                     | Privacy-respecting, cookie-free        |

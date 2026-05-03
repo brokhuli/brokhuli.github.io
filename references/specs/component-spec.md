@@ -161,7 +161,7 @@ These are reused across the cards above.
 
 ### `Icon.astro`
 
-- **Purpose:** Single-icon-set wrapper (per `tech-stack.md`, one of `lucide` or `tabler` via `astro-icon`).
+- **Purpose:** Single-icon-set wrapper around `astro-icon` using the locked **Lucide** set (`lucide:` prefix).
 - **Props:** `name`, `size?`, `class?`.
 - **a11y:** `aria-hidden="true"` by default; `title`/`aria-label` only when the icon carries meaning on its own.
 

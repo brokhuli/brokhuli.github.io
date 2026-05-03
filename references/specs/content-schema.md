@@ -48,7 +48,7 @@ export const yearRange = z.object({
 export const status = z.enum(["active", "shipped", "paused", "archived"]);
 ```
 
-`iconName` uses Iconify's `set:name` convention (per [tech-stack.md](tech-stack.md)). The single chosen set (e.g., `lucide`) is enforced at lint/review time, not at the schema level — keeping this loose lets us experiment.
+`iconName` uses Iconify's `set:name` convention (per [tech-stack.md](tech-stack.md)). The locked set is **`lucide`** — all icon values must use the `lucide:` prefix (e.g., `lucide:cpu`). Enforced at lint/review time, not at the schema level.
 
 ---
 

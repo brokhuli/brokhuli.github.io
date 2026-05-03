@@ -29,7 +29,8 @@ These are the non-functional qualities the portfolio site must meet. Each sectio
 - Unit tests via **Vitest** (Astro's recommended runner) cover non-trivial logic (content helpers, formatting, island components)
 - Any island that ships JS has at least one component test
 - Pure-static pages are validated by the build itself — `astro check` + content-collection schema validation catch most regressions before tests run
-- CI runs build + `astro check` + tests on every push; broken builds block deploys
+- **Playwright** smoke suite (~5 tests) runs in CI against the built `dist/` — page loads, theme toggle, log ticker mount, link resolution
+- CI runs build + `astro check` + Vitest + Playwright on every push; broken builds block deploys
 
 ## Observability
 
@@ -86,7 +87,7 @@ These are the non-functional qualities the portfolio site must meet. Each sectio
 
 ## Privacy & Analytics
 
-- Lightweight, privacy-respecting analytics (e.g., Plausible, GoatCounter, or Cloudflare Web Analytics) — no cookie banner needed
+- Lightweight, privacy-respecting analytics via **GoatCounter** — cookie-free, no banner needed (see [tech-stack.md §Analytics](tech-stack.md))
 - No third-party trackers beyond what's strictly useful
 - Contact form (if any) protected against spam without leaking the email address
 
