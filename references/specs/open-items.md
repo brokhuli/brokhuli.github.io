@@ -21,4 +21,4 @@ Things that need to be authored or decided before the site can ship. Strike item
 
 ## Decisions to make
 
-- [ ] **Licenses** — decide source code license (MIT?) and content license (All Rights Reserved? CC BY-NC?). Add a `LICENSE` file at repo root and finalize footer copyright statement.
+- [x] **Licenses** — split licensing: MIT for code ([LICENSE](../../LICENSE)), All Rights Reserved for content ([CONTENT-LICENSE.md](../../CONTENT-LICENSE.md)). Footer copyright should read `© 2026 Stephen Ullom · code MIT, content all rights reserved` (or equivalent short form linking to both files). Resolved 2026-05-03.
