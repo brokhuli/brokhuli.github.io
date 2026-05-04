@@ -212,7 +212,7 @@ A modular scale at ratio 1.2 (minor third), anchored at 16 px body. Explicit nam
 | `--text-2xl`  | 36 px | 1.2         | Hero subhead                          |
 | `--text-3xl`  | 48 px | 1.1         | Hero headline / name display          |
 
-Mobile (< 640 px) scales `--text-2xl` and `--text-3xl` down by ~15 % via container queries on the hero card.
+Below `--bp-sm` (640 px) `--text-2xl` and `--text-3xl` scale down by ~15 % via container queries on the hero card. See [§11 Breakpoints](#breakpoints) for the full breakpoint scale.
 
 ### Font weights
 
@@ -379,6 +379,21 @@ No raw `z-index` literals anywhere in component CSS.
 ```
 
 The dashboard grid columns are not tokenized — they're per-section concerns expressed in section CSS using these layout primitives.
+
+### Breakpoints
+
+A small, named scale. Specs and CSS reference these tokens by name; no spec or stylesheet should hard-code a `px` value for a breakpoint.
+
+```css
+:root {
+  --bp-sm: 640px;  /* phone landscape, hero typography downscale */
+  --bp-md: 768px;  /* canonical "mobile" cutoff: sidebar → hamburger */
+  --bp-lg: 1024px; /* tablet → desktop, full sidebar visible */
+  --bp-xl: 1280px; /* widescreen, only used for content max-width framing */
+}
+```
+
+`--bp-md` is the canonical mobile cutoff: below `--bp-md` the sidebar collapses into a top bar with a hamburger ([interaction-spec.md](interaction-spec.md) §3). `--bp-sm` is reserved for type-scale downsizing only ([§4 Type scale](#type-scale)). `--bp-lg` and `--bp-xl` are available to section CSS but should be used sparingly — most layouts only need the `md` boundary.
 
 ---
 

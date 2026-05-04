@@ -91,9 +91,33 @@ Implemented as one inline `<script>` listening on `document` with a 1 s timeout 
 
 ### Mobile
 
-- At `< 768px` the sidebar collapses into a top bar with a hamburger button.
+- Below `--bp-md` (768 px, see [design-tokens.md §11 Breakpoints](design-tokens.md#breakpoints)) the sidebar collapses into a top bar with a hamburger button.
 - Tapping the hamburger opens a slide-in panel from the left over `--motion-base`. Backdrop dims the page; tapping the backdrop or the close button (or pressing `Esc`) closes it.
 - Body scroll is locked while the panel is open.
+
+#### Panel sizing
+
+- Width: `min(320px, 85vw)`. Height: `100dvh` (dynamic viewport height — prevents the iOS URL bar from cropping the bottom of the panel).
+- Backdrop: full-viewport, `background: rgba(0,0,0,0.5)`, fades in over `--motion-quick` with `--ease-out-quart`.
+
+#### `aria-expanded` and state
+
+- The hamburger is a real `<button aria-expanded="false" aria-controls="mobile-nav">`.
+- The panel itself is `<nav id="mobile-nav" aria-hidden="true">` when closed, `aria-hidden="false"` when open.
+- `aria-expanded` flips synchronously on click; `aria-hidden` flips synchronously on open and after the close transition completes (so screen readers don't read the panel mid-fade).
+- No transition on `aria-expanded` — it's not a visual property, just state. The slide is on `transform: translateX(...)`; the backdrop is on `opacity`.
+
+#### Body scroll lock
+
+- Implemented in JS, not CSS: on open, capture `window.scrollY`, set `document.body.style.position = 'fixed'`, `top = -scrollY`, `left = right = 0`. On close, reverse it and `window.scrollTo(0, scrollY)`.
+- CSS-only `overflow: hidden` is rejected because Mobile Safari ignores it inside `position: fixed` ancestors and because `overflow: hidden` on `<body>` doesn't lock momentum scroll on iOS.
+- The lock is feature-detected: if `position: fixed` body scrolling produces a layout jump > 4 px on a probe element, fall back to `overscroll-behavior: contain` on the panel and let body scroll continue.
+
+#### Focus management
+
+- On open: focus moves to the close button inside the panel (first focusable element).
+- On close: focus returns to the hamburger button. If the user navigated to a section link inside the panel, focus moves to the section heading instead (the link's `href` target with `tabindex="-1"`).
+- Focus is **trapped** inside the panel while open: `Tab` from the last focusable element wraps to the first, `Shift+Tab` from the first wraps to the last. Implemented via a single `keydown` listener on the panel, not via inert siblings (inert wrapping the rest of the page is a future hardening).
 
 ---
 

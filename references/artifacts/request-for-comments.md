@@ -3,13 +3,14 @@
 | Field        | Value                                                      |
 | ------------ | ---------------------------------------------------------- |
 | **Author**   | Stephen Ullom (`sfullom@gmail.com`)                        |
-| **Status**   | Draft — open for comment                                   |
+| **Status**   | Accepted                                                   |
 | **Created**  | 2026-05-02                                                 |
+| **Accepted** | 2026-05-03 (single-author project; review closed by author) |
 | **Target**   | First public deploy of `https://brokhuli.github.io`        |
 | **Repo**     | `brokhuli/brokhuli.github.io`                              |
 | **Specs**    | [purpose-and-content](../specs/purpose-and-content.md), [architecture-spec](../specs/architecture-spec.md), [component-spec](../specs/component-spec.md), [content-schema](../specs/content-schema.md), [design-tokens](../specs/design-tokens.md), [interaction-spec](../specs/interaction-spec.md), [tech-stack](../specs/tech-stack.md), [non-functional-requirements](../specs/non-functional-requirements.md), [constraints](../specs/constraints.md), [whimsical-elements](../specs/whimsical-elements.md), [open-items](../specs/open-items.md) |
 | **Mockups**  | [retro-dark-01](../mockups/mockup-retro-dark-01.png), [retro-dark-02](../mockups/mockup-retro-dark-02.png), [retro-light-01](../mockups/mockup-retro-light-01.png), [retro-light-02](../mockups/mockup-retro-light-02.png) |
-| **ADR**      | [architecture-design-record](architecture-design-record.md) (companion) |
+| **ADR**      | [architecture-design-record](architecture-design-record.md) (companion; ADR-001 through ADR-011) |
 
 ---
 

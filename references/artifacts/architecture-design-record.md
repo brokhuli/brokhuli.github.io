@@ -303,6 +303,48 @@ Pre-commit hooks (Husky + lint-staged) front-load formatter/linter checks so mos
 
 ---
 
+## ADR-011 — SEO & social metadata strategy
+
+**Status:** Accepted · **Date:** 2026-05-03
+
+### Context
+
+[non-functional-requirements.md §SEO](../specs/non-functional-requirements.md) and [tech-stack.md §SEO](../specs/tech-stack.md) require: a generated `sitemap.xml`, a hand-authored `robots.txt`, JSON-LD structured data, Open Graph + Twitter Card meta, canonical URLs, and an OG image per route. None of these were anchored in an ADR — the tooling was picked but the *shape* of the metadata (which JSON-LD types, what fallback chain for OG images, how canonical URLs are computed across `/`, `/projects/[slug]`, `/resume`) was not codified. This ADR closes that gap so the implementation has a single contract to build to.
+
+### Decision
+
+1. **Sitemap.** Use `@astrojs/sitemap` with default config. Every route emitted by `getStaticPaths` is included; `/system-fault` and `/404` are excluded via `filter`. Sitemap lives at `/sitemap-index.xml`.
+2. **`robots.txt`.** Hand-authored in `public/robots.txt`. Allows all crawlers, points at the sitemap. Adds `Disallow: /system-fault` so the easter egg doesn't show up in search results.
+3. **Canonical URLs.** Computed in the central `<SEO />` component as `new URL(Astro.url.pathname, site).href` where `site` is the `astro.config.mjs` `site` field. Every page passes its own canonical via `<SEO canonicalUrl={...} />`; the component falls back to the computed value if the prop is omitted.
+4. **JSON-LD.** Three schema types, emitted in the base layout's `<head>`:
+   - **`WebSite`** on every page — name, url, alternateName, publisher.
+   - **`Person`** on every page — Stephen Ullom, sameAs links to LinkedIn + GitHub, jobTitle, knowsAbout (top-level domain labels from `domains` content collection).
+   - **`CreativeWork`** on each `/projects/[slug]` page — name, description, author (reference to the Person above), datePublished, keywords (from `tech` array). `SoftwareApplication` was rejected as too narrow: not every project is software-distribution-shaped.
+5. **OG images.** Fallback chain, evaluated by `<SEO />` per route:
+   1. The `ogImage` prop, if explicitly set by the page.
+   2. For `/projects/[slug]`: the project's `cover.src` (resized to 1200×630 via `astro:assets`).
+   3. The site default at `public/og/default.png` (1200×630, hand-designed).
+   No dynamic OG image generation (no Satori, no Vercel OG) — the static fallback chain covers every route and adds zero JS to the build.
+6. **Open Graph + Twitter Card meta.** Always emitted: `og:type` (`website` for top-level routes, `article` for `/projects/[slug]`), `og:title`, `og:description`, `og:image`, `og:url`, `twitter:card="summary_large_image"`, `twitter:creator="@brokhuli"` (placeholder; remove if no Twitter/X presence).
+7. **No `noindex` on production routes.** The site is public-facing. Drafts and unpublished projects are kept off `main` rather than hidden behind `noindex`.
+
+### Consequences
+
+- The `<SEO />` component owns the entire metadata surface — no page emits its own `<meta>` or JSON-LD directly. This is enforced by an ESLint rule on `<head>` content (or, failing that, by review).
+- The OG image fallback chain requires `public/og/default.png` to exist before any deploy — promoted from a Tier-3 nice-to-have to a Tier-1 launch blocker.
+- Adding a new schema type (e.g., `BreadcrumbList`) is a one-line change in `<SEO />` plus a JSON-LD partial. Adding a new route adds zero work — the canonical URL and OG fallback resolve automatically.
+- The `Disallow: /system-fault` line is a small leak that the page exists; acceptable given the easter-egg nature.
+
+### Alternatives considered
+
+- **Dynamic OG image generation (Satori, Vercel OG, Playwright screenshot)** — adds a build-time dep, a per-route render step, and the fonts/dependencies that come with it. Rejected: a static fallback covers every route the site will ever have at this scale, and a hand-designed default looks better than a templated one.
+- **`SoftwareApplication` JSON-LD for projects** — too narrow; many featured projects are systems work, simulations, or research, not distributable apps. `CreativeWork` is the most accurate parent.
+- **`Article` JSON-LD for projects** — closer to the OG `article` type but implies blog-post semantics. `CreativeWork` is broader and accurate; the OG type can still be `article` because it's a different vocabulary.
+- **`noindex` on `/system-fault`, `/resume` PDF, etc.** — `noindex` is for pages you don't want indexed but still want crawlable. `robots.txt Disallow` is correct for `/system-fault` (don't crawl); `/resume` (web version) should be indexed normally.
+- **Separate ADR per metadata type** — overkill; the strategy is cohesive enough to live as one decision.
+
+---
+
 ## Cross-cutting principles (carried across ADRs)
 
 These are not standalone decisions but recur in every ADR above. Recorded once for reference.

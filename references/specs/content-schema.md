@@ -32,8 +32,8 @@ Defined once in `src/content/_schemas.ts` and reused.
 ```ts
 import { z } from "astro:content";
 
-export const iconName = z.string().regex(/^[a-z0-9-]+:[a-z0-9-]+$/, {
-  message: "Icon must be in 'set:name' form (e.g., 'lucide:cpu').",
+export const iconName = z.string().regex(/^lucide:[a-z0-9-]+$/, {
+  message: "Icon must be in 'lucide:<name>' form (e.g., 'lucide:cpu'). The Lucide set is locked per tech-stack.md.",
 });
 
 export const slug = z.string().regex(/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/, {
@@ -48,7 +48,7 @@ export const yearRange = z.object({
 export const status = z.enum(["active", "shipped", "paused", "archived"]);
 ```
 
-`iconName` uses Iconify's `set:name` convention (per [tech-stack.md](tech-stack.md)). The locked set is **`lucide`** — all icon values must use the `lucide:` prefix (e.g., `lucide:cpu`). Enforced at lint/review time, not at the schema level.
+`iconName` uses Iconify's `set:name` convention (per [tech-stack.md](tech-stack.md)). The locked set is **`lucide`** — the regex above rejects any other prefix at build time, so the schema *is* the enforcement point. Lint/review is no longer the gate.
 
 ---
 
@@ -361,7 +361,7 @@ const logLines = defineCollection({
 
 ### Field notes
 
-- Two tones (`realistic` / `absurd`) so the `LogTicker` can mix them per the design guidelines in [portfolio-whimsy.md](portfolio-whimsy.md) §5 ("Mix of Serious + Absurd"). The ticker picks ~70% realistic, ~30% absurd.
+- Two tones (`realistic` / `absurd`) so the `LogTicker` can mix them per the design guidelines in [whimsical-elements.md](whimsical-elements.md) §5 ("Mix of Serious + Absurd"). The ticker picks ~70% realistic, ~30% absurd.
 - `WARN` and `ERR` levels are reserved for the `SystemFaultPage` only — the ambient `LogTicker` only emits `INFO`/`SYS`/`DBG` so the homepage never appears broken.
 - The whimsy doc lists ~40 starter lines; those become the seed `lines.json`.
 
@@ -387,14 +387,87 @@ This ordering comes directly from [purpose-and-content.md](purpose-and-content.m
 
 1. **`astro check`** — types every consumer of the collections.
 2. **Zod schemas** (per this doc) — validate frontmatter at build time. Bad frontmatter fails the build.
-3. **`validate-content.ts`** — cross-collection checks that Zod can't express:
-   - Every `projects[].tech[]` references an existing `techStack[].label`.
-   - Every `projects[].cover.src` and `projects[].media.src` resolves to an existing asset.
-   - `projects[].media.kind === "gif"` only when the source file extension is `.gif`.
-   - Every `experience[].order` is unique.
-   - At most 5 `projects[]` have `featured: true` (matches the `constraints.md` rule).
-   - `about.headline` contains `about.accentPhrase`.
+3. **`validate-content.ts`** — cross-collection checks that Zod can't express (see contract below).
 4. **CI** runs all of the above on every push; broken builds block deploys (per NFRs and `constraints.md`).
+
+### `validate-content.ts` contract
+
+A standalone Node script invoked from `package.json` as `npm run validate:content`, run by CI after `astro check` and before `astro build`. It loads every collection via `getCollection()` (or by reading `src/content/**` directly if Astro's API isn't available outside an integration), runs the checks below, and on the first failed check **prints all violations** (not just the first) and exits non-zero. Each violation includes the offending file path so the author can jump straight to the fix.
+
+| # | Check                                     | Failure message format                                                                          |
+| - | ----------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 1 | `projects[].tech[]` ⊆ `techStack[].label` | `projects/<slug>.mdx: tech "<label>" not found in tech-stack/`                                  |
+| 2 | `projects[].cover.src` resolves           | `projects/<slug>.mdx: cover.src "<path>" does not exist`                                        |
+| 3 | `projects[].media.src` resolves           | `projects/<slug>.mdx: media.src "<path>" does not exist`                                        |
+| 4 | `media.kind === "gif"` ↔ `.gif` extension | `projects/<slug>.mdx: media.kind="<kind>" but src extension is "<ext>"`                         |
+| 5 | `experience[].order` unique               | `experience/<slug-a>.md and <slug-b>.md share order=<n>`                                        |
+| 6 | At most 5 `featured: true` projects       | `featured project cap exceeded: <n> entries marked featured (max 5): <slug-list>`               |
+| 7 | `about.headline` contains `accentPhrase`  | `about/index.md: accentPhrase "<phrase>" not found in headline "<headline>"`                    |
+
+Sketch (illustrative — actual implementation owns its own structure):
+
+```ts
+// src/scripts/validate-content.ts
+import { getCollection } from "astro:content";
+import { existsSync } from "node:fs";
+import { extname, resolve } from "node:path";
+
+const errors: string[] = [];
+const fail = (msg: string) => errors.push(msg);
+
+const [projects, techStack, experience, about] = await Promise.all([
+  getCollection("projects"),
+  getCollection("techStack"),
+  getCollection("experience"),
+  getCollection("about"),
+]);
+
+const techLabels = new Set(techStack.map((t) => t.data.label));
+
+for (const p of projects) {
+  // Check 1: tech labels exist
+  for (const label of p.data.tech ?? []) {
+    if (!techLabels.has(label)) fail(`projects/${p.id}: tech "${label}" not found in tech-stack/`);
+  }
+  // Checks 2-3: assets resolve (paths are relative to the .mdx file)
+  for (const [field, src] of [["cover.src", p.data.cover?.src], ["media.src", p.data.media?.src]] as const) {
+    if (src && !existsSync(resolve(`src/content/projects`, src))) {
+      fail(`projects/${p.id}: ${field} "${src}" does not exist`);
+    }
+  }
+  // Check 4: media.kind matches extension
+  if (p.data.media?.kind === "gif" && extname(p.data.media.src) !== ".gif") {
+    fail(`projects/${p.id}: media.kind="gif" but src extension is "${extname(p.data.media.src)}"`);
+  }
+}
+
+// Check 5: unique experience order
+const seenOrder = new Map<number, string>();
+for (const e of experience) {
+  const prior = seenOrder.get(e.data.order);
+  if (prior) fail(`experience/${prior} and ${e.id} share order=${e.data.order}`);
+  else seenOrder.set(e.data.order, e.id);
+}
+
+// Check 6: ≤5 featured
+const featured = projects.filter((p) => p.data.featured);
+if (featured.length > 5) {
+  fail(`featured project cap exceeded: ${featured.length} entries marked featured (max 5): ${featured.map((p) => p.id).join(", ")}`);
+}
+
+// Check 7: headline contains accentPhrase
+const a = about[0]?.data;
+if (a && !a.headline.includes(a.accentPhrase)) {
+  fail(`about/index.md: accentPhrase "${a.accentPhrase}" not found in headline "${a.headline}"`);
+}
+
+if (errors.length) {
+  console.error(errors.join("\n"));
+  process.exit(1);
+}
+```
+
+**Discipline:** when a new cross-collection invariant is added to this doc, it MUST land in the same PR as the corresponding check in `validate-content.ts`. No invariants documented here without enforcement.
 
 ---
 

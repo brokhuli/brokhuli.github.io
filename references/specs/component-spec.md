@@ -1,6 +1,6 @@
 # Component Specification
 
-The component inventory for the portfolio site, derived from [purpose-and-content.md](purpose-and-content.md), [resume.md](../resume.md), the mockups in [references/mockups/](../mockups/), and the whimsy notes in [portfolio-whimsy.md](portfolio-whimsy.md). Tech choices reference [tech-stack.md](tech-stack.md); non-functional constraints reference [non-functional-requirements.md](non-functional-requirements.md).
+The component inventory for the portfolio site, derived from [purpose-and-content.md](purpose-and-content.md), [resume.md](../resume.md), the mockups in [references/mockups/](../mockups/), and the whimsy notes in [whimsical-elements.md](whimsical-elements.md). Tech choices reference [tech-stack.md](tech-stack.md); non-functional constraints reference [non-functional-requirements.md](non-functional-requirements.md).
 
 Components are grouped from outermost (layout shell) inward (atomic primitives), then a separate group for whimsy/easter-egg widgets.
 
@@ -110,8 +110,38 @@ The landing page is a single dashboard composed of these cards, each anchored by
 
 - **Purpose:** "Let's Connect" — make it easy to act.
 - **Content:** Email (`sfullom@gmail.com`), LinkedIn (`/in/stephen-ullom-7014a455`), GitHub (`/brokhuli`). Each row: icon + label + value. Optional availability line: *"Open to Principal / Staff / Architect roles in simulation, digital engineering, transportation, energy, robotics, industrial automation, or medtech."*
-- **Spam protection:** Email rendered via a tiny inline script that assembles the address from data attributes at runtime (no `mailto:` in static HTML).
+- **Spam protection:** Email rendered via a tiny inline script that assembles the address from data attributes at runtime (no `mailto:` in static HTML). See contract below.
 - **Strategy:** `.astro` with a small inline `<script>`.
+
+#### Email obfuscation contract
+
+The static HTML must never contain `sfullom@gmail.com`, `mailto:sfullom`, or any string a regex-grepping spam crawler would recognize as an address. The author writes the address as build-time `local`/`domain` props (split at the `@`), and the component emits:
+
+```html
+<a
+  class="contact-email"
+  href="#"
+  data-l="sfullom"
+  data-d="gmail.com"
+  aria-label="Send email"
+>
+  <!-- visible text rendered by script; before hydration, shows the icon + "Email" label only -->
+  <span class="contact-email__icon"><Icon name="lucide:mail" /></span>
+  <span class="contact-email__text" data-fallback="Email">Email</span>
+</a>
+```
+
+A ~20-line inline `<script>` (zero deps, no framework) runs at `DOMContentLoaded`:
+
+1. For each `.contact-email`: read `data-l` + `data-d`, join with `@`, set `textContent` of `.contact-email__text` to the joined address, set `href` to `mailto:<address>`.
+2. Wire a `click` handler that — alongside the default `mailto:` navigation — also writes the address to the clipboard via `navigator.clipboard.writeText(address)` when supported.
+3. On successful copy, swap the icon for `lucide:check` and the text for `Copied!` for 1.5 s, then revert. On copy failure (older Safari, denied permission), the `mailto:` still fires; no error is shown.
+
+Copy-to-clipboard is **in scope** as a quality-of-life affordance, not a primary action. The primary action remains opening the user's mail client.
+
+If JS is disabled, the link reads "Email" and opens `#` (no-op). This is intentional — readers who block JS get no obfuscation breakage and no clue to the address. The LinkedIn and GitHub rows are plain `<a href>` and work unconditionally.
+
+**a11y:** `aria-label="Send email"` on the link survives JS being disabled. After hydration, the address itself is visible in the link text and announced; `aria-label` is removed once the visible text is correct so screen readers don't double-announce.
 
 ---
 
@@ -186,8 +216,34 @@ These are reused across the cards above.
 ### `ArchitectureDiagram.astro`
 
 - **Purpose:** The system diagram inside `ArchitectureSection`.
-- **Source:** Hand-authored SVG (preferred) inlined into the component, with strokes/fills set via CSS variables. If complexity grows, fallback to Mermaid rendered at build time.
+- **Source:** Hand-authored SVG (canonical, per [ADR-007](../artifacts/architecture-design-record.md)) inlined into the component, with strokes/fills set via CSS variables. Mermaid rendered at build time via `rehype-mermaid` is the fallback only if a diagram becomes too complex to maintain by hand; mixing both in the same diagram is forbidden.
 - **Strategy:** Pure `.astro`.
+
+#### SVG class contract
+
+Hover behavior in [interaction-spec.md §11](interaction-spec.md) requires that the diagram CSS can target nodes, labels, edges, and tooltip anchors without the implementer reinventing selectors per diagram. Every hand-authored diagram MUST follow this class scheme:
+
+| Class                | Element                                                | Required attributes                                       |
+| -------------------- | ------------------------------------------------------ | --------------------------------------------------------- |
+| `.diagram`           | Root `<svg>`                                           | `role="img"`, `aria-labelledby`, `viewBox`                |
+| `.diagram__title`    | `<title>` child of root                                | id matching `aria-labelledby`                             |
+| `.diagram__desc`     | `<desc>` child of root                                 | optional long description                                 |
+| `.node`              | Logical node group `<g>` (a box, an actor, a service)  | `tabindex="0"`, `role="group"`, `aria-describedby`        |
+| `.node__shape`       | The `<rect>`/`<circle>`/`<path>` inside `.node`        | stroke is `var(--color-fg-subtle)` by default             |
+| `.node__label`       | `<text>` child of `.node`                              | inherits `font-family: var(--font-mono)`                  |
+| `.edge`              | `<path>` or `<line>` connecting two nodes              | stroke `var(--color-fg-subtle)`, `marker-end="url(#…)"`   |
+| `.tooltip-anchor`    | Optional `<g>` inside `.node` marking tooltip origin   | id referenced by the tooltip's `aria-describedby` target  |
+| `.diagram__tooltip`  | `<foreignObject>` or sibling `<g>` rendering the tip   | `aria-hidden="true"` until shown                          |
+
+`.node:hover .node__shape`, `.node:focus-visible .node__shape`, and `.node[data-active] .node__shape` thicken the stroke from `1.25` to `2.0` over `--motion-quick`. The tooltip (positioned at the `.tooltip-anchor` if present, otherwise at the node's bbox top-center) fades in over `--motion-base`.
+
+#### Tooltip positioning
+
+- Default placement: above the anchor, centered horizontally.
+- Edge-flip rule: if the tooltip's bounding box would extend past the diagram's `viewBox` on any side, flip across that side (top↔bottom, left↔right). The flip is computed at render time from the diagram's coordinate system, not from the document viewport — diagrams may live inside scrollable containers.
+- If both top and bottom would clip (very tall tooltip), pin to whichever side has more room and let the tooltip wrap.
+- Tooltip max width: `min(280px, viewBox-width - 32px)`.
+- All positioning is pure CSS + SVG attributes; no JS measurement loop.
 
 ### `SectionHeading.astro`
 
@@ -208,7 +264,7 @@ These are reused across the cards above.
 
 ## 5. Whimsy / Easter-Egg Widgets
 
-Each item in `portfolio-whimsy.md` maps to one component below. All are visually subtle and **all respect `prefers-reduced-motion`**.
+Each item in `whimsical-elements.md` maps to one component below. All are visually subtle and **all respect `prefers-reduced-motion`**.
 
 ### `ThemeToggle.astro` ("Dark Mode" / "Eric Mode")
 
@@ -233,7 +289,7 @@ Each item in `portfolio-whimsy.md` maps to one component below. All are visually
 ### `LogTicker.astro` (background system-task log)
 
 - **Purpose:** Whimsy idea 5 — quiet, low-contrast cycling log line at the bottom of the viewport.
-- **Content:** Random selection from the curated mix of realistic + absurd log lines in `portfolio-whimsy.md` §5. Lines fade in for ~3s, hold for ~4s, fade out. One line at a time.
+- **Content:** Random selection from the curated mix of realistic + absurd log lines in `whimsical-elements.md` §5. Lines fade in for ~3s, hold for ~4s, fade out. One line at a time.
 - **Strategy:** Tiny island, hydrated `client:idle`. ~30 lines of vanilla TS in a colocated `<script>`. Pauses entirely under `prefers-reduced-motion` and renders a single static line instead.
 - **a11y:** `aria-hidden="true"` (it's decorative); the panel below it (mockup-02 shows a multi-line log block) is also decorative and uses the same content pool.
 

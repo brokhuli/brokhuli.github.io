@@ -158,13 +158,13 @@ Lighthouse ≥ 95 across all four categories (Performance, Accessibility, Best P
 
 ### Retro-blueprint dashboard aesthetic per the mockups
 
-- **Why:** Decided in [portfolio-whimsy.md](portfolio-whimsy.md) and the mockups in `references/mockups/`.
+- **Why:** Decided in [whimsical-elements.md](whimsical-elements.md) and the mockups in `references/mockups/`.
 - **Forces:** Card-based layouts, faint gridlines / blueprint dots, monospace accents for log/code/status content, subtle measurement-tick details.
 - **Forbids:** Glassmorphism, brutalism, neumorphism, "AI startup" gradients, chunky illustrated mascots — anything that fights the engineering-precision feel.
 
 ### Whimsy is subtle, never loud
 
-- **Why:** Stated explicitly in `portfolio-whimsy.md`: "subtle personality signals, not loud gimmicks."
+- **Why:** Stated explicitly in `whimsical-elements.md`: "subtle personality signals, not loud gimmicks."
 - **Forces:** Easter eggs are discoverable but not in-your-face. The log ticker is low-contrast and one line at a time. The system-status panel is a small click target.
 - **Forbids:** Auto-playing audio, confetti, big animated mascots, splash intros, anything that makes a serious recruiter close the tab.
 

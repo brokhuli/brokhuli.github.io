@@ -189,7 +189,50 @@ Astro's underlying build tool. No direct config beyond the Tailwind plugin.
 
 - **What:** GitHub Action that runs Lighthouse against the built `dist/` on every push.
 - **Why:** Lighthouse ≥ 95 (all four categories) is a hard cap per [constraints.md](constraints.md) §Performance Budget. Without CI enforcement it's a goal, not a constraint.
-- **How:** Runs after `astro build` in the CI job. Config in `.lighthouserc.json` at repo root: `assert` preset `lighthouse:recommended` with category floor overrides set to 0.95. Failure blocks the deploy.
+- **How:** Runs after `astro build` in the CI job. Config in `.lighthouserc.json` at repo root (canonical contents below). Failure blocks the deploy.
+
+#### `.lighthouserc.json` (canonical contents)
+
+```json
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist",
+      "url": [
+        "http://localhost/index.html",
+        "http://localhost/resume/index.html"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "throttlingMethod": "simulate",
+        "skipAudits": ["uses-http2", "redirects-http"]
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "categories:performance":   ["error", { "minScore": 0.95 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "categories:best-practices":["error", { "minScore": 0.95 }],
+        "categories:seo":           ["error", { "minScore": 0.95 }],
+        "uses-http2": "off",
+        "redirects-http": "off",
+        "is-on-https": "off"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
+```
+
+Notes:
+- `uses-http2`, `redirects-http`, and `is-on-https` are disabled in `assert` because Lighthouse runs against the locally-served `dist/` over HTTP — the production site is on HTTPS via GitHub Pages.
+- Two URLs (`/`, `/resume/`) are sufficient for v1; add per-project case-study URLs after Phase 4 lands `/projects/[slug]`.
+- `numberOfRuns: 3` with `simulate` throttling smooths over single-run flakes without making CI noticeably slower.
+- `temporary-public-storage` upload gives reviewers a clickable LHCI report URL in the PR check; swap for a self-hosted LHCI server only if the public storage retention becomes a problem.
 
 ### `lychee` or `lychee-action` (link checker)
 
@@ -206,6 +249,8 @@ Astro's underlying build tool. No direct config beyond the Tailwind plugin.
 ---
 
 ## SEO
+
+See [ADR-011](../artifacts/architecture-design-record.md#adr-011--seo--social-metadata-strategy) for the full strategy and rationale; this section captures the tooling choices.
 
 ### `@astrojs/sitemap`
 
@@ -233,7 +278,7 @@ Astro's underlying build tool. No direct config beyond the Tailwind plugin.
 
 ## Whimsy-Specific Dependencies
 
-These exist purely to support [research/specs/portfolio-whimsy.md](portfolio-whimsy.md).
+These exist purely to support [whimsical-elements.md](../specs/whimsical-elements.md).
 
 ### Background log ticker
 

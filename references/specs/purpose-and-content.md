@@ -40,6 +40,8 @@ Then immediately support it with:
 
 This is the most important section. Don’t list everything—pick **3–5 serious projects**.
 
+> **Hard cap:** at most **5** projects may carry `featured: true` in [content-schema.md](content-schema.md). The cap is enforced at build time by `validate-content.ts` (see [content-schema.md → Validation flow](content-schema.md#validation-flow)) so the curation discipline can’t silently slip. If a sixth project deserves featuring, demote one first.
+
 Each project should read like a _mini case study_, not a README clone:
 
 ### For each project include:
