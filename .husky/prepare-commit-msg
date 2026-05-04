@@ -1,0 +1,51 @@
+#!/usr/bin/env sh
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+case "$COMMIT_SOURCE" in
+  merge|squash|commit|template)
+    exit 0
+    ;;
+esac
+
+if [ -s "$COMMIT_MSG_FILE" ] && ! grep -qE '^[[:space:]]*(#|$)' "$COMMIT_MSG_FILE" | head -1; then
+  FIRST_LINE=$(grep -vE '^\s*(#|$)' "$COMMIT_MSG_FILE" | head -1)
+  if [ -n "$FIRST_LINE" ]; then
+    exit 0
+  fi
+fi
+
+if ! command -v claude >/dev/null 2>&1; then
+  echo "prepare-commit-msg: 'claude' CLI not found on PATH; skipping AI message generation." >&2
+  exit 0
+fi
+
+DIFF=$(git diff --cached --no-color)
+if [ -z "$DIFF" ]; then
+  exit 0
+fi
+
+PROMPT=$(cat <<'EOF'
+You are generating a git commit message from the staged diff below.
+
+Rules:
+- Output only the commit message text. No preamble, no code fences, no explanation.
+- Subject line: imperative mood, lowercase first word, no trailing period, max 72 chars.
+- Then a blank line, then a body explaining WHY (not what — the diff shows what). Wrap body at 72 chars.
+- If the change is trivial (typo, formatting), subject line only — no body.
+- Do not invent context that isn't in the diff.
+
+Staged diff:
+EOF
+)
+
+MESSAGE=$(printf '%s\n\n%s\n' "$PROMPT" "$DIFF" | claude -p 2>/dev/null)
+
+if [ -z "$MESSAGE" ]; then
+  echo "prepare-commit-msg: claude returned empty output; leaving message untouched." >&2
+  exit 0
+fi
+
+EXISTING=$(cat "$COMMIT_MSG_FILE")
+printf '%s\n\n%s\n' "$MESSAGE" "$EXISTING" > "$COMMIT_MSG_FILE"
