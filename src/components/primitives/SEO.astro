@@ -1,0 +1,122 @@
+---
+/*
+ * SEO — centralized <head> metadata: title, description, canonical,
+ * Open Graph + Twitter Card, JSON-LD (WebSite + Person; CreativeWork
+ * for project pages).
+ *
+ * Specs:
+ *   references/specs/component-spec.md §4 SEO
+ *   references/artifacts/architecture-design-record.md ADR-011
+ */
+
+const SITE = Astro.site?.toString() ?? "https://brokhuli.github.io/";
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  type?: "website" | "project";
+  /** For type === "project": project frontmatter snapshot */
+  project?: {
+    title: string;
+    tagline: string;
+    publishedAt: Date | string;
+    updatedAt?: Date | string;
+    tech?: string[];
+    coverSrc?: string;
+  };
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  ogImage,
+  type = "website",
+  project,
+} = Astro.props;
+
+const canonical = canonicalUrl
+  ? new URL(canonicalUrl, SITE).href
+  : new URL(Astro.url.pathname, SITE).href;
+
+// OG image fallback chain (ADR-011 §5)
+const resolvedOg =
+  ogImage ?? project?.coverSrc ?? new URL("/og/default.png", SITE).href;
+
+const ogType = type === "project" ? "article" : "website";
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Stephen Ullom",
+  jobTitle: "Software Architect",
+  url: SITE,
+  sameAs: [
+    "https://www.linkedin.com/in/stephen-ullom-7014a455",
+    "https://github.com/brokhuli",
+  ],
+};
+
+const webSiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Stephen Ullom — brokhuli.github.io",
+  alternateName: "brokhuli",
+  url: SITE,
+  publisher: { "@id": `${SITE}#person` },
+};
+
+const creativeWorkJsonLd =
+  type === "project" && project
+    ? {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        name: project.title,
+        description: project.tagline,
+        author: { "@id": `${SITE}#person` },
+        datePublished: new Date(project.publishedAt).toISOString(),
+        ...(project.updatedAt
+          ? { dateModified: new Date(project.updatedAt).toISOString() }
+          : {}),
+        ...(project.tech?.length ? { keywords: project.tech.join(", ") } : {}),
+      }
+    : null;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={resolvedOg} />
+<meta property="og:site_name" content="Stephen Ullom" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={resolvedOg} />
+
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify({ ...personJsonLd, "@id": `${SITE}#person` })}
+/>
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify(webSiteJsonLd)}
+/>
+{
+  creativeWorkJsonLd && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(creativeWorkJsonLd)}
+    />
+  )
+}

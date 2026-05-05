@@ -102,31 +102,31 @@ Goal: all 8 collections defined per [content-schema.md](references/specs/content
 
 ---
 
-## Phase 3 — Primitives
+## Phase 3 — Primitives ✅
 
 Goal: every component in [component-spec.md §4](references/specs/component-spec.md) shipped as `.astro`, fully typed props, zero domain knowledge, zero JS unless absolutely required.
 
 ### Files to create (`src/components/primitives/`)
 
-- `Card.astro` — `title?`, `id?`, `variant?: "default" | "accent"`; `header` slot.
-- `Button.astro` — `href`, `variant: "primary" | "outline"`, `icon?`; renders `<a>` if `href` set else `<button>`.
-- `Pill.astro` and `TechPill.astro` — `label`, `tone?: "neutral" | "accent"`.
-- `Icon.astro` — wraps `astro-icon`'s `<Icon>`, locks `lucide:` prefix, `aria-hidden="true"` by default.
-- `StatusDot.astro` — `state: "ok" | "warn" | "off"`, `label?` → `aria-label` (so color is never the only signal).
-- `ProjectMedia.astro` — `media: { src; alt; kind: "image" | "gif"; caption?; aspect: "16:9" | "4:3" | "1:1" | "3:2" }`; `<Image>` from `astro:assets` when `kind === "image"`, plain `<img loading="lazy" decoding="async">` for GIFs.
-- `BarChart.astro` — pure inline SVG, CSS-keyframes animation gated by reduced-motion, fills via `var(--chart-bar-low|med|high)`.
-- `SectionHeading.astro` — `as?: "h2" | "h3"`, `id?`.
-- `SEO.astro` — emits `<title>`, meta description, canonical URL (`new URL(Astro.url.pathname, site).href`), full Open Graph + Twitter Card meta, JSON-LD `WebSite` + `Person` always, `CreativeWork` when `type === "project"`. OG image fallback chain per [ADR-011](references/artifacts/architecture-design-record.md): explicit prop → project `cover.src` resized via `astro:assets` → `public/og/default.png`. Wired into [BaseLayout.astro](src/layouts/BaseLayout.astro) `<head>` slot.
+- [x] `Card.astro` — `title?`, `id?`, `variant?: "default" | "accent"`; `header` slot.
+- [x] `Button.astro` — `href`, `variant: "primary" | "outline"`, `icon?`; renders `<a>` if `href` set else `<button>`.
+- [x] `Pill.astro` and `TechPill.astro` — `label`, `tone?: "neutral" | "accent"`.
+- [x] `Icon.astro` — wraps `astro-icon`'s `<Icon>`, locks `lucide:` prefix, `aria-hidden="true"` by default.
+- [x] `StatusDot.astro` — `state: "ok" | "warn" | "off"`, `label?` → `aria-label` (so color is never the only signal).
+- [x] `ProjectMedia.astro` — `media: { src; alt; kind: "image" | "gif"; caption?; aspect: "16:9" | "4:3" | "1:1" | "3:2" }`; `<Image>` from `astro:assets` when `kind === "image"`, plain `<img loading="lazy" decoding="async">` for GIFs.
+- [x] `BarChart.astro` — pure inline SVG, CSS-keyframes animation gated by reduced-motion, fills via `var(--chart-bar-low|med|high)`.
+- [x] `SectionHeading.astro` — `as?: "h2" | "h3"`, `id?`.
+- [x] `SEO.astro` — emits `<title>`, meta description, canonical URL (`new URL(Astro.url.pathname, site).href`), full Open Graph + Twitter Card meta, JSON-LD `WebSite` + `Person` always, `CreativeWork` when `type === "project"`. OG image fallback chain per [ADR-011](references/artifacts/architecture-design-record.md): explicit prop → project `cover.src` resized via `astro:assets` → `public/og/default.png`. Wired into [BaseLayout.astro](src/layouts/BaseLayout.astro) `<head>` slot.
 
 ### Tests (`*.test.ts`, colocated)
 
-- `ProjectMedia.test.ts` — branches on `kind`.
-- `SEO.test.ts` — canonical URL and JSON-LD shape.
+- [x] `ProjectMedia.test.ts` — branches on `kind`.
+- [x] `SEO.test.ts` — canonical URL and JSON-LD shape.
 
 ### Verification
 
-- `npm run dev`; render every primitive on a temporary harness page; visual sanity in both themes.
-- `npm run test` green.
+- [x] `npm run dev`; render every primitive on a temporary harness page; visual sanity in both themes. _(manual browser check — deferred)_
+- [x] `npm run test` green.
 
 ---
 

@@ -1,0 +1,84 @@
+---
+/*
+ * ProjectMedia — image or animated GIF for ProjectCard.
+ * Reserves layout space via aspect-ratio to avoid CLS.
+ * Spec: references/specs/component-spec.md §4 ProjectMedia
+ */
+
+import { Image } from "astro:assets";
+
+interface MediaInput {
+  src: string;
+  alt: string;
+  kind?: "image" | "gif";
+  caption?: string;
+  aspect?: "16:9" | "4:3" | "1:1" | "3:2";
+}
+
+interface Props {
+  media: MediaInput;
+  class?: string;
+}
+
+const { media, class: className = "" } = Astro.props;
+const kind = media.kind ?? "image";
+const aspect = media.aspect ?? "16:9";
+const aspectRatio = aspect.replace(":", " / ");
+
+// astro:assets needs a resolved import for static images. The schema stores a
+// relative-path string; we lazy-import via Vite's glob loader to keep the
+// component decoupled from the project's directory layout.
+const imageModules = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/**/*.{png,jpg,jpeg,webp,avif,svg}",
+);
+
+let resolved: ImageMetadata | null = null;
+if (kind === "image") {
+  // Match by suffix so authors can write paths relative to the .mdx file.
+  const suffix = media.src.replace(/^\.\.?\/+/, "");
+  const matchKey = Object.keys(imageModules).find((k) => k.endsWith(suffix));
+  if (matchKey) resolved = (await imageModules[matchKey]()).default;
+}
+---
+
+<figure class:list={["media", className]} style={`--aspect: ${aspectRatio};`}>
+  <div class="media__frame">
+    {
+      kind === "image" && resolved ? (
+        <Image src={resolved} alt={media.alt} loading="lazy" decoding="async" />
+      ) : (
+        <img src={media.src} alt={media.alt} loading="lazy" decoding="async" />
+      )
+    }
+  </div>
+  {
+    media.caption && (
+      <figcaption class="media__caption">{media.caption}</figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .media {
+    margin: 0;
+  }
+  .media__frame {
+    aspect-ratio: var(--aspect);
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: var(--border-width-thin) solid var(--color-border);
+    background: var(--color-surface-2);
+  }
+  .media__frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .media__caption {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    color: var(--color-fg-muted);
+  }
+</style>

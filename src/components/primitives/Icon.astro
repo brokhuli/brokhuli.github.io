@@ -1,0 +1,44 @@
+---
+/*
+ * Icon — wrapper around astro-icon locked to the lucide: prefix.
+ * Spec: references/specs/component-spec.md §4 Icon
+ */
+
+import { Icon as IconifyIcon } from "astro-icon/components";
+
+interface Props {
+  name: string;
+  size?: number | string;
+  class?: string;
+  label?: string;
+}
+
+const { name, size = 18, class: className, label } = Astro.props;
+
+if (!name.startsWith("lucide:")) {
+  throw new Error(
+    `<Icon name="${name}"> must use the 'lucide:' prefix — the icon set is locked per tech-stack.md.`,
+  );
+}
+---
+
+{
+  label ? (
+    <IconifyIcon
+      name={name}
+      width={size}
+      height={size}
+      class={className}
+      aria-label={label}
+      role="img"
+    />
+  ) : (
+    <IconifyIcon
+      name={name}
+      width={size}
+      height={size}
+      class={className}
+      aria-hidden="true"
+    />
+  )
+}

@@ -1,0 +1,40 @@
+---
+/*
+ * Pill — small rounded tag.
+ * Spec: references/specs/component-spec.md §4 Pill / TechPill
+ */
+
+interface Props {
+  label?: string;
+  tone?: "neutral" | "accent";
+  class?: string;
+}
+
+const { label, tone = "neutral", class: className = "" } = Astro.props;
+---
+
+<span class:list={["pill", `pill--${tone}`, className]}>
+  {label ?? <slot />}
+</span>
+
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-3);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    border: var(--border-width-thin) solid var(--color-border);
+    background: var(--color-surface-2);
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+  }
+  .pill--accent {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: var(--color-accent-muted);
+  }
+</style>

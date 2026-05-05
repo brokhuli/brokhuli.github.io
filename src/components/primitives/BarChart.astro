@@ -1,0 +1,110 @@
+---
+/*
+ * BarChart — pure inline SVG bar chart used by /system-fault.
+ * CSS-keyframe entry animation, gated by prefers-reduced-motion.
+ * Spec: references/specs/component-spec.md §4 BarChart
+ */
+
+interface Datum {
+  label: string;
+  value: number;
+  tone?: "low" | "med" | "high";
+}
+
+interface Props {
+  data: Datum[];
+  axisLabel?: string;
+  caption?: string;
+  height?: number;
+  class?: string;
+}
+
+const {
+  data,
+  axisLabel,
+  caption,
+  height = 120,
+  class: className = "",
+} = Astro.props;
+
+const max = Math.max(1, ...data.map((d) => d.value));
+const barWidth = 100 / data.length;
+const gap = barWidth * 0.2;
+const innerWidth = barWidth - gap;
+---
+
+<figure class:list={["chart", className]} role="figure" aria-label={axisLabel}>
+  <svg
+    class="chart__svg"
+    viewBox={`0 0 100 ${height}`}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    {
+      data.map((d, i) => {
+        const tone = d.tone ?? "low";
+        const barHeight = (d.value / max) * (height - 16);
+        const x = i * barWidth + gap / 2;
+        const y = height - barHeight;
+        return (
+          <rect
+            class:list={["chart__bar", `chart__bar--${tone}`]}
+            x={x}
+            y={y}
+            width={innerWidth}
+            height={barHeight}
+            style={`--idx: ${i};`}
+          />
+        );
+      })
+    }
+  </svg>
+  {axisLabel && <figcaption class="chart__axis">{axisLabel}</figcaption>}
+  {caption && <figcaption class="chart__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .chart {
+    margin: 0;
+  }
+  .chart__svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: var(--border-width-thin) solid var(--chart-axis);
+  }
+  .chart__bar {
+    transform-origin: bottom;
+    animation: chart-grow var(--motion-slow) var(--ease-out-quart) both;
+    animation-delay: calc(var(--idx, 0) * 40ms);
+  }
+  .chart__bar--low {
+    fill: var(--chart-bar-low);
+  }
+  .chart__bar--med {
+    fill: var(--chart-bar-med);
+  }
+  .chart__bar--high {
+    fill: var(--chart-bar-high);
+  }
+  .chart__axis,
+  .chart__caption {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-muted);
+  }
+  @keyframes chart-grow {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .chart__bar {
+      animation: none;
+    }
+  }
+</style>

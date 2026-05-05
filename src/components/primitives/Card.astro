@@ -1,0 +1,59 @@
+---
+/*
+ * Card — bordered, rounded container that defines the dashboard look.
+ * Spec: references/specs/component-spec.md §4 Card
+ */
+
+interface Props {
+  title?: string;
+  id?: string;
+  variant?: "default" | "accent";
+  class?: string;
+}
+
+const { title, id, variant = "default", class: className = "" } = Astro.props;
+---
+
+<section id={id} data-variant={variant} class:list={["card", className]}>
+  {
+    (Astro.slots.has("header") || title) && (
+      <header class="card__header">
+        {Astro.slots.has("header") ? (
+          <slot name="header" />
+        ) : (
+          <h2 class="card__title">{title}</h2>
+        )}
+      </header>
+    )
+  }
+  <div class="card__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .card {
+    background: var(--color-surface-1);
+    border: var(--line-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    transition:
+      border-color var(--motion-quick) var(--ease-out-quart),
+      box-shadow var(--motion-quick) var(--ease-out-quart);
+  }
+  .card[data-variant="accent"] {
+    border-color: var(--color-accent-muted);
+  }
+  .card__header {
+    margin-bottom: var(--space-4);
+  }
+  .card__title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    line-height: var(--text-lg-line);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-fg-default);
+    margin: 0;
+  }
+</style>

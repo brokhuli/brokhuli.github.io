@@ -1,0 +1,18 @@
+---
+/*
+ * TechPill — alias for Pill specialized for tech-tag usage.
+ * Spec: references/specs/component-spec.md §4 Pill / TechPill
+ */
+
+import Pill from "./Pill.astro";
+
+interface Props {
+  label: string;
+  tone?: "neutral" | "accent";
+  class?: string;
+}
+
+const { label, tone = "neutral", class: className = "" } = Astro.props;
+---
+
+<Pill label={label} tone={tone} class={className} />

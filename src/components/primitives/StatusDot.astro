@@ -1,0 +1,42 @@
+---
+/*
+ * StatusDot — small colored dot used for project status + system status.
+ * Color is never the only signal: aria-label communicates state to AT.
+ * Spec: references/specs/component-spec.md §4 StatusDot
+ */
+
+interface Props {
+  state: "ok" | "warn" | "off";
+  label?: string;
+  class?: string;
+}
+
+const { state, label, class: className = "" } = Astro.props;
+const ariaLabel = label ?? state;
+---
+
+<span
+  class:list={["dot", `dot--${state}`, className]}
+  role="img"
+  aria-label={ariaLabel}></span>
+
+<style>
+  .dot {
+    display: inline-block;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+  }
+  .dot--ok {
+    background: var(--color-success);
+    box-shadow: 0 0 6px
+      color-mix(in oklab, var(--color-success), transparent 50%);
+  }
+  .dot--warn {
+    background: var(--color-warning);
+  }
+  .dot--off {
+    background: var(--color-fg-subtle);
+  }
+</style>

@@ -26,6 +26,8 @@ export default [
       globals: {
         console: "readonly",
         process: "readonly",
+        URL: "readonly",
+        ImageMetadata: "readonly",
       },
     },
     plugins: {
@@ -36,4 +38,15 @@ export default [
     },
   },
   ...astro.configs.recommended,
+  {
+    files: ["**/*.astro"],
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        process: "readonly",
+        URL: "readonly",
+        ImageMetadata: "readonly",
+      },
+    },
+  },
 ];

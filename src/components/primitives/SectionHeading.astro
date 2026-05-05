@@ -1,0 +1,34 @@
+---
+/*
+ * SectionHeading — small uppercase tracking + accent underline.
+ * Spec: references/specs/component-spec.md §4 SectionHeading
+ */
+
+interface Props {
+  as?: "h2" | "h3";
+  id?: string;
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const { as: Tag = "h2", id, class: className = "" } = props;
+---
+
+<Tag id={id} class:list={["heading", className]}>
+  <slot />
+</Tag>
+
+<style>
+  .heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-fg-muted);
+    margin: 0 0 var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width-thin) solid var(--color-accent);
+    display: inline-block;
+  }
+</style>

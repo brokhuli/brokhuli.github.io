@@ -19,15 +19,31 @@
 
 import "../styles/tailwind.css";
 import "../styles/global.css";
+import SEO from "../components/primitives/SEO.astro";
 
 interface Props {
   title?: string;
   description?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  seoType?: "website" | "project";
+  project?: {
+    title: string;
+    tagline: string;
+    publishedAt: Date | string;
+    updatedAt?: Date | string;
+    tech?: string[];
+    coverSrc?: string;
+  };
 }
 
 const {
   title = "Stephen Ullom — brokhuli.github.io",
   description = "Personal portfolio for Stephen Ullom.",
+  canonicalUrl,
+  ogImage,
+  seoType = "website",
+  project,
 } = Astro.props;
 ---
 
@@ -36,9 +52,15 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+    <SEO
+      title={title}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      ogImage={ogImage}
+      type={seoType}
+      project={project}
+    />
 
     {
       /*
@@ -71,7 +93,6 @@ const {
       })();
     </script>
 
-    {/* TODO Phase 3: <SEO /> primitive renders OG, Twitter, JSON-LD here */}
     <slot name="head" />
   </head>
   <body>
