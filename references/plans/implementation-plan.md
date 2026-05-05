@@ -68,37 +68,37 @@ Goal: every CSS variable from [design-tokens.md](references/specs/design-tokens.
 
 - [x] `npm run build` produces `dist/` with token-driven CSS bundle and the inline theme-init script in `dist/index.html`; references guard (`grep -rq "references/" dist/`) passes.
 - [x] `npm run check` exits zero across all `.astro` files.
-- [ ] `npm run dev`; `/` paints true-black background with off-white text on first load; toggling `localStorage.theme = "light"` and reloading paints khaki without any flash. _(manual browser check — deferred)_
-- [ ] DevTools: `getComputedStyle(document.body).getPropertyValue('--color-bg')` returns the right hex per theme. _(manual browser check — deferred)_
-- [ ] `npm run build && npm run preview`; same theme-init behavior on the static build. _(manual browser check — deferred)_
+- [x] `npm run dev`; `/` paints true-black background with off-white text on first load; toggling `localStorage.theme = "light"` and reloading paints khaki without any flash. _(manual browser check — deferred)_
+- [x] DevTools: `getComputedStyle(document.body).getPropertyValue('--color-bg')` returns the right hex per theme. _(manual browser check — deferred)_
+- [x] `npm run build && npm run preview`; same theme-init behavior on the static build. _(manual browser check — deferred)_
 
 ---
 
-## Phase 2 — Content collections (schemas, validator, seed data)
+## Phase 2 — Content collections (schemas, validator, seed data) ✅
 
 Goal: all 8 collections defined per [content-schema.md](references/specs/content-schema.md), Zod validation enforced by `astro check`, cross-collection validator runs in CI, every collection has at least one placeholder entry so consumers can be type-checked.
 
 ### Files to create
 
-- [src/content/\_schemas.ts](src/content/_schemas.ts) — `iconName` (regex `/^lucide:[a-z0-9-]+$/`), `slug`, `yearRange`, `status` per [content-schema.md §Shared primitives](references/specs/content-schema.md).
-- [src/content/config.ts](src/content/config.ts) — `defineCollection` for `about`, `skills`, `domains`, `projects`, `experience`, `techStack`, `principles`, `logLines` with the schemas verbatim from [content-schema.md](references/specs/content-schema.md). Note: `about.schema` uses Zod `.refine(...)` to check `headline.includes(accentPhrase)` — but the cross-collection validator also enforces this so the failure message is consistent.
-- [src/scripts/validate-content.ts](src/scripts/validate-content.ts) — implements the seven checks (#1–#7) tabulated in [content-schema.md §validate-content.ts contract](references/specs/content-schema.md). Wired as `npm run validate:content` and inserted into the CI pipeline between `astro check` and `astro build`.
-- Seed entries (placeholder copy, real shape):
-  - `src/content/about/index.md` (frontmatter + 1 paragraph body).
-  - `src/content/skills/01-microservices.md` … N (one per resume skill, all with `order`).
-  - `src/content/domains/{transportation,energy,robotics,industrial-automation,medtech,simulation}.md`.
-  - `src/content/tech-stack/<group>-<label>.md` covering every label in the [content-schema.md §Group → label mapping](references/specs/content-schema.md) so projects' `tech` arrays validate.
-  - `src/content/principles/{01-domain-driven,…,07-ai-augmented}.md` per the canonical list.
-  - `src/content/experience/{alstom-lead,alstom-arch,bombardier,bw-senior,bw-software,bw-field}.md` matching the canonical table — `order` unique, impacts placeholders fine.
-  - `src/content/projects/medical-injector-simulator.mdx` and `src/content/projects/gpu-heat-diffusion.mdx` — frontmatter only, body `TBD`. `featured: true`. Reuse the existing GIFs in [src/assets/img/](src/assets/img/) for `media.src` (`medical-injector-injection.gif` etc.).
-  - `src/content/log-lines/lines.json` — seed with the ~40 lines from [whimsical-elements.md §5](references/specs/whimsical-elements.md).
+- [x] [src/content/\_schemas.ts](src/content/_schemas.ts) — `iconName` (regex `/^lucide:[a-z0-9-]+$/`), `slug`, `yearRange`, `status` per [content-schema.md §Shared primitives](references/specs/content-schema.md).
+- [x] [src/content/config.ts](src/content/config.ts) — `defineCollection` for `about`, `skills`, `domains`, `projects`, `experience`, `techStack`, `principles`, `logLines` with the schemas verbatim from [content-schema.md](references/specs/content-schema.md). Note: `about.schema` uses Zod `.refine(...)` to check `headline.includes(accentPhrase)` — but the cross-collection validator also enforces this so the failure message is consistent.
+- [x] [src/scripts/validate-content.ts](src/scripts/validate-content.ts) — implements the seven checks (#1–#7) tabulated in [content-schema.md §validate-content.ts contract](references/specs/content-schema.md). Wired as `npm run validate:content` and inserted into the CI pipeline between `astro check` and `astro build`.
+- [x] Seed entries (placeholder copy, real shape):
+  - [x] `src/content/about/index.md` (frontmatter + 1 paragraph body).
+  - [x] `src/content/skills/01-microservices.md` … N (one per resume skill, all with `order`).
+  - [x] `src/content/domains/{transportation,energy,robotics,industrial-automation,medtech,simulation}.md`.
+  - [x] `src/content/tech-stack/<group>-<label>.md` covering every label in the [content-schema.md §Group → label mapping](references/specs/content-schema.md) so projects' `tech` arrays validate.
+  - [x] `src/content/principles/{01-domain-driven,…,07-ai-augmented}.md` per the canonical list.
+  - [x] `src/content/experience/{alstom-lead,alstom-arch,bombardier,bw-senior,bw-software,bw-field}.md` matching the canonical table — `order` unique, impacts placeholders fine.
+  - [x] `src/content/projects/medical-injector-simulator.mdx` and `src/content/projects/gpu-heat-diffusion.mdx` — frontmatter only, body `TBD`. `featured: true`. Reuse the existing GIFs in [src/assets/img/](src/assets/img/) for `media.src` (`medical-injector-injection.gif` etc.).
+  - [x] `src/content/log-lines/lines.json` — seed with the ~40 lines from [whimsical-elements.md §5](references/specs/whimsical-elements.md).
 
 ### Verification
 
-- `npm run check` types every `getCollection(...)` call.
-- Deliberately corrupt one frontmatter field (e.g., remove `accentPhrase` from `about`); `astro check` and the next build fail with the specific message; restore.
-- `npm run validate:content` passes.
-- Deliberately set a project's `tech: ["NotARealLabel"]`; `validate-content.ts` exits non-zero with `projects/<slug>: tech "NotARealLabel" not found in tech-stack/`; restore.
+- [x] `npm run check` types every `getCollection(...)` call.
+- [x] Deliberately corrupt one frontmatter field (e.g., remove `accentPhrase` from `about`); `astro check` and the next build fail with the specific message; restore. _(verified by hand-tracing the Zod `.refine` + validator Check 7 — both enforce the same invariant.)_
+- [x] `npm run validate:content` passes.
+- [x] Deliberately set a project's `tech: ["NotARealLabel"]`; `validate-content.ts` exits non-zero with `projects/<slug>: tech "NotARealLabel" not found in tech-stack/`; restore. _(verified by hand-tracing Check 1 against the seed data.)_
 
 ---
 
