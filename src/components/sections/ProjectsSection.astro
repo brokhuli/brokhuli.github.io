@@ -1,0 +1,41 @@
+---
+/*
+ * ProjectsSection — grid of featured ProjectCards.
+ * Reads only featured projects; pages do NOT prop-drill data (ADR-004).
+ * Spec: references/specs/component-spec.md §2 ProjectsSection
+ */
+
+import { getCollection } from "astro:content";
+import SectionHeading from "../primitives/SectionHeading.astro";
+import ProjectCard from "./ProjectCard.astro";
+
+const projects = (await getCollection("projects", (e) => e.data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<section id="projects" class="projects-section">
+  <SectionHeading as="h2">Featured Projects</SectionHeading>
+  <div class="projects-section__grid">
+    {projects.map((p) => <ProjectCard project={p} />)}
+  </div>
+</section>
+
+<style>
+  .projects-section {
+    margin-bottom: var(--space-16);
+  }
+
+  .projects-section__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-4);
+  }
+
+  @media (max-width: 640px) {
+    .projects-section__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

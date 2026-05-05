@@ -1,0 +1,136 @@
+---
+/*
+ * ExperienceEntry — single role row inside ExperienceCard.
+ * Spec: references/specs/component-spec.md §2 ExperienceCard
+ */
+
+import type { CollectionEntry } from "astro:content";
+import Icon from "../primitives/Icon.astro";
+import Pill from "../primitives/Pill.astro";
+
+interface Props {
+  entry: CollectionEntry<"experience">;
+}
+
+const { entry } = Astro.props;
+const { role, company, years, impacts, highlights, companyIcon } = entry.data;
+const yearStr = years.end
+  ? `${years.start} – ${years.end}`
+  : `${years.start} – Present`;
+---
+
+<article class="exp-entry">
+  <div class="exp-entry__header">
+    <div class="exp-entry__left">
+      {
+        companyIcon && (
+          <span class="exp-entry__icon" aria-hidden="true">
+            <Icon name={companyIcon} size={16} />
+          </span>
+        )
+      }
+      <div class="exp-entry__titles">
+        <span class="exp-entry__role">{role}</span>
+        <span class="exp-entry__company">{company}</span>
+      </div>
+    </div>
+    <span class="exp-entry__years">{yearStr}</span>
+  </div>
+  <ul class="exp-entry__impacts" role="list">
+    {impacts.map((impact) => <li>{impact}</li>)}
+  </ul>
+  {
+    highlights && highlights.length > 0 && (
+      <ul class="exp-entry__highlights" role="list" aria-label="Highlights">
+        {highlights.map((h) => (
+          <li>
+            <Pill label={h} tone="neutral" />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  .exp-entry {
+    padding-bottom: var(--space-5);
+    border-bottom: var(--line-divider);
+  }
+
+  .exp-entry:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .exp-entry__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+
+  .exp-entry__left {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .exp-entry__icon {
+    display: inline-flex;
+    color: var(--color-fg-subtle);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .exp-entry__titles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .exp-entry__role {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--text-base);
+    color: var(--color-fg-default);
+    line-height: 1.3;
+  }
+
+  .exp-entry__company {
+    font-size: var(--text-sm);
+    color: var(--color-fg-muted);
+  }
+
+  .exp-entry__years {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-subtle);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .exp-entry__impacts {
+    list-style: disc;
+    padding-left: var(--space-5);
+    margin: 0 0 var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .exp-entry__impacts li {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    color: var(--color-fg-muted);
+  }
+
+  .exp-entry__highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+</style>

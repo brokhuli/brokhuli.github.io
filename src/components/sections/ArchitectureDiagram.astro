@@ -1,0 +1,252 @@
+---
+/*
+ * ArchitectureDiagram — hand-authored inline SVG system diagram.
+ * Follows the SVG class contract from component-spec.md §4.
+ * Strokes/fills via CSS variables; no JS.
+ */
+---
+
+<div class="diagram-wrap">
+  <svg
+    class="diagram"
+    viewBox="0 0 560 340"
+    role="img"
+    aria-labelledby="arch-diagram-title"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <title id="arch-diagram-title">System architecture diagram</title>
+    <desc>
+      Sensors and devices feed into ingestion, which flows into state
+      estimation, then control, then actuation. A data platform layer (logging,
+      metrics, traces) spans underneath. A monitoring and observability plane
+      wraps the entire stack.
+    </desc>
+
+    <!-- Defs: arrowhead marker -->
+    <defs>
+      <marker
+        id="arrow"
+        markerWidth="8"
+        markerHeight="8"
+        refX="6"
+        refY="3"
+        orient="auto"
+      >
+        <path d="M0,0 L0,6 L8,3 z" fill="var(--diagram-edge)"></path>
+      </marker>
+    </defs>
+
+    <!-- Monitoring & Observability outer plane -->
+    <rect
+      class="diagram__plane diagram__plane--outer"
+      x="8"
+      y="8"
+      width="544"
+      height="324"
+      rx="10"></rect>
+    <text class="diagram__plane-label" x="20" y="26">
+      Monitoring &amp; Observability
+    </text>
+
+    <!-- Data Platform lower plane -->
+    <rect
+      class="diagram__plane diagram__plane--inner"
+      x="20"
+      y="250"
+      width="520"
+      height="68"
+      rx="6"></rect>
+    <text class="diagram__plane-label" x="32" y="268">
+      Data Platform — logging · metrics · traces
+    </text>
+
+    <!-- Node: Sensors/Devices -->
+    <g class="node" tabindex="0" role="group" aria-describedby="n1-desc">
+      <title>Sensors / Devices</title>
+      <desc id="n1-desc">
+        Physical sensors, actuators, and field hardware that produce and consume
+        real-world signals.
+      </desc>
+      <rect class="node__shape" x="20" y="100" width="100" height="52" rx="6"
+      ></rect>
+      <text class="node__label" x="70" y="121" text-anchor="middle">
+        Sensors /
+      </text>
+      <text class="node__label" x="70" y="139" text-anchor="middle">
+        Devices
+      </text>
+      <g class="tooltip-anchor" id="n1-tip-anchor" transform="translate(70,100)"
+      ></g>
+    </g>
+
+    <!-- Edge: Sensors → Ingestion -->
+    <path class="edge" d="M120,126 L165,126" marker-end="url(#arrow)"></path>
+
+    <!-- Node: Ingestion -->
+    <g class="node" tabindex="0" role="group" aria-describedby="n2-desc">
+      <title>Ingestion</title>
+      <desc id="n2-desc">
+        Protocol adapters, message queues, and stream processors that normalize
+        raw signals into domain events.
+      </desc>
+      <rect class="node__shape" x="165" y="100" width="100" height="52" rx="6"
+      ></rect>
+      <text class="node__label" x="215" y="130" text-anchor="middle">
+        Ingestion
+      </text>
+      <g
+        class="tooltip-anchor"
+        id="n2-tip-anchor"
+        transform="translate(215,100)"></g>
+    </g>
+
+    <!-- Edge: Ingestion → State Estimation -->
+    <path class="edge" d="M265,126 L310,126" marker-end="url(#arrow)"></path>
+
+    <!-- Node: State Estimation -->
+    <g class="node" tabindex="0" role="group" aria-describedby="n3-desc">
+      <title>State Estimation</title>
+      <desc id="n3-desc">
+        Filters, fusion algorithms, and models that derive system state from
+        noisy sensor streams.
+      </desc>
+      <rect class="node__shape" x="310" y="88" width="100" height="76" rx="6"
+      ></rect>
+      <text class="node__label" x="360" y="121" text-anchor="middle">
+        State
+      </text>
+      <text class="node__label" x="360" y="139" text-anchor="middle">
+        Estimation
+      </text>
+      <g class="tooltip-anchor" id="n3-tip-anchor" transform="translate(360,88)"
+      ></g>
+    </g>
+
+    <!-- Edge: State Estimation → Control -->
+    <path class="edge" d="M410,126 L450,126" marker-end="url(#arrow)"></path>
+
+    <!-- Node: Control -->
+    <g class="node" tabindex="0" role="group" aria-describedby="n4-desc">
+      <title>Control</title>
+      <desc id="n4-desc">
+        Real-time control loops that compute actuator commands from estimated
+        state, operating within deterministic timing budgets.
+      </desc>
+      <rect class="node__shape" x="450" y="100" width="90" height="52" rx="6"
+      ></rect>
+      <text class="node__label" x="495" y="130" text-anchor="middle">
+        Control
+      </text>
+      <g
+        class="tooltip-anchor"
+        id="n4-tip-anchor"
+        transform="translate(495,100)"></g>
+    </g>
+
+    <!-- Edge: Control → Actuation (curves back down) -->
+    <path
+      class="edge"
+      d="M495,152 Q495,200 360,200 Q215,200 70,200 Q45,200 45,180 L45,155"
+      fill="none"
+      marker-end="url(#arrow)"></path>
+    <text class="diagram__edge-label" x="284" y="215">actuation</text>
+
+    <!-- Tooltip stubs (aria-hidden; shown only on hover/focus via CSS) -->
+    <g class="diagram__tooltip" aria-hidden="true" transform="translate(20,50)">
+      <rect rx="4" width="160" height="28"></rect>
+      <text x="8" y="18">Hover a node to learn more</text>
+    </g>
+  </svg>
+</div>
+
+<style>
+  .diagram-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .diagram {
+    width: 100%;
+    max-width: 560px;
+    height: auto;
+    display: block;
+  }
+
+  .diagram__plane {
+    fill: none;
+    stroke: var(--diagram-stroke);
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+    opacity: 0.5;
+  }
+
+  .diagram__plane--inner {
+    fill: var(--color-surface-2);
+    opacity: 0.6;
+    stroke: none;
+  }
+
+  .diagram__plane-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    fill: var(--color-fg-subtle);
+    dominant-baseline: hanging;
+    letter-spacing: 0.04em;
+  }
+
+  .node__shape {
+    fill: var(--diagram-fill);
+    stroke: var(--diagram-stroke);
+    stroke-width: 1.25;
+    transition: stroke-width var(--motion-instant) var(--ease-out-quart);
+  }
+
+  .node:hover .node__shape,
+  .node:focus-visible .node__shape,
+  .node[data-active] .node__shape {
+    stroke: var(--diagram-stroke-strong);
+    stroke-width: 2;
+  }
+
+  .node:focus-visible {
+    outline: none;
+  }
+
+  .node__label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    fill: var(--color-fg-default);
+    dominant-baseline: auto;
+  }
+
+  .edge {
+    fill: none;
+    stroke: var(--diagram-edge);
+    stroke-width: 1.25;
+  }
+
+  .diagram__edge-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    fill: var(--color-fg-subtle);
+    text-anchor: middle;
+  }
+
+  .diagram__tooltip {
+    display: none;
+    pointer-events: none;
+  }
+
+  .diagram__tooltip rect {
+    fill: var(--color-surface-2);
+    stroke: var(--color-border);
+    stroke-width: 1;
+  }
+
+  .diagram__tooltip text {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    fill: var(--color-fg-muted);
+    dominant-baseline: auto;
+  }
+</style>

@@ -31,13 +31,27 @@ const aspectRatio = aspect.replace(":", " / ");
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   "/src/**/*.{png,jpg,jpeg,webp,avif,svg}",
 );
+// GIFs bypass Sharp (animated GIFs lose animation through it) but still need
+// Vite to resolve the asset path so the browser can fetch it.
+const gifModules = import.meta.glob<string>("/src/**/*.gif", {
+  query: "?url",
+  import: "default",
+});
+
+// Normalise the content-relative path to a /src/… absolute key.
+const normaliseSuffix = (src: string) => src.replace(/^(?:\.\.\/)+/, "");
 
 let resolved: ImageMetadata | null = null;
+let resolvedGifUrl: string | null = null;
+
 if (kind === "image") {
-  // Match by suffix so authors can write paths relative to the .mdx file.
-  const suffix = media.src.replace(/^\.\.?\/+/, "");
+  const suffix = normaliseSuffix(media.src);
   const matchKey = Object.keys(imageModules).find((k) => k.endsWith(suffix));
   if (matchKey) resolved = (await imageModules[matchKey]()).default;
+} else if (kind === "gif") {
+  const suffix = normaliseSuffix(media.src);
+  const matchKey = Object.keys(gifModules).find((k) => k.endsWith(suffix));
+  if (matchKey) resolvedGifUrl = await gifModules[matchKey]();
 }
 ---
 
@@ -47,7 +61,12 @@ if (kind === "image") {
       kind === "image" && resolved ? (
         <Image src={resolved} alt={media.alt} loading="lazy" decoding="async" />
       ) : (
-        <img src={media.src} alt={media.alt} loading="lazy" decoding="async" />
+        <img
+          src={resolvedGifUrl ?? media.src}
+          alt={media.alt}
+          loading="lazy"
+          decoding="async"
+        />
       )
     }
   </div>

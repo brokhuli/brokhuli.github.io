@@ -1,0 +1,69 @@
+---
+/*
+ * HeaderCard — top-of-page identity strip.
+ * Spec: references/specs/component-spec.md §2 HeaderCard
+ */
+
+import Icon from "../primitives/Icon.astro";
+---
+
+<header class="header-card" id="home">
+  <div class="header-card__identity">
+    <span class="header-card__name">Stephen Ullom</span>
+  </div>
+  <div class="header-card__meta">
+    <span class="header-card__role">Software Architect</span>
+    <a
+      class="header-card__linkedin"
+      href="https://linkedin.com/in/stephen-ullom-7014a455"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="LinkedIn profile"
+    >
+      <Icon name="lucide:linkedin" size={18} />
+    </a>
+  </div>
+</header>
+
+<style>
+  .header-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-6) 0 var(--space-4);
+    border-bottom: var(--line-divider);
+    margin-bottom: var(--space-8);
+  }
+
+  .header-card__name {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-fg-default);
+    line-height: 1;
+  }
+
+  .header-card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .header-card__role {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-fg-muted);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .header-card__linkedin {
+    display: inline-flex;
+    color: var(--color-fg-subtle);
+    transition: color var(--motion-quick) var(--ease-out-quart);
+  }
+  .header-card__linkedin:hover {
+    color: var(--color-accent);
+  }
+</style>

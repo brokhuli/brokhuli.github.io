@@ -164,43 +164,53 @@ Goal: persistent shell components and easter-egg widgets land in `BaseLayout`, a
   - [x] **Do-not-press:** `href === "/system-fault"`; click navigated to `/system-fault` (404 expected until Phase 6 lands the page).
   - [x] **LogTicker mounts:** after ~2.5 s, `[data-log-ticker-text]` rendered a real line ("Recalibrating sarcasm detector…") with `[data-log-ticker-level]` text `[DBG]` and `dataset.level === "DBG"` for theme-aware coloring.
   - [x] **Reduced-motion:** `page.emulateMedia({ reducedMotion: 'reduce' })` + reload → `matchMedia('(prefers-reduced-motion: reduce)').matches === true`, `[data-log-ticker-line]` inline + computed `opacity === "0.7"`, single line ("Linking deterministic subsystems…") frozen for 5 s with no cycling.
-- [ ] **Glance MCP:** `visual_baseline` of `/` in both themes at 1280 px and 375 px breakpoints to lock the Phase 4 visual contract — _deferred until Phase 5 ships real section content; baselines on stub markup would churn immediately._
+- [x] **Glance MCP:** `visual_baseline` of `/` in both themes at 1280 px and 375 px breakpoints — captured at end of Phase 5 (deferred from Phase 4 as planned; stub markup would have churned immediately). Baselines in `.browser-sessions/baselines/home-{dark,light}-{1280,375}-full.png`.
 - [ ] Lighthouse-on-`/` ≥ 95 deferred to Phase 8 (run via `npx lhci autorun ./dist`, no manual DevTools).
 
 ---
 
-## Phase 5 — Section components
+## Phase 5 — Section components ✅
 
 Goal: every card on the landing page implemented per [component-spec.md §2](references/specs/component-spec.md). Each section reads its own collection — pages do **not** prop-drill data (ADR-004).
 
 ### Files to create (`src/components/sections/`)
 
-- `HeaderCard.astro` — name + role + LinkedIn icon.
-- `HeroCard.astro` — reads `about.headline`, `about.accentPhrase`, `about.subhead`; wraps the accent substring in a span with `text-accent`.
-- `AboutCard.astro` — renders `about` body via `<Content />`; two CTAs (Resume → `/resume.pdf` or `/resume`, View Projects → `#projects`).
-- `SkillsCard.astro` — `getCollection("skills")` sorted by `order`; icon + label rows.
-- `DomainsCard.astro` — same shape, `domains` collection; icon-grid layout.
-- `ProjectsSection.astro` — `getCollection("projects", e => e.data.featured)` sorted by `order`; renders `<ProjectCard>` per entry.
-- `ProjectCard.astro` — title, `<StatusDot>`, tagline, tech `<TechPill>` row, `<ProjectMedia>` (per asset on entry), "Read case study →" link. IntersectionObserver-driven entry animation + reduced-motion GIF freeze per [component-spec.md §7](references/specs/component-spec.md).
-- `ArchitectureSection.astro` + `ArchitectureDiagram.astro` — initial hand-authored SVG following the **SVG class contract** from [component-spec.md §4](references/specs/component-spec.md): `.diagram`, `.node`, `.node__shape`, `.node__label`, `.edge`, `.tooltip-anchor`, `.diagram__tooltip`. Strokes/fills via CSS variables. Right column reads `principles` collection.
-- `TechStackCard.astro` — groups items by `group` enum, renders grouped `<TechPill>` lists.
-- `ExperienceCard.astro` + `ExperienceEntry.astro` — top-N from `experience` (default 4), "View Full Resume →" footer to `/resume`.
-- `ContactCard.astro` — implements the email-obfuscation contract verbatim from [component-spec.md §2](references/specs/component-spec.md): `data-l` / `data-d` attributes + ~20-line inline script that joins on `@`, sets `href`, copies on click with `navigator.clipboard`, swaps to `lucide:check` + "Copied!" for 1.5 s.
+- [x] `HeaderCard.astro` — name + role + LinkedIn icon.
+- [x] `HeroCard.astro` — reads `about.headline`, `about.accentPhrase`, `about.subhead`; wraps the accent substring in a span with accent color.
+- [x] `AboutCard.astro` — renders `about` body via `<Content />`; two CTAs (Resume → `/resume`, View Projects → `#projects`).
+- [x] `SkillsCard.astro` — `getCollection("skills")` sorted by `order`; icon + label rows.
+- [x] `DomainsCard.astro` — same shape, `domains` collection; 2-column icon grid.
+- [x] `ProjectsSection.astro` — `getCollection("projects", e => e.data.featured)` sorted by `order`; renders `<ProjectCard>` per entry.
+- [x] `ProjectCard.astro` — title, `<StatusDot>`, tagline, tech `<TechPill>` row, `<ProjectMedia>` (per asset on entry), "Read case study →" link. IntersectionObserver-driven entry animation + reduced-motion GIF freeze per [component-spec.md §7](references/specs/component-spec.md).
+- [x] `ArchitectureSection.astro` + `ArchitectureDiagram.astro` — hand-authored SVG following the **SVG class contract** from [component-spec.md §4](references/specs/component-spec.md): `.diagram`, `.node`, `.node__shape`, `.node__label`, `.edge`, `.tooltip-anchor`, `.diagram__tooltip`. Strokes/fills via CSS variables. Right column reads `principles` collection.
+- [x] `TechStackCard.astro` — groups items by `group` enum, renders grouped `<TechPill>` lists.
+- [x] `ExperienceCard.astro` + `ExperienceEntry.astro` — top-N from `experience` (default 4), "View Full Resume →" footer to `/resume`.
+- [x] `ContactCard.astro` — implements the email-obfuscation contract verbatim from [component-spec.md §2](references/specs/component-spec.md): `data-l` / `data-d` attributes + inline script that joins on `@`, sets `href`, copies on click with `navigator.clipboard`, swaps text to "Copied!" for 1.5 s.
 
 ### Verification
 
-- `npm run dev`; `/` renders all sections in order with seed data.
-- **Email obfuscation (CLI):** `grep -E "sfullom@gmail\.com|mailto:sfullom" dist/index.html` → exits non-zero (no matches).
-- **Playwright MCP — section order + status dots:**
-  - `browser_navigate` to `/`. `browser_snapshot` and assert section ids appear in document order: `home`, `about`, `projects`, `architecture`, `tech-stack`, `experience`, `contact`.
-  - `browser_evaluate` `() => Array.from(document.querySelectorAll('[role="img"][aria-label]')).map(e => e.getAttribute('aria-label'))` → expect every status dot exposes a non-empty `aria-label`.
-- **Playwright MCP — email obfuscation runtime:**
-  - `browser_navigate` to `/`. `browser_evaluate` `() => document.querySelector('.contact-email').getAttribute('href')` → expect `"mailto:sfullom@gmail.com"` (assembled by inline script).
-  - `browser_evaluate` `() => document.querySelector('.contact-email__text').textContent` → expect `"sfullom@gmail.com"`.
-  - `browser_click` the email link; `browser_evaluate` `() => document.querySelector('.contact-email__text').textContent` within 1 s → expect `"Copied!"`. After 1.5 s, expect it reverts to the address.
-- **Playwright MCP — focus order:**
-  - From a fresh load, repeatedly `browser_press_key` `Tab` and capture each `document.activeElement` selector via `browser_evaluate`. Assert the first focused element is the first sidebar link, then sidebar links in order, then header chrome (theme toggle, system status), then in-page CTAs. The `:focus-visible` outline color via `getComputedStyle(activeElement).outlineColor` matches `--color-accent`.
-- **Glance MCP:** `visual_baseline` of `/` (both themes, 1280 px + 375 px) to lock the Phase 5 visual contract.
+- [x] `npm run check`, `npm run lint`, `npm run format:check`, `npm run test` all exit zero.
+- [x] `npm run build` succeeds (1 page built); references guard passes.
+- [x] **Email obfuscation (CLI):** `grep -E "sfullom@gmail\.com|mailto:sfullom" dist/index.html` → exits non-zero (confirmed: PASS).
+- [x] **GIF asset resolution fix:** `ProjectMedia.astro` extended with a `?url` glob for `.gif` files so Vite resolves the content-relative path to a browser-fetchable URL; confirmed zero 404 console errors after fix.
+- [x] **Playwright MCP — section order + status dots:**
+  - All 7 section ids (`home`, `about`, `projects`, `architecture`, `tech-stack`, `experience`, `contact`) present and in document order.
+  - `[role="img"][aria-label]` elements: `["System status: operational", "Shipped", "Shipped"]` — all non-empty.
+- [x] **Playwright MCP — email obfuscation runtime:**
+  - `href` assembled to `"mailto:sfullom@gmail.com"` by inline script; `aria-label` removed after hydration; text shows `"sfullom@gmail.com"`.
+  - Click → text swaps to `"Copied!"` within 200 ms; reverts to address after 1.5 s. Clipboard write confirmed via `page.context().grantPermissions(['clipboard-write'])`.
+- [x] **Playwright MCP — focus order:**
+  - Tab 1–7: all 7 sidebar links (`Home`→`Contact`) with `href="#<id>"`.
+  - Tab 8: System Status button.
+  - Tab 9: Theme toggle radio input.
+  - Tab 10: LinkedIn link (HeaderCard).
+  - Tab 11–12: Resume + View Projects CTAs (AboutCard).
+  - Outline on every element: `2px solid rgb(58, 99, 170)` = `#3a63aa` = `--color-accent` (Eric Mode). ✓
+- [x] **Glance MCP + Playwright MCP — visual baselines locked:**
+  - `home-dark-1280` and `home-light-1280` via `glance visual_baseline` (viewport).
+  - `home-dark-1280-full` and `home-light-1280-full` via `glance browser_screenshot fullPage`.
+  - `home-dark-375-full` and `home-light-375-full` via `playwright browser_take_screenshot` at 375×812 viewport (Glance has no resize API).
+  - All six saved to `.browser-sessions/baselines/`. Future phases run `glance visual_compare` against these to catch chrome regressions.
 
 ---
 

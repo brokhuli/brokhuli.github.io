@@ -1,0 +1,62 @@
+---
+/*
+ * SkillsCard — icon + label list from the `skills` collection.
+ * Spec: references/specs/component-spec.md §2 SkillsCard
+ */
+
+import { getCollection } from "astro:content";
+import Card from "../primitives/Card.astro";
+import SectionHeading from "../primitives/SectionHeading.astro";
+import Icon from "../primitives/Icon.astro";
+
+const skills = (await getCollection("skills")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Card>
+  <SectionHeading slot="header" as="h2">Skills</SectionHeading>
+  <ul class="skills__list" role="list">
+    {
+      skills.map((s) => (
+        <li class="skills__item">
+          {s.data.icon && (
+            <span class="skills__icon" aria-hidden="true">
+              <Icon name={s.data.icon} size={16} />
+            </span>
+          )}
+          <span class="skills__label">{s.data.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+</Card>
+
+<style>
+  .skills__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .skills__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .skills__icon {
+    display: inline-flex;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .skills__label {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    color: var(--color-fg-default);
+  }
+</style>

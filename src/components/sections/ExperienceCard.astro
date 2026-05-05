@@ -1,0 +1,48 @@
+---
+/*
+ * ExperienceCard — top-N experience entries with a "View Full Resume →" footer.
+ * Spec: references/specs/component-spec.md §2 ExperienceCard
+ */
+
+import { getCollection } from "astro:content";
+import Card from "../primitives/Card.astro";
+import SectionHeading from "../primitives/SectionHeading.astro";
+import Button from "../primitives/Button.astro";
+import ExperienceEntry from "./ExperienceEntry.astro";
+
+interface Props {
+  limit?: number;
+}
+
+const { limit = 4 } = Astro.props;
+
+const entries = (await getCollection("experience"))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, limit);
+---
+
+<Card id="experience">
+  <SectionHeading slot="header" as="h2">Experience</SectionHeading>
+  <div class="exp-card__entries">
+    {entries.map((e) => <ExperienceEntry entry={e} />)}
+  </div>
+  <div class="exp-card__footer">
+    <Button href="/resume" variant="outline" icon="lucide:external-link">
+      View Full Resume
+    </Button>
+  </div>
+</Card>
+
+<style>
+  .exp-card__entries {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+  }
+
+  .exp-card__footer {
+    border-top: var(--line-divider);
+    padding-top: var(--space-4);
+  }
+</style>

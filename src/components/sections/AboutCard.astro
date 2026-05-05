@@ -1,0 +1,59 @@
+---
+/*
+ * AboutCard — renders the about body via <Content /> with two CTAs.
+ * Spec: references/specs/component-spec.md §2 AboutCard
+ */
+
+import { getCollection, render } from "astro:content";
+import Card from "../primitives/Card.astro";
+import Button from "../primitives/Button.astro";
+import SectionHeading from "../primitives/SectionHeading.astro";
+
+const entries = await getCollection("about");
+const about = entries[0];
+const { Content } = about ? await render(about) : { Content: null };
+const resumeHref = about?.data.resumeHref ?? "/resume";
+---
+
+<Card id="about">
+  <SectionHeading slot="header" as="h2">About</SectionHeading>
+  {
+    Content && (
+      <div class="about__body prose">
+        <Content />
+      </div>
+    )
+  }
+  <div class="about__ctas">
+    <Button href={resumeHref} variant="outline" icon="lucide:file-text">
+      Resume
+    </Button>
+    <Button href="#projects" variant="primary" icon="lucide:layout-grid">
+      View Projects
+    </Button>
+  </div>
+</Card>
+
+<style>
+  .about__body {
+    margin-bottom: var(--space-6);
+    color: var(--color-fg-default);
+  }
+
+  .about__body :global(p) {
+    font-size: var(--text-base);
+    line-height: var(--text-base-line);
+    color: var(--color-fg-muted);
+    margin: 0 0 var(--space-4);
+  }
+
+  .about__body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .about__ctas {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+</style>

@@ -1,0 +1,121 @@
+---
+/*
+ * ArchitectureSection — diagram + principles list.
+ * Spec: references/specs/component-spec.md §2 ArchitectureSection
+ */
+
+import { getCollection } from "astro:content";
+import SectionHeading from "../primitives/SectionHeading.astro";
+import Icon from "../primitives/Icon.astro";
+import ArchitectureDiagram from "./ArchitectureDiagram.astro";
+
+const principles = (await getCollection("principles")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<section id="architecture" class="arch-section">
+  <SectionHeading as="h2">Architecture &amp; Systems Thinking</SectionHeading>
+  <div class="arch-section__layout">
+    <div class="arch-section__diagram">
+      <ArchitectureDiagram />
+    </div>
+    <div class="arch-section__principles">
+      <h3 class="arch-section__principles-title">
+        How I Approach System Design
+      </h3>
+      <ul class="arch-section__list" role="list">
+        {
+          principles.map((p) => (
+            <li class="arch-section__item">
+              {p.data.icon && (
+                <span class="arch-section__icon" aria-hidden="true">
+                  <Icon name={p.data.icon} size={16} />
+                </span>
+              )}
+              <div class="arch-section__text">
+                <span class="arch-section__label">{p.data.label}</span>
+                <span class="arch-section__blurb">{p.data.blurb}</span>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .arch-section {
+    margin-bottom: var(--space-16);
+  }
+
+  .arch-section__layout {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-8);
+    margin-top: var(--space-4);
+    align-items: start;
+  }
+
+  .arch-section__diagram {
+    background: var(--color-surface-1);
+    border: var(--line-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+  }
+
+  .arch-section__principles-title {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-fg-default);
+    margin: 0 0 var(--space-4);
+  }
+
+  .arch-section__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .arch-section__item {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+  }
+
+  .arch-section__icon {
+    color: var(--color-accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .arch-section__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .arch-section__label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-fg-default);
+    line-height: var(--text-sm-line);
+  }
+
+  .arch-section__blurb {
+    font-size: var(--text-xs);
+    color: var(--color-fg-muted);
+    line-height: var(--text-xs-line);
+  }
+
+  @media (max-width: 900px) {
+    .arch-section__layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

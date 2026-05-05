@@ -1,0 +1,62 @@
+---
+/*
+ * DomainsCard — icon-grid of engineering domains from the `domains` collection.
+ * Spec: references/specs/component-spec.md §2 DomainsCard
+ */
+
+import { getCollection } from "astro:content";
+import Card from "../primitives/Card.astro";
+import SectionHeading from "../primitives/SectionHeading.astro";
+import Icon from "../primitives/Icon.astro";
+
+const domains = (await getCollection("domains")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Card>
+  <SectionHeading slot="header" as="h2">Domains</SectionHeading>
+  <ul class="domains__grid" role="list">
+    {
+      domains.map((d) => (
+        <li class="domains__item" title={d.data.blurb}>
+          {d.data.icon && (
+            <span class="domains__icon" aria-hidden="true">
+              <Icon name={d.data.icon} size={20} />
+            </span>
+          )}
+          <span class="domains__label">{d.data.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+</Card>
+
+<style>
+  .domains__grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .domains__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .domains__icon {
+    display: inline-flex;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .domains__label {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    color: var(--color-fg-default);
+  }
+</style>

@@ -1,0 +1,171 @@
+---
+/*
+ * ContactCard — email (obfuscated), LinkedIn, GitHub.
+ *
+ * Email obfuscation contract (component-spec.md §2):
+ *   - Static HTML must never contain the full address or "mailto:sfullom".
+ *   - data-l / data-d split at "@"; assembled by the inline <script>.
+ *   - Click also writes to clipboard; icon + text swap to Copied! for 1.5 s.
+ *   - JS-disabled: shows "Email" with href="#" (intentional no-op).
+ */
+
+import Card from "../primitives/Card.astro";
+import SectionHeading from "../primitives/SectionHeading.astro";
+import Icon from "../primitives/Icon.astro";
+---
+
+<Card id="contact">
+  <SectionHeading slot="header" as="h2">Contact</SectionHeading>
+
+  <p class="contact__availability">
+    Open to Principal / Staff / Architect roles in simulation, digital
+    engineering, transportation, energy, robotics, industrial automation, or
+    medtech.
+  </p>
+
+  <ul class="contact__list" role="list">
+    <li class="contact__row">
+      <a
+        class="contact-email"
+        href="#"
+        data-l="sfullom"
+        data-d="gmail.com"
+        aria-label="Send email"
+      >
+        <span class="contact__icon" data-email-icon>
+          <Icon name="lucide:mail" size={18} />
+        </span>
+        <span class="contact__label">Email</span>
+        <span class="contact__value contact-email__text" data-fallback="Email"
+          >Email</span
+        >
+      </a>
+    </li>
+    <li class="contact__row">
+      <a
+        class="contact__link"
+        href="https://linkedin.com/in/stephen-ullom-7014a455"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="contact__icon"
+          ><Icon name="lucide:linkedin" size={18} /></span
+        >
+        <span class="contact__label">LinkedIn</span>
+        <span class="contact__value">/in/stephen-ullom-7014a455</span>
+      </a>
+    </li>
+    <li class="contact__row">
+      <a
+        class="contact__link"
+        href="https://github.com/brokhuli"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="contact__icon"
+          ><Icon name="lucide:github" size={18} /></span
+        >
+        <span class="contact__label">GitHub</span>
+        <span class="contact__value">/brokhuli</span>
+      </a>
+    </li>
+  </ul>
+</Card>
+
+<script>
+  // Email obfuscation + clipboard copy. Spec: component-spec.md §2.
+  // Runs at DOMContentLoaded (Astro bundles <script> as type=module).
+  (function () {
+    const links =
+      document.querySelectorAll<HTMLAnchorElement>(".contact-email");
+    if (links.length === 0) return;
+
+    for (const link of links) {
+      const local = link.dataset.l;
+      const domain = link.dataset.d;
+      if (!local || !domain) continue;
+      const address = `${local}@${domain}`;
+
+      const textEl = link.querySelector<HTMLElement>(".contact-email__text");
+
+      if (textEl) textEl.textContent = address;
+      link.href = `mailto:${address}`;
+      link.removeAttribute("aria-label");
+
+      link.addEventListener("click", (e) => {
+        if (!navigator.clipboard) return;
+        e.preventDefault();
+        navigator.clipboard.writeText(address).then(() => {
+          if (textEl) textEl.textContent = "Copied!";
+          link.href = "#";
+          setTimeout(() => {
+            if (textEl) textEl.textContent = address;
+            link.href = `mailto:${address}`;
+          }, 1500);
+        });
+      });
+    }
+  })();
+</script>
+
+<style>
+  .contact__availability {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    color: var(--color-fg-muted);
+    margin: 0 0 var(--space-5);
+    font-style: italic;
+  }
+
+  .contact__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .contact__row {
+    display: flex;
+  }
+
+  .contact-email,
+  .contact__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: var(--color-fg-default);
+    padding: var(--space-2);
+    margin: calc(var(--space-2) * -1);
+    border-radius: var(--radius-sm);
+    transition: color var(--motion-quick) var(--ease-out-quart);
+    width: 100%;
+  }
+
+  .contact-email:hover,
+  .contact__link:hover {
+    color: var(--color-accent);
+  }
+
+  .contact__icon {
+    display: inline-flex;
+    color: var(--color-fg-subtle);
+    flex-shrink: 0;
+  }
+
+  .contact__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-subtle);
+    letter-spacing: var(--tracking-wide);
+    width: 64px;
+    flex-shrink: 0;
+  }
+
+  .contact__value {
+    font-size: var(--text-sm);
+    color: var(--color-fg-default);
+  }
+</style>

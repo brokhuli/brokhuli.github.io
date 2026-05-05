@@ -1,0 +1,93 @@
+---
+/*
+ * HeroCard — positioning headline that reads from the `about` collection.
+ * Wraps the accentPhrase substring in a span so it gets accent color.
+ * Spec: references/specs/component-spec.md §2 HeroCard
+ */
+
+import { getCollection } from "astro:content";
+import Icon from "../primitives/Icon.astro";
+
+const entries = await getCollection("about");
+const about = entries[0]?.data;
+const headline =
+  about?.headline ?? "Designing deterministic systems for real-world impact.";
+const accentPhrase = about?.accentPhrase ?? "";
+const subhead = about?.subhead ?? "";
+
+// Split headline around accentPhrase so we can wrap it.
+const parts = accentPhrase ? headline.split(accentPhrase) : [headline];
+---
+
+<section class="hero-card" aria-label="Positioning headline">
+  <div class="hero-card__content">
+    <h1 class="hero-card__headline">
+      {
+        accentPhrase ? (
+          <>
+            {parts[0]}
+            <span class="hero-card__accent">{accentPhrase}</span>
+            {parts[1]}
+          </>
+        ) : (
+          headline
+        )
+      }
+    </h1>
+    <p class="hero-card__subhead">{subhead}</p>
+  </div>
+  <div class="hero-card__arrow" aria-hidden="true">
+    <Icon name="lucide:arrow-up-right" size={32} />
+  </div>
+</section>
+
+<style>
+  .hero-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .hero-card__content {
+    flex: 1;
+  }
+
+  .hero-card__headline {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--text-3xl-line);
+    color: var(--color-fg-default);
+    margin: 0 0 var(--space-4);
+  }
+
+  .hero-card__accent {
+    color: var(--color-accent);
+  }
+
+  .hero-card__subhead {
+    font-size: var(--text-md);
+    line-height: var(--text-md-line);
+    color: var(--color-fg-muted);
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .hero-card__arrow {
+    color: var(--color-fg-subtle);
+    flex-shrink: 0;
+    margin-top: var(--space-2);
+  }
+
+  @media (max-width: 640px) {
+    .hero-card__headline {
+      font-size: var(--text-2xl);
+    }
+    .hero-card__arrow {
+      display: none;
+    }
+  }
+</style>

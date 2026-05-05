@@ -1,0 +1,79 @@
+---
+/*
+ * TechStackCard — tech items grouped by capability bucket.
+ * Spec: references/specs/component-spec.md §2 TechStackCard
+ */
+
+import { getCollection } from "astro:content";
+import Card from "../primitives/Card.astro";
+import SectionHeading from "../primitives/SectionHeading.astro";
+import TechPill from "../primitives/TechPill.astro";
+
+const items = await getCollection("techStack");
+
+const groupMeta: Record<string, { label: string; order: number }> = {
+  languages: { label: "Languages", order: 1 },
+  "web-ui": { label: "UI & Front-End", order: 2 },
+  "distributed-systems": { label: "Distributed Systems", order: 3 },
+  "data-qa": { label: "Data & QA", order: 4 },
+  "ai-augmented": { label: "AI-Augmented", order: 5 },
+  "frameworks-devops": { label: "Frameworks & DevOps", order: 6 },
+};
+
+const groups = Object.entries(groupMeta)
+  .sort(([, a], [, b]) => a.order - b.order)
+  .map(([key, meta]) => ({
+    key,
+    label: meta.label,
+    items: items
+      .filter((i) => i.data.group === key)
+      .sort((a, b) => a.data.order - b.data.order),
+  }))
+  .filter((g) => g.items.length > 0);
+---
+
+<Card id="tech-stack">
+  <SectionHeading slot="header" as="h2">Tech Stack</SectionHeading>
+  <div class="tech-stack__groups">
+    {
+      groups.map((g) => (
+        <div class="tech-stack__group">
+          <h3 class="tech-stack__group-label">{g.label}</h3>
+          <ul class="tech-stack__pills" role="list">
+            {g.items.map((i) => (
+              <li>
+                <TechPill label={i.data.label} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</Card>
+
+<style>
+  .tech-stack__groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .tech-stack__group-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-fg-subtle);
+    margin: 0 0 var(--space-2);
+  }
+
+  .tech-stack__pills {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+</style>

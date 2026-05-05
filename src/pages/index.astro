@@ -1,11 +1,78 @@
 ---
+/*
+ * Landing page — composition only, no data logic (ADR-004).
+ * Each section component reads its own collection.
+ * Phase 6 will wire real routes for subpages.
+ */
+
 import BaseLayout from "../layouts/BaseLayout.astro";
+import HeaderCard from "../components/sections/HeaderCard.astro";
+import HeroCard from "../components/sections/HeroCard.astro";
+import AboutCard from "../components/sections/AboutCard.astro";
+import SkillsCard from "../components/sections/SkillsCard.astro";
+import DomainsCard from "../components/sections/DomainsCard.astro";
+import ProjectsSection from "../components/sections/ProjectsSection.astro";
+import ArchitectureSection from "../components/sections/ArchitectureSection.astro";
+import TechStackCard from "../components/sections/TechStackCard.astro";
+import ExperienceCard from "../components/sections/ExperienceCard.astro";
+import ContactCard from "../components/sections/ContactCard.astro";
 ---
 
 <BaseLayout
-  title="Stephen Ullom — brokhuli.github.io"
-  description="Personal portfolio for Stephen Ullom."
+  title="Stephen Ullom — Software Architect"
+  description="Personal portfolio for Stephen Ullom — software architect specializing in real-time simulation, digital twins, and safety-critical control systems."
 >
-  <h1>brokhuli</h1>
-  <p>Phase 1 layout shell — design tokens wired, theme-init in place.</p>
+  <HeaderCard />
+  <HeroCard />
+
+  <div class="landing__top-grid">
+    <div class="landing__main">
+      <AboutCard />
+    </div>
+    <div class="landing__sidebar-right">
+      <SkillsCard />
+      <DomainsCard />
+    </div>
+  </div>
+
+  <ProjectsSection />
+  <ArchitectureSection />
+
+  <div class="landing__bottom-grid">
+    <TechStackCard />
+    <ExperienceCard />
+  </div>
+
+  <ContactCard />
 </BaseLayout>
+
+<style>
+  .landing__top-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+    align-items: start;
+  }
+
+  .landing__sidebar-right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .landing__bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .landing__top-grid,
+    .landing__bottom-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

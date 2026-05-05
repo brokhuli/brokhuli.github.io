@@ -1,0 +1,200 @@
+---
+/*
+ * ProjectCard — single featured project with media, status, tech pills, CTA.
+ * Spec: references/specs/component-spec.md §2 ProjectCard
+ * Interaction: interaction-spec.md §6 (entry animation, GIF reduced-motion)
+ */
+
+import type { CollectionEntry } from "astro:content";
+import StatusDot from "../primitives/StatusDot.astro";
+import TechPill from "../primitives/TechPill.astro";
+import ProjectMedia from "../primitives/ProjectMedia.astro";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { title, tagline, status, tech, media, slug: slugField } = project.data;
+const slug = slugField ?? project.id;
+
+const statusMap: Record<
+  string,
+  { state: "ok" | "warn" | "off"; label: string }
+> = {
+  active: { state: "ok", label: "Active" },
+  paused: { state: "warn", label: "Paused" },
+  shipped: { state: "off", label: "Shipped" },
+  archived: { state: "off", label: "Archived" },
+};
+const dot = statusMap[status as string] ?? statusMap.shipped;
+---
+
+<article class="project-card" data-project-card>
+  {
+    media && (
+      <div class="project-card__media-wrap">
+        <ProjectMedia media={media} class="project-card__media" />
+      </div>
+    )
+  }
+  <div class="project-card__body">
+    <div class="project-card__header">
+      <StatusDot state={dot.state} label={dot.label} />
+      <h3 class="project-card__title">{title}</h3>
+    </div>
+    <p class="project-card__tagline">{tagline}</p>
+    <ul class="project-card__tech" role="list" aria-label="Technologies used">
+      {
+        tech.map((t) => (
+          <li>
+            <TechPill label={t} />
+          </li>
+        ))
+      }
+    </ul>
+    <a class="project-card__cta" href={`/projects/${slug}`}>
+      Read case study →
+    </a>
+  </div>
+</article>
+
+<script>
+  // IntersectionObserver-driven entry animation + reduced-motion GIF freeze.
+  // Spec: interaction-spec.md §6, component-spec.md §7.
+  (function () {
+    const reduced =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const cards = document.querySelectorAll<HTMLElement>("[data-project-card]");
+
+    for (const card of cards) {
+      // GIF freeze under reduced-motion: swap src to poster if available.
+      if (reduced) {
+        const gifs =
+          card.querySelectorAll<HTMLImageElement>("img[src$='.gif']");
+        for (const gif of gifs) {
+          const poster = gif.src.replace(/\.gif$/, ".poster.webp");
+          const probe = new Image();
+          probe.onload = () => {
+            gif.src = poster;
+          };
+          probe.src = poster;
+        }
+        card.style.opacity = "1";
+        card.style.transform = "none";
+        continue;
+      }
+
+      // Entry animation: fade in + translate up on first scroll into view.
+      card.style.opacity = "0";
+      card.style.transform = "translateY(8px)";
+      card.style.transition = `opacity var(--motion-slow) var(--ease-out-quart),
+        transform var(--motion-slow) var(--ease-out-quart)`;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const target = e.target as HTMLElement;
+            if (target.dataset.animated) continue;
+            target.dataset.animated = "true";
+            target.style.opacity = "1";
+            target.style.transform = "none";
+            observer.unobserve(e.target);
+          }
+        },
+        { threshold: 0.4 },
+      );
+      observer.observe(card);
+    }
+  })();
+</script>
+
+<style>
+  .project-card {
+    background: var(--color-surface-1);
+    border: var(--line-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition:
+      border-color var(--motion-quick) var(--ease-out-quart),
+      box-shadow var(--motion-base) var(--ease-out-quart);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-card:hover {
+      border-color: var(--color-border-hover);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    .project-card:hover .project-card__media :global(img) {
+      transform: scale(1.02);
+      transition: transform var(--motion-base) var(--ease-out-quart);
+    }
+  }
+
+  .project-card__media-wrap {
+    overflow: hidden;
+  }
+
+  .project-card__media :global(img) {
+    transition: transform var(--motion-base) var(--ease-out-quart);
+  }
+
+  .project-card__body {
+    padding: var(--space-4) var(--space-6) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+  }
+
+  .project-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .project-card__title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--text-lg-line);
+    color: var(--color-fg-default);
+    margin: 0;
+  }
+
+  .project-card__tagline {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    color: var(--color-fg-muted);
+    margin: 0;
+  }
+
+  .project-card__tech {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .project-card__cta {
+    margin-top: auto;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-accent);
+    text-decoration: none;
+    align-self: flex-start;
+  }
+
+  .project-card__cta:hover {
+    color: var(--color-accent-hover);
+  }
+</style>
