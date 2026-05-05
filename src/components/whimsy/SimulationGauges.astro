@@ -1,0 +1,78 @@
+---
+/*
+ * SimulationGauges — decorative horizontal bars that reinforce the
+ * simulation aesthetic in the lower-right of mockup-02.
+ *
+ * Spec: references/specs/component-spec.md §5 SimulationGauges
+ * Pure CSS; no JS. Optional — rendered conditionally from BaseLayout.
+ */
+
+const gauges = [
+  { label: "SCALE", value: 88 },
+  { label: "ELEGANCE", value: 72 },
+  { label: "TIMELINESS", value: 64 },
+  { label: "ENTROPY", value: 33 },
+];
+---
+
+<div class="sim-gauges" aria-hidden="true">
+  {
+    gauges.map((g) => (
+      <div class="sim-gauges__row">
+        <span class="sim-gauges__label">{g.label}</span>
+        <span class="sim-gauges__bar">
+          <span class="sim-gauges__fill" style={`--fill: ${g.value}%`} />
+        </span>
+        <span class="sim-gauges__value">{g.value}</span>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .sim-gauges {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    border: var(--line-divider);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    color: var(--color-fg-muted);
+  }
+
+  .sim-gauges__row {
+    display: grid;
+    grid-template-columns: 80px 1fr 32px;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .sim-gauges__label {
+    letter-spacing: var(--tracking-wider);
+    color: var(--color-fg-subtle);
+  }
+
+  .sim-gauges__bar {
+    height: 4px;
+    background: var(--color-surface-3);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+
+  .sim-gauges__fill {
+    display: block;
+    height: 100%;
+    width: var(--fill);
+    background: var(--color-accent);
+    border-radius: inherit;
+  }
+
+  .sim-gauges__value {
+    color: var(--color-fg-default);
+    text-align: right;
+  }
+</style>

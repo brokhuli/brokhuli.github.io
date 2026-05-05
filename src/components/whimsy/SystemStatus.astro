@@ -1,0 +1,236 @@
+---
+/*
+ * SystemStatus — small "● System Status" indicator with click-opened popover.
+ *
+ * Specs:
+ *   references/specs/component-spec.md §5 SystemStatus
+ *   references/specs/interaction-spec.md §8
+ *   references/specs/whimsical-elements.md (idea 2)
+ */
+
+import StatusDot from "../primitives/StatusDot.astro";
+---
+
+<div class="system-status" data-system-status>
+  <button
+    type="button"
+    class="system-status__trigger"
+    aria-expanded="false"
+    aria-controls="system-status-dialog"
+    aria-haspopup="dialog"
+    data-system-status-trigger
+  >
+    <StatusDot state="ok" label="System status: operational" />
+    <span class="system-status__label">System Status</span>
+  </button>
+
+  <dialog
+    id="system-status-dialog"
+    class="system-status__dialog"
+    aria-labelledby="system-status-title"
+    data-system-status-dialog
+  >
+    <h2 id="system-status-title" class="system-status__title">
+      System Status: Operational
+    </h2>
+    <dl class="system-status__list">
+      <div class="system-status__row">
+        <dt>Uptime</dt><dd>20+ years</dd>
+      </div>
+      <div class="system-status__row">
+        <dt>Primary Functions</dt><dd>Architecture, Simulation, Scale</dd>
+      </div>
+      <div class="system-status__row">
+        <dt>Latency</dt><dd>Low (after coffee)</dd>
+      </div>
+      <div class="system-status__row">
+        <dt>Last Deployment</dt><dd>Recently</dd>
+      </div>
+    </dl>
+    <p class="system-status__note">All systems nominal. Carry building.</p>
+    <button type="button" class="system-status__close" data-system-status-close>
+      Close
+    </button>
+  </dialog>
+</div>
+
+<script>
+  // Open/close + outside-click + Esc handling for the system-status popover.
+  // Spec: interaction-spec.md §8.
+  (function () {
+    const root = document.querySelector<HTMLElement>("[data-system-status]");
+    if (!root) return;
+    const trigger = root.querySelector<HTMLButtonElement>(
+      "[data-system-status-trigger]",
+    );
+    const dialog = root.querySelector<HTMLDialogElement>(
+      "[data-system-status-dialog]",
+    );
+    const closeBtn = root.querySelector<HTMLButtonElement>(
+      "[data-system-status-close]",
+    );
+    if (!trigger || !dialog) return;
+
+    const open = () => {
+      if (dialog.open) return;
+      // Use show() (modeless) so the page underneath remains scrollable
+      // and outside-click closes correctly. The popover anchors to the trigger.
+      dialog.show();
+      trigger.setAttribute("aria-expanded", "true");
+      const focusTarget = dialog.querySelector<HTMLElement>(
+        "button, [href], [tabindex]",
+      );
+      focusTarget?.focus();
+    };
+
+    const close = () => {
+      if (!dialog.open) return;
+      dialog.close();
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.focus();
+    };
+
+    trigger.addEventListener("click", () => {
+      if (dialog.open) close();
+      else open();
+    });
+    closeBtn?.addEventListener("click", close);
+
+    document.addEventListener("click", (e) => {
+      if (!dialog.open) return;
+      const target = e.target as Node | null;
+      if (!target) return;
+      if (root.contains(target)) return;
+      close();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && dialog.open) {
+        e.preventDefault();
+        close();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .system-status {
+    position: relative;
+    display: inline-block;
+  }
+
+  .system-status__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-surface-1);
+    border: var(--line-divider);
+    border-radius: var(--radius-pill);
+    color: var(--color-fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    letter-spacing: var(--tracking-wide);
+    cursor: pointer;
+  }
+
+  .system-status__trigger:hover {
+    color: var(--color-fg-default);
+    border-color: var(--color-border-hover);
+  }
+
+  .system-status__dialog {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    left: auto;
+    margin: 0;
+    padding: var(--space-4);
+    width: 280px;
+    background: var(--color-surface-1);
+    color: var(--color-fg-default);
+    border: var(--line-divider);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    z-index: var(--z-popover);
+    transform-origin: top right;
+    transform: scale(0.96);
+    opacity: 0;
+    transition:
+      transform var(--motion-quick) var(--ease-out-quart),
+      opacity var(--motion-quick) var(--ease-out-quart);
+  }
+
+  .system-status__dialog[open] {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .system-status__title {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    line-height: var(--text-md-line);
+    margin: 0 0 var(--space-3);
+    color: var(--color-fg-default);
+  }
+
+  .system-status__list {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .system-status__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+  }
+
+  .system-status__row dt {
+    color: var(--color-fg-subtle);
+  }
+  .system-status__row dd {
+    margin: 0;
+    color: var(--color-fg-default);
+    text-align: right;
+  }
+
+  .system-status__note {
+    margin: var(--space-3) 0 var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-fg-muted);
+    font-style: italic;
+  }
+
+  .system-status__close {
+    width: 100%;
+    padding: var(--space-2);
+    border: var(--line-divider);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-2);
+    color: var(--color-fg-default);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    cursor: pointer;
+  }
+
+  .system-status__close:hover {
+    border-color: var(--color-border-hover);
+    background: var(--color-surface-3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .system-status__dialog {
+      transform: none;
+      transition-duration: var(--motion-instant);
+    }
+    .system-status__dialog[open] {
+      transform: none;
+    }
+  }
+</style>

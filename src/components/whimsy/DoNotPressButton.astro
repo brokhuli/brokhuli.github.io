@@ -1,0 +1,105 @@
+---
+/*
+ * DoNotPressButton — small footer chip that opens /system-fault.
+ *
+ * Specs:
+ *   references/specs/component-spec.md §5 DoNotPressButton
+ *   references/specs/interaction-spec.md §10
+ */
+
+import Icon from "../primitives/Icon.astro";
+---
+
+<a class="do-not-press" href="/system-fault" data-do-not-press>
+  <span class="do-not-press__icon" aria-hidden="true">
+    <Icon name="lucide:triangle-alert" size={14} />
+  </span>
+  <span class="do-not-press__label">Do Not Press</span>
+</a>
+
+<script>
+  // Brief shake on click. Navigation is not delayed by it (interaction-spec.md §10).
+  (function () {
+    const links = document.querySelectorAll<HTMLAnchorElement>(
+      "[data-do-not-press]",
+    );
+    if (links.length === 0) return;
+    const reduced =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
+    for (const link of links) {
+      link.addEventListener("click", () => {
+        link.classList.remove("do-not-press--shake");
+        // Force reflow so the animation re-triggers.
+        void link.offsetWidth;
+        link.classList.add("do-not-press--shake");
+      });
+    }
+  })();
+</script>
+
+<style>
+  .do-not-press {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    border: var(--line-divider);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-1);
+    color: var(--color-fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    letter-spacing: var(--tracking-wide);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      transform var(--motion-base) var(--ease-spring),
+      color var(--motion-base) var(--ease-spring),
+      border-color var(--motion-base) var(--ease-spring);
+  }
+
+  .do-not-press:hover,
+  .do-not-press:focus-visible {
+    transform: scale(1.04);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+  }
+
+  .do-not-press__icon {
+    display: inline-flex;
+    color: var(--color-warning);
+  }
+
+  .do-not-press--shake {
+    animation: do-not-press-shake 80ms steps(3, end);
+  }
+
+  @keyframes do-not-press-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    33% {
+      transform: translateX(-2px);
+    }
+    66% {
+      transform: translateX(2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .do-not-press,
+    .do-not-press:hover,
+    .do-not-press:focus-visible {
+      transform: none;
+      transition-duration: var(--motion-instant);
+    }
+    .do-not-press--shake {
+      animation: none;
+    }
+  }
+</style>

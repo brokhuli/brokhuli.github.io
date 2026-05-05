@@ -1,0 +1,62 @@
+---
+/*
+ * Footer — closing line, license note, do-not-press chip.
+ *
+ * Specs:
+ *   references/specs/component-spec.md §1 Footer
+ *   references/specs/open-items.md (footer copy decision)
+ */
+
+import DoNotPressButton from "../whimsy/DoNotPressButton.astro";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <p class="footer__line">
+    © {year} Stephen Ullom · code <a href="/LICENSE">MIT</a>, content <a
+      href="/CONTENT-LICENSE.md">all rights reserved</a
+    >
+  </p>
+  <DoNotPressButton />
+</footer>
+
+<style>
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-8) var(--layout-gutter-desktop);
+    border-top: var(--line-divider);
+    margin-top: var(--space-16);
+    color: var(--color-fg-subtle);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    flex-wrap: wrap;
+  }
+
+  .footer__line {
+    margin: 0;
+  }
+
+  .footer__line a {
+    color: var(--color-fg-muted);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border);
+    text-underline-offset: 2px;
+  }
+
+  .footer__line a:hover {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .footer {
+      padding: var(--space-6) var(--layout-gutter-mobile);
+      justify-content: center;
+      text-align: center;
+    }
+  }
+</style>

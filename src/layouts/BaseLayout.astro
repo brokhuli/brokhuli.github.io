@@ -7,19 +7,28 @@
  *   - Inline theme-init script (ADR-003) that sets data-theme
  *     synchronously before first paint to prevent FOUC.
  *   - Tailwind/tokens/global stylesheet imports.
- *   - <SEO /> placeholder slot (filled in Phase 3).
- *   - Body wrapper with <main><slot /></main>.
- *   - Comment placeholders for chrome/whimsy/footer (Phase 4).
+ *   - <SEO /> in <head>.
+ *   - Persistent chrome: <Sidebar />, <Footer />.
+ *   - Persistent whimsy: <ThemeToggle />, <SystemStatus />, <LogTicker />.
+ *     Optional <SimulationGauges /> via the `gauges` prop.
+ *   - Inline keyboard-shortcut script (g h | g p | g a | g e | g c | t | ?).
  *
  * Specs:
  *   references/specs/architecture-spec.md §3
  *   references/artifacts/architecture-design-record.md ADR-003
- *   references/specs/interaction-spec.md §1
+ *   references/specs/component-spec.md §1, §5
+ *   references/specs/interaction-spec.md §1, §2, §7
  */
 
 import "../styles/tailwind.css";
 import "../styles/global.css";
 import SEO from "../components/primitives/SEO.astro";
+import Sidebar from "../components/chrome/Sidebar.astro";
+import Footer from "../components/chrome/Footer.astro";
+import ThemeToggle from "../components/whimsy/ThemeToggle.astro";
+import SystemStatus from "../components/whimsy/SystemStatus.astro";
+import LogTicker from "../components/whimsy/LogTicker.astro";
+import SimulationGauges from "../components/whimsy/SimulationGauges.astro";
 
 interface Props {
   title?: string;
@@ -35,6 +44,7 @@ interface Props {
     tech?: string[];
     coverSrc?: string;
   };
+  gauges?: boolean;
 }
 
 const {
@@ -44,6 +54,7 @@ const {
   ogImage,
   seoType = "website",
   project,
+  gauges = false,
 } = Astro.props;
 ---
 
@@ -93,15 +104,129 @@ const {
       })();
     </script>
 
+    {
+      /*
+      Keyboard shortcuts (interaction-spec.md §2):
+        g h | g p | g a | g e | g c → scroll to anchor
+        t → toggle theme (handled inside ThemeToggle script)
+        ? → reuse system-status as a shortcuts cheatsheet (deferred)
+      One-second window between leader (`g`) and the second key.
+      Disabled while inputs are focused.
+    */
+    }
+    <script is:inline>
+      (function () {
+        var jumpMap = {
+          h: "home",
+          p: "projects",
+          a: "architecture",
+          e: "experience",
+          c: "contact",
+        };
+        var leader = false;
+        var leaderTimer = null;
+        function inEditable(t) {
+          if (!t) return false;
+          var tag = t.tagName;
+          return (
+            tag === "INPUT" ||
+            tag === "TEXTAREA" ||
+            tag === "SELECT" ||
+            t.isContentEditable
+          );
+        }
+        document.addEventListener("keydown", function (e) {
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+          if (inEditable(e.target)) return;
+          if (e.key === "g") {
+            leader = true;
+            if (leaderTimer) clearTimeout(leaderTimer);
+            leaderTimer = setTimeout(function () {
+              leader = false;
+            }, 1000);
+            return;
+          }
+          if (leader && Object.prototype.hasOwnProperty.call(jumpMap, e.key)) {
+            var id = jumpMap[e.key];
+            var el = document.getElementById(id);
+            if (el) {
+              e.preventDefault();
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+              try {
+                history.replaceState(null, "", "#" + id);
+              } catch {
+                // History API unavailable (sandboxed iframe etc.) — ignore.
+              }
+            }
+            leader = false;
+            if (leaderTimer) clearTimeout(leaderTimer);
+            return;
+          }
+          leader = false;
+        });
+      })();
+    </script>
+
     <slot name="head" />
   </head>
   <body>
-    {/* TODO Phase 4: <Sidebar /> chrome */}
-    <main>
+    <Sidebar />
+
+    <div class="page-header">
+      <SystemStatus />
+      <ThemeToggle />
+    </div>
+
+    <main class="page-main">
       <slot />
     </main>
+
+    <Footer />
+
     {
-      /* TODO Phase 4: <Footer />, whimsy widgets (ThemeToggle, SystemStatus, LogTicker, DoNotPress) */
+      gauges && (
+        <div class="page-gauges">
+          <SimulationGauges />
+        </div>
+      )
     }
+
+    <LogTicker />
   </body>
 </html>
+
+<style is:global>
+  .page-main {
+    margin-left: var(--layout-sidebar-width);
+    padding: var(--space-8) var(--layout-gutter-desktop);
+    max-width: var(--layout-max-width);
+  }
+
+  .page-header {
+    position: fixed;
+    top: var(--space-3);
+    right: var(--space-3);
+    z-index: var(--z-header);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .page-gauges {
+    position: fixed;
+    right: var(--space-4);
+    bottom: var(--space-12);
+    z-index: var(--z-overlay);
+    width: 240px;
+  }
+
+  @media (max-width: 768px) {
+    .page-main {
+      margin-left: 0;
+      padding: var(--space-6) var(--layout-gutter-mobile);
+    }
+    .page-gauges {
+      display: none;
+    }
+  }
+</style>

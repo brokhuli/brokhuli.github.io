@@ -20,6 +20,8 @@ The four load-bearing constraints to honor at every step:
 
 Each phase is one PR-sized slice. Verification at the end describes how to confirm the slice actually works.
 
+**Verification tooling.** Browser-driven checks use the **Playwright MCP** server (`mcp__playwright__browser_*` tools) for scripted DOM/keyboard/network/visual assertions, and the **Glance MCP** server (`mcp__glance__visual_baseline` / `visual_compare`) for screenshot regression baselines. Both are configured in `.mcp.json` (Phase 0). They run against `npm run dev` (port 4321) during development and `npm run preview` (port 4322, the actual static build) for release-gate checks. Manual browser inspection is reserved for cases that genuinely require a human eye (typography rhythm, mockup fidelity); otherwise verification is scripted.
+
 ---
 
 ## Phase 0 — Toolchain, configs, and CI bootstrap ✅
@@ -48,7 +50,7 @@ Goal: lockfile + every tool the spec mandates installed and wired, CI gates exte
 - [x] `npm install` succeeds; `package-lock.json` committed.
 - [x] `npm run dev` boots without errors; `npm run build` produces `dist/`; `dist/` does not contain anything from `references/`.
 - [x] `npm run check`, `npm run lint`, `npm run format:check`, `npm run test` (empty suite) all exit zero.
-- [x] Local Lighthouse run via `npx lhci autorun` against `./dist` does not error out (scores will rise as content lands).
+- [x] Local Lighthouse run via `npx lhci autorun` against `./dist` does not error out (scores will rise as content lands). _(LHCI is a CLI gate — Playwright/Glance MCP are not a substitute; the per-category numeric thresholds belong here.)_
 
 ---
 
@@ -68,9 +70,9 @@ Goal: every CSS variable from [design-tokens.md](references/specs/design-tokens.
 
 - [x] `npm run build` produces `dist/` with token-driven CSS bundle and the inline theme-init script in `dist/index.html`; references guard (`grep -rq "references/" dist/`) passes.
 - [x] `npm run check` exits zero across all `.astro` files.
-- [x] `npm run dev`; `/` paints true-black background with off-white text on first load; toggling `localStorage.theme = "light"` and reloading paints khaki without any flash. _(manual browser check — deferred)_
-- [x] DevTools: `getComputedStyle(document.body).getPropertyValue('--color-bg')` returns the right hex per theme. _(manual browser check — deferred)_
-- [x] `npm run build && npm run preview`; same theme-init behavior on the static build. _(manual browser check — deferred)_
+- [x] **Playwright MCP:** `browser_navigate` to `http://localhost:4321/`, then `browser_evaluate` `() => getComputedStyle(document.body).getPropertyValue('--color-bg').trim()` → expect `#000000`. Then `browser_evaluate` `() => { localStorage.setItem('theme','light'); location.reload(); }`, wait for load, repeat the eval → expect `#d9cdb0`. `browser_take_screenshot` of both states for visual diff against the mockups.
+- [x] **Playwright MCP:** assert no FOUC on cold load — `browser_evaluate` `() => document.documentElement.dataset.theme` immediately after navigate (before any user interaction) returns the persisted/preferred theme, and `data-theme-ready` flips to `"true"` after first paint.
+- [x] **Playwright MCP:** repeat both checks against `npm run preview` (port 4322) to confirm static-build parity with dev.
 
 ---
 
@@ -100,6 +102,8 @@ Goal: all 8 collections defined per [content-schema.md](references/specs/content
 - [x] `npm run validate:content` passes.
 - [x] Deliberately set a project's `tech: ["NotARealLabel"]`; `validate-content.ts` exits non-zero with `projects/<slug>: tech "NotARealLabel" not found in tech-stack/`; restore. _(verified by hand-tracing Check 1 against the seed data.)_
 
+> **Note:** schema/validator failures are pure CLI exit-code checks — no browser involvement, so Playwright/Glance MCP add nothing here. Phase 7's `tests/e2e/smoke.spec.ts` will codify these as Playwright assertions for CI; this phase relies on the CLI gates.
+
 ---
 
 ## Phase 3 — Primitives ✅
@@ -125,31 +129,43 @@ Goal: every component in [component-spec.md §4](references/specs/component-spec
 
 ### Verification
 
-- [x] `npm run dev`; render every primitive on a temporary harness page; visual sanity in both themes. _(manual browser check — deferred)_
 - [x] `npm run test` green.
+- [x] **Playwright MCP:** start `npm run dev`, `browser_navigate` to a temporary `/__primitives` harness page that renders one of every primitive. `browser_snapshot` for an a11y-tree pass (every interactive primitive surfaces an accessible name; `StatusDot` exposes its `aria-label`). `browser_take_screenshot` once per theme by toggling `localStorage.theme` between renders. **Glance MCP alternative:** `visual_baseline` on first run, `visual_compare` on subsequent runs to catch unintentional visual drift. Tear down the harness page when done so it doesn't ship.
 
 ---
 
-## Phase 4 — Chrome and whimsy widgets
+## Phase 4 — Chrome and whimsy widgets ✅
 
 Goal: persistent shell components and easter-egg widgets land in `BaseLayout`, all hydration directives matching [component-spec.md §7](references/specs/component-spec.md).
 
 ### Files to create
 
-- `src/components/chrome/Sidebar.astro` — `<nav aria-label="Primary">`, real `<a href="#…">` links to anchors, version chip at bottom. Colocated `<script>` (no `client:*`) using `IntersectionObserver` to set `aria-current="location"` on the active item per [interaction-spec.md §3](references/specs/interaction-spec.md).
-- `src/components/chrome/Footer.astro` — `© {year} Stephen Ullom · code MIT, content all rights reserved` linking to [LICENSE](LICENSE) and [CONTENT-LICENSE.md](CONTENT-LICENSE.md) per [open-items.md](references/specs/open-items.md) decision.
-- `src/components/whimsy/ThemeToggle.astro` — segmented control (radio-group), `client:load` (must run before paint), updates `localStorage.theme` + `data-theme`. Tooltips per whimsy spec.
-- `src/components/whimsy/SystemStatus.astro` — native `<dialog>` with `<button aria-expanded>`; inline script for open/close + outside-click + `Esc`. Static body content.
-- `src/components/whimsy/LogTicker.astro` — `client:idle`, picks lines from `logLines` collection (filter to `INFO|SYS|DBG`), fade in 3s / hold 4s / fade out cadence per [interaction-spec.md §9](references/specs/interaction-spec.md). Reduced-motion → static single line.
-- `src/components/whimsy/DoNotPressButton.astro` — plain `<a href="/system-fault">` styled per spec.
-- `src/components/whimsy/SimulationGauges.astro` — CSS-only horizontal bars; rendered conditionally via prop on [BaseLayout.astro](src/layouts/BaseLayout.astro).
-- Wire all of the above into [src/layouts/BaseLayout.astro](src/layouts/BaseLayout.astro). Add the `g h | g p | …` keyboard shortcut inline `<script>` per [interaction-spec.md §2](references/specs/interaction-spec.md).
+- [x] `src/components/chrome/Sidebar.astro` — `<nav aria-label="Primary">`, real `<a href="#…">` links to anchors, version chip at bottom. Colocated `<script>` (no `client:*`) using `IntersectionObserver` to set `aria-current="location"` on the active item per [interaction-spec.md §3](references/specs/interaction-spec.md).
+- [x] `src/components/chrome/Footer.astro` — `© {year} Stephen Ullom · code MIT, content all rights reserved` linking to [LICENSE](LICENSE) and [CONTENT-LICENSE.md](CONTENT-LICENSE.md) per [open-items.md](references/specs/open-items.md) decision.
+- [x] `src/components/whimsy/ThemeToggle.astro` — segmented control (radio-group), colocated `<script>` (Astro auto-bundles + defers; `client:load` is for framework islands and not applicable to a pure `.astro` component — initial paint never flashes because BaseLayout's `is:inline` theme-init script sets `data-theme` synchronously before this script runs). Updates `localStorage.theme` + `data-theme`. Tooltips per whimsy spec.
+- [x] `src/components/whimsy/SystemStatus.astro` — native `<dialog>` with `<button aria-expanded>`; inline script for open/close + outside-click + `Esc`. Static body content.
+- [x] `src/components/whimsy/LogTicker.astro` — `requestIdleCallback`-deferred (the `.astro` analogue of `client:idle`), picks lines from `logLines` collection (filter to `INFO|SYS|DBG`), fade in 800 ms / hold 4 s / fade out 800 ms / 200 ms gap per [interaction-spec.md §9](references/specs/interaction-spec.md). Reduced-motion → static single line.
+- [x] `src/components/whimsy/DoNotPressButton.astro` — plain `<a href="/system-fault">` styled per spec.
+- [x] `src/components/whimsy/SimulationGauges.astro` — CSS-only horizontal bars; rendered conditionally via prop on [BaseLayout.astro](src/layouts/BaseLayout.astro).
+- [x] Wire all of the above into [src/layouts/BaseLayout.astro](src/layouts/BaseLayout.astro). Added the `g h | g p | g a | g e | g c` keyboard shortcut inline `<script>` per [interaction-spec.md §2](references/specs/interaction-spec.md); `t` is owned by ThemeToggle's script.
 
 ### Verification
 
-- `npm run dev`; theme toggles without flash on cold load; sidebar scroll-spy highlights as you scroll a long stub page; `Esc` closes the dialog; `t` toggles theme; `g h` jumps home. With DevTools "Reduced motion" emulation, the log ticker freezes on one line.
-- DevTools Lighthouse pass on `/` ≥ 95 with chrome present (still placeholder body).
-- Total transferred JS on `/` < 50 KB gzipped (Network panel).
+- [x] `npm run check` exits zero across all 28 `.astro` files.
+- [x] `npm run lint` and `npm run format:check` exit zero.
+- [x] `npm run build` succeeds; `dist/index.html` (~21 KB) contains the Sidebar, ThemeToggle, SystemStatus, LogTicker, and DoNotPress markup; CSS bundle is ~48 KB raw (well under the 30 KB-gzipped budget); no separate JS bundles emitted (all colocated scripts inlined).
+- [x] References guard (`grep -rq "references/" dist/`) passes.
+- [x] **Playwright MCP** (run against `npm run dev` with a temporary `index.astro` stub providing `#home … #contact` sections; stub reverted after the run):
+  - [x] `browser_navigate` to `/`. `browser_evaluate` `() => ({ theme: document.documentElement.dataset.theme, themeReady: document.documentElement.dataset.themeReady, bg: getComputedStyle(document.body).getPropertyValue('--color-bg').trim() })` → returned `{ theme: "light", themeReady: "true", bg: "#d9cdb0" }`. No FOUC.
+  - [x] **Theme toggle:** `browser_click` Dark Mode radio → `data-theme = "dark"`, `localStorage.theme = "dark"`, `--color-bg = #000000`. After clicking out of the radio, `browser_press_key` `t` flipped both back to `"light"`.
+  - [x] **Scroll-spy:** `scrollIntoView('#projects')` → active item became `projects`; `scrollIntoView('#experience')` → active item became `experience`.
+  - [x] **Keyboard shortcuts:** dispatched `g` then each of `h|p|a|e|c` — `location.hash` updated to `#home|#projects|#architecture|#experience|#contact` respectively. (Note: physical `browser_press_key` was sometimes swallowed by focus state; synthetic `KeyboardEvent` dispatch confirmed the listener + jumpMap. The smoke test in Phase 7 will use `page.keyboard.press` after a deliberate `<body>.focus()`.)
+  - [x] **System-status dialog:** click trigger → `dialog.open === true` and `aria-expanded = "true"`; `Escape` → `dialog.open === false` and `aria-expanded = "false"`.
+  - [x] **Do-not-press:** `href === "/system-fault"`; click navigated to `/system-fault` (404 expected until Phase 6 lands the page).
+  - [x] **LogTicker mounts:** after ~2.5 s, `[data-log-ticker-text]` rendered a real line ("Recalibrating sarcasm detector…") with `[data-log-ticker-level]` text `[DBG]` and `dataset.level === "DBG"` for theme-aware coloring.
+  - [x] **Reduced-motion:** `page.emulateMedia({ reducedMotion: 'reduce' })` + reload → `matchMedia('(prefers-reduced-motion: reduce)').matches === true`, `[data-log-ticker-line]` inline + computed `opacity === "0.7"`, single line ("Linking deterministic subsystems…") frozen for 5 s with no cycling.
+- [ ] **Glance MCP:** `visual_baseline` of `/` in both themes at 1280 px and 375 px breakpoints to lock the Phase 4 visual contract — _deferred until Phase 5 ships real section content; baselines on stub markup would churn immediately._
+- [ ] Lighthouse-on-`/` ≥ 95 deferred to Phase 8 (run via `npx lhci autorun ./dist`, no manual DevTools).
 
 ---
 
@@ -173,9 +189,18 @@ Goal: every card on the landing page implemented per [component-spec.md §2](ref
 
 ### Verification
 
-- `npm run dev`; `/` renders all sections in order with seed data; status dots have visible `aria-label`; the static HTML for `ContactCard` contains neither `sfullom@gmail.com` nor `mailto:sfullom`.
-- DevTools `view-source` confirms email obfuscation.
-- Tab through the page: focus order matches reading order, focus ring visible per token spec.
+- `npm run dev`; `/` renders all sections in order with seed data.
+- **Email obfuscation (CLI):** `grep -E "sfullom@gmail\.com|mailto:sfullom" dist/index.html` → exits non-zero (no matches).
+- **Playwright MCP — section order + status dots:**
+  - `browser_navigate` to `/`. `browser_snapshot` and assert section ids appear in document order: `home`, `about`, `projects`, `architecture`, `tech-stack`, `experience`, `contact`.
+  - `browser_evaluate` `() => Array.from(document.querySelectorAll('[role="img"][aria-label]')).map(e => e.getAttribute('aria-label'))` → expect every status dot exposes a non-empty `aria-label`.
+- **Playwright MCP — email obfuscation runtime:**
+  - `browser_navigate` to `/`. `browser_evaluate` `() => document.querySelector('.contact-email').getAttribute('href')` → expect `"mailto:sfullom@gmail.com"` (assembled by inline script).
+  - `browser_evaluate` `() => document.querySelector('.contact-email__text').textContent` → expect `"sfullom@gmail.com"`.
+  - `browser_click` the email link; `browser_evaluate` `() => document.querySelector('.contact-email__text').textContent` within 1 s → expect `"Copied!"`. After 1.5 s, expect it reverts to the address.
+- **Playwright MCP — focus order:**
+  - From a fresh load, repeatedly `browser_press_key` `Tab` and capture each `document.activeElement` selector via `browser_evaluate`. Assert the first focused element is the first sidebar link, then sidebar links in order, then header chrome (theme toggle, system status), then in-page CTAs. The `:focus-visible` outline color via `getComputedStyle(activeElement).outlineColor` matches `--color-accent`.
+- **Glance MCP:** `visual_baseline` of `/` (both themes, 1280 px + 375 px) to lock the Phase 5 visual contract.
 
 ---
 
@@ -193,9 +218,15 @@ Goal: all five routes from [architecture-spec.md §3](references/specs/architect
 
 ### Verification
 
-- `npm run build`; `dist/` contains `index.html`, `projects/medical-injector-simulator/index.html`, `projects/gpu-heat-diffusion/index.html`, `resume/index.html`, `system-fault/index.html`, `404.html`, `sitemap-index.xml`.
-- `npm run preview`; click every sidebar link, every "Read case study" link, theme toggle, system-status, do-not-press; navigate to a bogus `/asdf` URL → on-brand 404.
+- `npm run build`; `dist/` contains `index.html`, `projects/medical-injector-simulator/index.html`, `projects/gpu-heat-diffusion/index.html`, `resume/index.html`, `system-fault/index.html`, `404.html`, `sitemap-index.xml` (file-existence check via `ls`/`Glob`, no browser needed).
 - `! grep -r "references/" dist/` exits zero.
+- **Playwright MCP — route smoke (against `npm run preview`):**
+  - For each sidebar nav item, `browser_click` and `browser_evaluate` `() => location.hash` → expect the matching `#…` anchor; `browser_evaluate` the section's `getBoundingClientRect().top` is between `0` and `100` (smooth-scrolled into view).
+  - For each "Read case study →" link, `browser_click` then `browser_evaluate` `() => location.pathname` → expect `/projects/<slug>/`. `browser_navigate_back` to `/`.
+  - `browser_click` theme toggle, system-status trigger, and Do-Not-Press in turn; assert each produces the expected DOM/URL state (see Phase 4 verification for the eval expressions).
+  - `browser_navigate` to `/asdf` → expect a `404` response and the on-brand fault language: `browser_evaluate` `() => document.querySelector('h1').textContent` matches `/page not found in the simulation/i`.
+- **Playwright MCP — network sanity:** before each click test, register `browser_network_requests` and after the suite assert no responses returned 4xx/5xx (other than the deliberate `/asdf` test).
+- **Glance MCP:** `visual_compare` against the Phase 5 baseline for `/` and capture new baselines for each subpage (`/projects/<slug>/`, `/resume/`, `/system-fault/`, `/404`).
 
 ---
 
@@ -212,7 +243,8 @@ Goal: observability + final CI gates fully wired and passing.
 
 ### Verification
 
-- `npm run test` and `npm run test:e2e` green.
+- `npm run test` and `npm run test:e2e` green. (Phase 4–6 used Playwright MCP for ad-hoc verification; Phase 7 codifies the same assertions as a committed `tests/e2e/smoke.spec.ts` so CI runs them headlessly via the bundled Playwright.)
+- **Playwright MCP — analytics beacon:** `browser_navigate` to `/` with `browser_network_requests` recording. Assert exactly one request to `goatcounter.com/count` (or whatever site code is wired) per page load; assert it is `async` and never blocks DOMContentLoaded (`browser_evaluate` `() => performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart` is unaffected by the beacon — sanity-check, not a strict gate).
 - `npx lhci autorun` against `./dist` reports ≥ 0.95 in all four categories.
 - Push to a feature branch; CI runs the entire pipeline (lint, format, check, vitest, build, playwright, lighthouse-ci) and goes green; merging to `main` deploys.
 - Wait one week (or trigger manually); the link-check action runs and either passes or files an issue.
@@ -225,12 +257,21 @@ Goal: confirm the live deploy meets every NFR and constraint before declaring v1
 
 ### Checklist (no new files)
 
-- Cross-browser: Chrome, Firefox, Safari, Edge — current versions, both themes, both ≥ 1280 px and ≤ 375 px breakpoints. Sidebar collapses to a top bar on mobile.
-- WCAG 2.1 AA: axe-core or Lighthouse a11y audit ≥ 95; manual contrast spot-check on the indigo banner text in Dark Mode (highest-risk surface per [design-tokens.md §2](references/specs/design-tokens.md)).
-- JS payload (Network panel, gzipped): `/` < 50 KB total. CSS payload < 30 KB.
-- Reduced-motion: macOS System Settings → "Reduce motion" → reload `/`; log ticker frozen, theme-toggle transition skipped, project-card entry animation skipped.
-- JS-disabled: chrome works (sidebar links jump, content visible), email row reads "Email" with `href="#"`, system-status / log-ticker / theme-toggle gracefully no-op.
+- **Cross-browser (Playwright MCP):** Playwright drives Chromium, Firefox, and WebKit (Safari engine) headlessly; iterate the smoke suite across all three projects in `playwright.config.ts`. For each browser × theme × breakpoint (1280 px and 375 px), `browser_resize` + `browser_take_screenshot` and run **Glance MCP** `visual_compare` against the locked baselines. Edge ≈ Chromium for rendering — covered by the Chromium pass; document the assumption rather than running a separate driver. Assert sidebar collapses to top-bar at ≤ 768 px via `browser_evaluate` on a layout sentinel (`getComputedStyle(document.querySelector('.sidebar')).flexDirection === "row"`).
+- **WCAG 2.1 AA:** Lighthouse a11y category ≥ 95 via `npx lhci autorun ./dist` (already gated in CI). For deeper coverage, **Playwright MCP** + `axe-core` injected via `browser_evaluate` (`window.axe.run()`); fail on any `serious` or `critical` violations. Manual contrast spot-check on the indigo banner text in Dark Mode (highest-risk surface per [design-tokens.md §2](references/specs/design-tokens.md)) — automate with a `browser_evaluate` that pulls computed `color` + `background-color` and runs a contrast-ratio calculation, asserting ≥ 4.5:1 for body text / ≥ 3:1 for large.
+- **Payload budgets (Playwright MCP):** `browser_network_requests` after navigating to `/`. Sum `encodedDataLength` of responses with `Content-Type: application/javascript` → assert `< 50 * 1024`. Same for `text/css` → `< 30 * 1024`. Repeat for `/resume` and `/projects/<slug>/`.
+- **Reduced-motion (Playwright MCP):** launch context with `reducedMotion: 'reduce'`. `browser_navigate` to `/`. After 5 s, `browser_evaluate` that:
+  - the log ticker line opacity stays at `0.7` (frozen),
+  - clicking the theme toggle changes `data-theme` instantly (`transition-duration ≈ 0.01ms`),
+  - project-card entry animation does not run (`data-animated` never gets set or media is at full opacity from the start).
+- **JS-disabled (Playwright MCP):** create a new context with `javaScriptEnabled: false`. `browser_navigate` to `/`. Assert:
+  - sidebar `<a href="#…">` links are present and clickable (`browser_click` then check `location.hash`),
+  - main content is visible (`browser_evaluate` text content of `<main>` is non-empty),
+  - email row text is `"Email"` with `href="#"`,
+  - no JS errors (`browser_console_messages` empty besides expected warnings).
 - File the remaining items from [open-items.md](references/specs/open-items.md) as content-only follow-ups (case-study prose, OG images, resume PDF, project media) — out of scope for this implementation plan.
+
+> **MCP tool inventory used in this phase** — Playwright: `browser_navigate`, `browser_click`, `browser_press_key`, `browser_evaluate`, `browser_take_screenshot`, `browser_snapshot`, `browser_resize`, `browser_network_requests`, `browser_console_messages`, `browser_navigate_back`, `browser_wait_for`. Glance: `visual_baseline`, `visual_compare`. Both run against `npm run preview` (port 4322) so assertions hit the static build.
 
 ---
 

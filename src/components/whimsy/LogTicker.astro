@@ -1,0 +1,216 @@
+---
+/*
+ * LogTicker — quiet cycling log line at the bottom of the viewport.
+ *
+ * Specs:
+ *   references/specs/component-spec.md §5 LogTicker
+ *   references/specs/interaction-spec.md §9
+ *   references/specs/whimsical-elements.md (idea 5)
+ *
+ * Lines are read from the `logLines` collection at build time and embedded
+ * into a JSON script so the runtime needs no network. Filtered to INFO|SYS|DBG
+ * (WARN/ERR are reserved for the system-fault page).
+ */
+
+import { getCollection } from "astro:content";
+
+const entries = await getCollection("logLines");
+const lines = entries
+  .flatMap((e) => e.data.lines)
+  .filter((l) => l.level === "INFO" || l.level === "SYS" || l.level === "DBG");
+
+const dataId = "log-ticker-data";
+---
+
+<div class="log-ticker" data-log-ticker aria-hidden="true">
+  <span class="log-ticker__line" data-log-ticker-line>
+    <span class="log-ticker__level" data-log-ticker-level>INFO</span>
+    <span class="log-ticker__text" data-log-ticker-text
+      >Initializing telemetry…</span
+    >
+  </span>
+</div>
+
+<script
+  is:inline
+  id={dataId}
+  type="application/json"
+  set:html={JSON.stringify(lines)}
+/>
+
+<script>
+  // Cycling log line. Spec: interaction-spec.md §9.
+  //   - fade in 800ms (linear), hold 4000ms, fade out 800ms, 200ms gap
+  //   - weighted random 70% realistic / 30% absurd, never repeat the previous
+  //   - pause when tab is hidden or pointer hovers
+  //   - reduced-motion: render one line statically and stop
+  (function () {
+    type Line = {
+      level: "INFO" | "SYS" | "DBG";
+      text: string;
+      tone: "realistic" | "absurd";
+    };
+
+    const ticker = document.querySelector<HTMLElement>("[data-log-ticker]");
+    const dataNode = document.getElementById("log-ticker-data");
+    if (!ticker || !dataNode) return;
+
+    let lines: Line[] = [];
+    try {
+      lines = JSON.parse(dataNode.textContent || "[]") as Line[];
+    } catch {
+      return;
+    }
+    if (lines.length === 0) return;
+
+    const lineEl = ticker.querySelector<HTMLElement>("[data-log-ticker-line]");
+    const levelEl = ticker.querySelector<HTMLElement>(
+      "[data-log-ticker-level]",
+    );
+    const textEl = ticker.querySelector<HTMLElement>("[data-log-ticker-text]");
+    if (!lineEl || !levelEl || !textEl) return;
+
+    const realistic = lines.filter((l) => l.tone === "realistic");
+    const absurd = lines.filter((l) => l.tone === "absurd");
+
+    let prev: Line | null = null;
+    const pick = (): Line => {
+      const useAbsurd = absurd.length > 0 && Math.random() < 0.3;
+      const pool = useAbsurd ? absurd : realistic.length ? realistic : lines;
+      let next = pool[Math.floor(Math.random() * pool.length)];
+      if (prev && pool.length > 1 && next.text === prev.text) {
+        next = pool[(pool.indexOf(next) + 1) % pool.length];
+      }
+      prev = next;
+      return next;
+    };
+
+    const render = (l: Line) => {
+      levelEl.textContent = `[${l.level}]`;
+      levelEl.dataset.level = l.level;
+      textEl.textContent = l.text;
+    };
+
+    const reduced =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      render(pick());
+      lineEl.style.opacity = "0.7";
+      return;
+    }
+
+    let paused = false;
+    let timer: number | null = null;
+    const clear = () => {
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+
+    const FADE = 800;
+    const HOLD = 4000;
+    const GAP = 200;
+
+    const cycle = () => {
+      if (paused) {
+        timer = window.setTimeout(cycle, 500);
+        return;
+      }
+      render(pick());
+      lineEl.style.transition = `opacity ${FADE}ms linear`;
+      lineEl.style.opacity = "0";
+      // Force layout, then animate to full opacity.
+      void lineEl.offsetHeight;
+      requestAnimationFrame(() => {
+        lineEl.style.opacity = "1";
+        timer = window.setTimeout(() => {
+          lineEl.style.opacity = "0";
+          timer = window.setTimeout(cycle, FADE + GAP);
+        }, FADE + HOLD);
+      });
+    };
+
+    document.addEventListener("visibilitychange", () => {
+      paused = document.visibilityState === "hidden";
+    });
+
+    let resumeTimer: number | null = null;
+    ticker.addEventListener("pointerenter", () => {
+      paused = true;
+      if (resumeTimer !== null) clearTimeout(resumeTimer);
+    });
+    ticker.addEventListener("pointerleave", () => {
+      if (resumeTimer !== null) clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(() => (paused = false), 500);
+    });
+
+    const start = () => {
+      clear();
+      cycle();
+    };
+
+    // Approximate client:idle: defer the cycle until the browser is idle.
+    type IdleWin = Window & {
+      requestIdleCallback?: (
+        cb: () => void,
+        opts?: { timeout: number },
+      ) => void;
+    };
+    const w = window as IdleWin;
+    if (typeof w.requestIdleCallback === "function") {
+      w.requestIdleCallback(start, { timeout: 1500 });
+    } else {
+      setTimeout(start, 200);
+    }
+  })();
+</script>
+
+<style>
+  .log-ticker {
+    position: fixed;
+    bottom: var(--space-3);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: var(--z-overlay);
+    pointer-events: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    color: var(--color-fg-muted);
+    opacity: var(--log-ticker-opacity);
+    max-width: min(80vw, 600px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .log-ticker__line {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: baseline;
+    opacity: 0;
+  }
+
+  .log-ticker__level {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-info);
+  }
+  .log-ticker__level[data-level="INFO"] {
+    color: var(--color-info);
+  }
+  .log-ticker__level[data-level="SYS"] {
+    color: var(--color-success);
+  }
+  .log-ticker__level[data-level="DBG"] {
+    color: var(--color-debug);
+  }
+
+  /* Mobile: hide to avoid covering content */
+  @media (max-width: 640px) {
+    .log-ticker {
+      display: none;
+    }
+  }
+</style>

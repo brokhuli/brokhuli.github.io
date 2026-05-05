@@ -1,0 +1,226 @@
+---
+/*
+ * Sidebar — persistent left-rail navigation.
+ *
+ * Specs:
+ *   references/specs/component-spec.md §1 Sidebar
+ *   references/specs/interaction-spec.md §3
+ *
+ * Strategy: pure .astro with one colocated <script> (no client:* needed)
+ * driving an IntersectionObserver for the active-section highlight.
+ */
+
+import Icon from "../primitives/Icon.astro";
+
+const items = [
+  { id: "home", label: "Home", icon: "lucide:home" },
+  { id: "about", label: "About", icon: "lucide:user" },
+  { id: "projects", label: "Projects", icon: "lucide:layout-grid" },
+  { id: "architecture", label: "Architecture", icon: "lucide:network" },
+  { id: "tech-stack", label: "Tech Stack", icon: "lucide:cpu" },
+  { id: "experience", label: "Experience", icon: "lucide:briefcase" },
+  { id: "contact", label: "Contact", icon: "lucide:mail" },
+];
+
+import pkg from "../../../package.json";
+const versionLabel = `v${pkg.version}`;
+---
+
+<nav class="sidebar" aria-label="Primary">
+  <ul class="sidebar__list" role="list">
+    {
+      items.map((item, idx) => (
+        <li class="sidebar__item">
+          <a
+            class="sidebar__link"
+            href={`#${item.id}`}
+            data-section={item.id}
+            aria-current={idx === 0 ? "location" : undefined}
+          >
+            <span class="sidebar__icon" aria-hidden="true">
+              <Icon name={item.icon} size={20} />
+            </span>
+            <span class="sidebar__label">{item.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="sidebar__chip" aria-hidden="true">{versionLabel}</div>
+</nav>
+
+<script>
+  // Scroll-spy: highlight the sidebar item whose section is closest to the
+  // viewport center. Spec: interaction-spec.md §3.
+  (function () {
+    const links = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>(".sidebar__link"),
+    );
+    if (links.length === 0) return;
+
+    const sectionMap = new Map<string, HTMLAnchorElement>();
+    for (const link of links) {
+      const id = link.dataset.section;
+      if (id) sectionMap.set(id, link);
+    }
+
+    const targets: Element[] = [];
+    for (const id of sectionMap.keys()) {
+      const el = document.getElementById(id);
+      if (el) targets.push(el);
+    }
+    if (targets.length === 0) return;
+
+    let active: string | null = null;
+    const setActive = (id: string) => {
+      if (id === active) return;
+      active = id;
+      for (const link of links) {
+        if (link.dataset.section === id) {
+          link.setAttribute("aria-current", "location");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort(
+            (a, b) =>
+              Math.abs(a.boundingClientRect.top) -
+              Math.abs(b.boundingClientRect.top),
+          );
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
+    );
+
+    for (const t of targets) observer.observe(t);
+  })();
+</script>
+
+<style>
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--layout-sidebar-width);
+    z-index: var(--z-sidebar);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-6) 0 var(--space-4);
+    background: var(--color-surface-1);
+    border-right: var(--line-divider);
+  }
+
+  .sidebar__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    flex: 1;
+  }
+
+  .sidebar__item {
+    display: block;
+  }
+
+  .sidebar__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-1);
+    border-radius: var(--radius-md);
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    position: relative;
+    transition: color var(--motion-quick) var(--ease-out-quart);
+  }
+
+  .sidebar__link:hover {
+    color: var(--color-fg-default);
+  }
+
+  .sidebar__link[aria-current="location"] {
+    color: var(--color-accent);
+  }
+
+  .sidebar__link[aria-current="location"]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--color-accent);
+    border-radius: var(--radius-pill);
+  }
+
+  .sidebar__icon {
+    display: inline-flex;
+  }
+
+  .sidebar__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .sidebar__chip {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-subtle);
+    letter-spacing: var(--tracking-wider);
+    padding: var(--space-1) var(--space-2);
+    border: var(--line-divider);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-2);
+  }
+
+  /* Mobile: collapse to a top bar with horizontal links. */
+  @media (max-width: 768px) {
+    .sidebar {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: auto;
+      flex-direction: row;
+      padding: var(--space-2) var(--layout-gutter-mobile);
+      border-right: none;
+      border-bottom: var(--line-divider);
+      gap: var(--space-3);
+      overflow-x: auto;
+    }
+    .sidebar__list {
+      flex-direction: row;
+      flex: 0 1 auto;
+      gap: var(--space-1);
+    }
+    .sidebar__link {
+      flex-direction: row;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+    }
+    .sidebar__link[aria-current="location"]::before {
+      left: 4px;
+      right: 4px;
+      top: auto;
+      bottom: 0;
+      width: auto;
+      height: 2px;
+    }
+    .sidebar__chip {
+      margin-top: 0;
+      margin-left: auto;
+    }
+  }
+</style>
