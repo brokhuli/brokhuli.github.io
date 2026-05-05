@@ -1,0 +1,58 @@
+/*
+ * Tailwind v4 CSS-first config.
+ * @theme block exposes our semantic design tokens to Tailwind utilities,
+ * so `bg-bg`, `text-fg-default`, `text-accent`, `font-display`, etc.
+ * resolve to the matching CSS variables defined in tokens.css.
+ *
+ * Spec: references/specs/design-tokens.md §13
+ */
+
+@import "tailwindcss";
+@import "./tokens.css";
+
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-bg: var(--color-bg);
+  --color-surface-1: var(--color-surface-1);
+  --color-surface-2: var(--color-surface-2);
+  --color-surface-3: var(--color-surface-3);
+
+  --color-fg-default: var(--color-fg-default);
+  --color-fg-muted: var(--color-fg-muted);
+  --color-fg-subtle: var(--color-fg-subtle);
+  --color-fg-on-accent: var(--color-fg-on-accent);
+
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-muted: var(--color-accent-muted);
+
+  --color-border: var(--color-border);
+  --color-border-hover: var(--color-border-hover);
+  --color-border-strong: var(--color-border-strong);
+
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-info: var(--color-info);
+  --color-debug: var(--color-debug);
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}

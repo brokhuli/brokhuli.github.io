@@ -52,23 +52,25 @@ Goal: lockfile + every tool the spec mandates installed and wired, CI gates exte
 
 ---
 
-## Phase 1 — Design tokens and BaseLayout shell
+## Phase 1 — Design tokens and BaseLayout shell ✅
 
 Goal: every CSS variable from [design-tokens.md](references/specs/design-tokens.md) emitted under `:root` / `[data-theme]`, Tailwind v4 reading them, theme-init script in `<head>` preventing FOUC. Pages still bare.
 
 ### Files to create
 
-- [src/styles/tokens.css](src/styles/tokens.css) — full token set verbatim from [design-tokens.md](references/specs/design-tokens.md): color (both Dark and Eric Mode palettes under `[data-theme="dark"]` / `[data-theme="light"]`), typography (Inter / Space Grotesk / JetBrains Mono via `@fontsource-variable/*` imports), spacing scale, radii, shadows, motion durations + easings, z-index, border, chart, grid. Naming follows `--<category>-<role>[-<variant>][-<state>]`; no color-name tokens.
-- [src/styles/tailwind.css](src/styles/tailwind.css) — `@import "tailwindcss";` + `@theme { ... }` block reading `var(--color-bg)` etc. so utilities resolve to tokens. `@plugin "@tailwindcss/typography";`.
-- [src/styles/global.css](src/styles/global.css) — base resets, `@media (prefers-reduced-motion: reduce) { ... }` global short-circuit per [interaction-spec.md §1](references/specs/interaction-spec.md), focus-ring rule per [interaction-spec.md §2](references/specs/interaction-spec.md).
-- [src/layouts/BaseLayout.astro](src/layouts/BaseLayout.astro) — owns `<html lang="en">`, `<head>` (charset, viewport, font-source imports, three CSS imports above, `<SEO />` placeholder slot for now), inline `<script is:inline>` theme-init reading `localStorage.theme` ↔ `prefers-color-scheme` → setting `documentElement.dataset.theme` synchronously, then setting `data-theme-ready="true"` to enable transitions (per ADR-003). Body wraps `<main><slot /></main>`; chrome/whimsy/footer left as comment placeholders to fill in Phase 4.
-- Update [src/pages/index.astro](src/pages/index.astro) to use `<BaseLayout>` with placeholder body so the build proves the layout works.
+- [x] [src/styles/tokens.css](src/styles/tokens.css) — full token set verbatim from [design-tokens.md](references/specs/design-tokens.md): color (both Dark and Eric Mode palettes under `[data-theme="dark"]` / `[data-theme="light"]`), typography (Inter / Space Grotesk / JetBrains Mono via `@fontsource-variable/*` imports), spacing scale, radii, shadows, motion durations + easings, z-index, border, chart, grid. Naming follows `--<category>-<role>[-<variant>][-<state>]`; no color-name tokens.
+- [x] [src/styles/tailwind.css](src/styles/tailwind.css) — `@import "tailwindcss";` + `@theme { ... }` block reading `var(--color-bg)` etc. so utilities resolve to tokens. `@plugin "@tailwindcss/typography";`.
+- [x] [src/styles/global.css](src/styles/global.css) — base resets, `@media (prefers-reduced-motion: reduce) { ... }` global short-circuit per [interaction-spec.md §1](references/specs/interaction-spec.md), focus-ring rule per [interaction-spec.md §2](references/specs/interaction-spec.md).
+- [x] [src/layouts/BaseLayout.astro](src/layouts/BaseLayout.astro) — owns `<html lang="en">`, `<head>` (charset, viewport, font-source imports, three CSS imports above, `<SEO />` placeholder slot for now), inline `<script is:inline>` theme-init reading `localStorage.theme` ↔ `prefers-color-scheme` → setting `documentElement.dataset.theme` synchronously, then setting `data-theme-ready="true"` to enable transitions (per ADR-003). Body wraps `<main><slot /></main>`; chrome/whimsy/footer left as comment placeholders to fill in Phase 4.
+- [x] Update [src/pages/index.astro](src/pages/index.astro) to use `<BaseLayout>` with placeholder body so the build proves the layout works.
 
 ### Verification
 
-- `npm run dev`; `/` paints true-black background with off-white text on first load; toggling `localStorage.theme = "light"` and reloading paints khaki without any flash.
-- DevTools: `getComputedStyle(document.body).getPropertyValue('--color-bg')` returns the right hex per theme.
-- `npm run build && npm run preview`; same theme-init behavior on the static build.
+- [x] `npm run build` produces `dist/` with token-driven CSS bundle and the inline theme-init script in `dist/index.html`; references guard (`grep -rq "references/" dist/`) passes.
+- [x] `npm run check` exits zero across all `.astro` files.
+- [ ] `npm run dev`; `/` paints true-black background with off-white text on first load; toggling `localStorage.theme = "light"` and reloading paints khaki without any flash. _(manual browser check — deferred)_
+- [ ] DevTools: `getComputedStyle(document.body).getPropertyValue('--color-bg')` returns the right hex per theme. _(manual browser check — deferred)_
+- [ ] `npm run build && npm run preview`; same theme-init behavior on the static build. _(manual browser check — deferred)_
 
 ---
 

@@ -1,0 +1,111 @@
+/*
+ * Global resets, base typography, focus ring, blueprint-dot background,
+ * and the global reduced-motion short-circuit.
+ *
+ * Specs:
+ *   references/specs/design-tokens.md §12 (blueprint dots)
+ *   references/specs/interaction-spec.md §1 (reduced-motion)
+ *   references/specs/interaction-spec.md §2 (focus ring)
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--text-base-line);
+  color: var(--color-fg-default);
+  background-color: var(--color-bg);
+  background-image: radial-gradient(
+    var(--grid-line-color) var(--grid-dot-size),
+    transparent var(--grid-dot-size)
+  );
+  background-size: var(--grid-dot-gap) var(--grid-dot-gap);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * Theme transitions are gated until first paint completes.
+ * BaseLayout sets data-theme synchronously, then flips
+ * data-theme-ready="true" so the first paint never animates.
+ */
+html[data-theme-ready="true"] body,
+html[data-theme-ready="true"] body * {
+  transition:
+    background-color var(--motion-base) var(--ease-out-quart),
+    border-color var(--motion-base) var(--ease-out-quart),
+    color var(--motion-base) var(--ease-out-quart);
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+/*
+ * Shared focus ring (interaction-spec.md §2).
+ * 2px outline at the accent, 2px offset, only on :focus-visible.
+ */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: var(--border-width-strong) solid var(--color-accent);
+  outline-offset: 2px;
+  transition: outline-color var(--motion-quick) var(--ease-out-quart);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/*
+ * Global reduced-motion short-circuit.
+ * Individual interactions document their reduced-motion behavior
+ * (e.g., the log ticker freezes on a single line) on top of this.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

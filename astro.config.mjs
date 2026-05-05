@@ -1,16 +1,31 @@
 import { defineConfig } from "astro/config";
+import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+import icon from "astro-icon";
+import tailwindcss from "@tailwindcss/vite";
 
+// https://astro.build/config
 export default defineConfig({
-  // This tells Astro where the site will live online
   site: "https://brokhuli.github.io",
-
-  // If your repo name is "portfolio", base should be "/portfolio"
-  // If this is your main "brokhuli.github.io" repo, leave it as ''
   base: "",
-
-  // Modern 2026 performance features
+  output: "static",
   compressHTML: true,
   build: {
-    format: "directory", // Results in cleaner URLs like /about/ instead of /about.html
+    format: "directory",
+  },
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) =>
+        !page.includes("/system-fault") && !page.endsWith("/404"),
+    }),
+    icon({
+      include: {
+        lucide: ["*"],
+      },
+    }),
+  ],
+  vite: {
+    plugins: [tailwindcss()],
   },
 });

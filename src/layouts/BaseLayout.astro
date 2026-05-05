@@ -1,0 +1,86 @@
+---
+/*
+ * BaseLayout — wraps every page.
+ *
+ * Owns:
+ *   - <html lang="en">, <head>, <body>
+ *   - Inline theme-init script (ADR-003) that sets data-theme
+ *     synchronously before first paint to prevent FOUC.
+ *   - Tailwind/tokens/global stylesheet imports.
+ *   - <SEO /> placeholder slot (filled in Phase 3).
+ *   - Body wrapper with <main><slot /></main>.
+ *   - Comment placeholders for chrome/whimsy/footer (Phase 4).
+ *
+ * Specs:
+ *   references/specs/architecture-spec.md §3
+ *   references/artifacts/architecture-design-record.md ADR-003
+ *   references/specs/interaction-spec.md §1
+ */
+
+import "../styles/tailwind.css";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Stephen Ullom — brokhuli.github.io",
+  description = "Personal portfolio for Stephen Ullom.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+
+    {
+      /*
+      Theme-init: runs synchronously before first paint.
+      Reads localStorage.theme, falls back to prefers-color-scheme,
+      writes data-theme on <html>, then flips data-theme-ready="true"
+      so global.css enables transitions for subsequent changes.
+    */
+    }
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersLight =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: light)").matches;
+          var theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : prefersLight
+                ? "light"
+                : "dark";
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = "dark";
+        }
+        requestAnimationFrame(function () {
+          document.documentElement.dataset.themeReady = "true";
+        });
+      })();
+    </script>
+
+    {/* TODO Phase 3: <SEO /> primitive renders OG, Twitter, JSON-LD here */}
+    <slot name="head" />
+  </head>
+  <body>
+    {/* TODO Phase 4: <Sidebar /> chrome */}
+    <main>
+      <slot />
+    </main>
+    {
+      /* TODO Phase 4: <Footer />, whimsy widgets (ThemeToggle, SystemStatus, LogTicker, DoNotPress) */
+    }
+  </body>
+</html>
