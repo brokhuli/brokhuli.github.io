@@ -23,3 +23,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# browser-automation MCP outputs (Playwright + Glance)
+.playwright-mcp/
+.browser-sessions/
