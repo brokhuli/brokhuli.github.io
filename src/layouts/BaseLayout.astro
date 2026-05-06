@@ -56,6 +56,13 @@ const {
   project,
   gauges = false,
 } = Astro.props;
+
+// GoatCounter site code: env-driven so dev/CI omit the beacon entirely.
+// When the account exists, set PUBLIC_GOATCOUNTER_CODE=<sitecode> in .env
+// or in the GitHub Actions deploy workflow.
+const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
+  | string
+  | undefined;
 ---
 
 <!doctype html>
@@ -192,6 +199,25 @@ const {
     }
 
     <LogTicker />
+
+    {
+      /*
+       * GoatCounter analytics — privacy-respecting, cookie-free (~3 KB).
+       * Site code is read from PUBLIC_GOATCOUNTER_CODE at build time.
+       * If unset, no script is emitted (no-op stub) so dev + preview don't
+       * fire tracking calls. Spec: tech-stack.md §Analytics.
+       */
+    }
+    {
+      goatCounterCode && (
+        <script
+          is:inline
+          async
+          data-goatcounter={`https://${goatCounterCode}.goatcounter.com/count`}
+          src="https://gc.zgo.at/count.js"
+        />
+      )
+    }
   </body>
 </html>
 

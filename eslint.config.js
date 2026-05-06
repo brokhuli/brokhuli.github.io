@@ -49,4 +49,16 @@ export default [
       },
     },
   },
+  {
+    // Tests evaluate code in the browser (page.evaluate) so DOM globals are real.
+    files: ["tests/e2e/**/*.{ts,tsx}"],
+    languageOptions: {
+      globals: {
+        document: "readonly",
+        window: "readonly",
+        localStorage: "readonly",
+        navigator: "readonly",
+      },
+    },
+  },
 ];
