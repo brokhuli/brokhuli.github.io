@@ -1,0 +1,206 @@
+---
+/*
+ * /resume — full résumé page.
+ * Reads every entry from the `experience` collection (no top-N limit) and
+ * surfaces structured prose. If public/resume.pdf exists, offers a download.
+ *
+ * Spec: references/specs/architecture-spec.md §3, component-spec.md §3
+ */
+
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Card from "../components/primitives/Card.astro";
+import Button from "../components/primitives/Button.astro";
+import SectionHeading from "../components/primitives/SectionHeading.astro";
+import ExperienceEntry from "../components/sections/ExperienceEntry.astro";
+import Icon from "../components/primitives/Icon.astro";
+
+const experience = (await getCollection("experience")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const aboutEntries = await getCollection("about");
+const about = aboutEntries[0];
+const { Content: AboutBody } = about ? await render(about) : { Content: null };
+
+// Build-time check: is public/resume.pdf present?
+const publicDir = fileURLToPath(
+  new URL("../../public/resume.pdf", import.meta.url),
+);
+const hasResumePdf = existsSync(publicDir);
+---
+
+<BaseLayout
+  title="Résumé — Stephen Ullom"
+  description="Full résumé for Stephen Ullom — software architect across transportation, energy, robotics, and medtech."
+>
+  <article class="resume">
+    <header class="resume__header">
+      <a class="resume__back" href="/">← Back home</a>
+      <div class="resume__title-row">
+        <h1 class="resume__name">Stephen Ullom</h1>
+        <span class="resume__role">Software Architect</span>
+      </div>
+      <div class="resume__actions">
+        {
+          hasResumePdf && (
+            <Button href="/resume.pdf" variant="primary" icon="lucide:download">
+              Download PDF
+            </Button>
+          )
+        }
+        <Button
+          href="https://linkedin.com/in/stephen-ullom-7014a455"
+          variant="outline"
+          icon="lucide:linkedin"
+        >
+          LinkedIn
+        </Button>
+      </div>
+    </header>
+
+    {
+      AboutBody && (
+        <Card>
+          <SectionHeading slot="header" as="h2">
+            Summary
+          </SectionHeading>
+          <div class="prose resume__summary">
+            <AboutBody />
+          </div>
+        </Card>
+      )
+    }
+
+    <Card>
+      <SectionHeading slot="header" as="h2">Experience</SectionHeading>
+      <div class="resume__entries">
+        {experience.map((e) => <ExperienceEntry entry={e} />)}
+      </div>
+    </Card>
+
+    <Card>
+      <SectionHeading slot="header" as="h2">Contact</SectionHeading>
+      <ul class="resume__contact" role="list">
+        <li>
+          <Icon name="lucide:mail" size={16} />
+          <span>Email available on the <a href="/#contact">home page</a></span>
+        </li>
+        <li>
+          <Icon name="lucide:linkedin" size={16} />
+          <a
+            href="https://linkedin.com/in/stephen-ullom-7014a455"
+            target="_blank"
+            rel="noopener noreferrer">linkedin.com/in/stephen-ullom-7014a455</a
+          >
+        </li>
+        <li>
+          <Icon name="lucide:github" size={16} />
+          <a
+            href="https://github.com/brokhuli"
+            target="_blank"
+            rel="noopener noreferrer">github.com/brokhuli</a
+          >
+        </li>
+      </ul>
+    </Card>
+  </article>
+</BaseLayout>
+
+<style>
+  .resume {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .resume__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+
+  .resume__back {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    align-self: flex-start;
+  }
+  .resume__back:hover {
+    color: var(--color-accent);
+  }
+
+  .resume__title-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .resume__name {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-tight);
+    line-height: 1;
+    color: var(--color-fg-default);
+    margin: 0;
+  }
+
+  .resume__role {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-fg-muted);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .resume__actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .resume__summary :global(p) {
+    font-size: var(--text-base);
+    line-height: var(--text-base-line);
+    color: var(--color-fg-muted);
+    margin: 0 0 var(--space-3);
+  }
+
+  .resume__summary :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .resume__entries {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .resume__contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .resume__contact li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-fg-muted);
+  }
+
+  .resume__contact a {
+    color: var(--color-accent);
+  }
+</style>

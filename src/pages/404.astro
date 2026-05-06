@@ -1,0 +1,103 @@
+---
+/*
+ * /404 — on-brand "page not found in the simulation".
+ * Reuses the system-fault visual language.
+ *
+ * Spec: references/specs/component-spec.md §3 404
+ *       references/specs/architecture-spec.md §3
+ */
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Card from "../components/primitives/Card.astro";
+import Button from "../components/primitives/Button.astro";
+import SectionHeading from "../components/primitives/SectionHeading.astro";
+import BarChart from "../components/primitives/BarChart.astro";
+
+const probeChart = [
+  { label: "DNS", value: 23, tone: "low" as const },
+  { label: "TLS", value: 41, tone: "low" as const },
+  { label: "GET", value: 100, tone: "high" as const },
+  { label: "404", value: 100, tone: "high" as const },
+];
+---
+
+<BaseLayout
+  title="404 — page not found in the simulation"
+  description="That route doesn't exist in this simulation."
+>
+  <article class="notfound">
+    <Card class="notfound__banner" variant="accent">
+      <h1 class="notfound__title">
+        <span class="notfound__tag">404</span>
+        Page not found in the simulation.
+      </h1>
+      <p class="notfound__sub">
+        The route you tried doesn't exist on this build. The system attempted to
+        resolve it, declined, and is now logging the event for posterity.
+      </p>
+    </Card>
+
+    <Card>
+      <SectionHeading slot="header" as="h2">Probe trace</SectionHeading>
+      <BarChart data={probeChart} axisLabel="request lifecycle" />
+    </Card>
+
+    <div class="notfound__actions">
+      <Button href="/" variant="primary" icon="lucide:home">Return home</Button>
+      <Button href="/system-fault" variant="outline" icon="lucide:activity">
+        See observability dashboard
+      </Button>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .notfound {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .notfound__banner {
+    border-color: var(--color-warning);
+  }
+
+  .notfound__title {
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+    line-height: var(--text-md-line);
+    color: var(--color-fg-default);
+    margin: 0 0 var(--space-3);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .notfound__tag {
+    display: inline-block;
+    background: var(--color-warning);
+    color: var(--color-bg);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wider);
+  }
+
+  .notfound__sub {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    color: var(--color-fg-muted);
+    margin: 0;
+  }
+
+  .notfound__actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>

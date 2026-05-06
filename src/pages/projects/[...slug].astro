@@ -1,0 +1,310 @@
+---
+/*
+ * Project case-study route.
+ * Spec: references/specs/architecture-spec.md §3, component-spec.md §3
+ *
+ * Renders one page per `projects` collection entry. The MDX body slots into
+ * a prose wrapper; frontmatter drives the structured Why-it's-hard / Outcome /
+ * Metrics / Code-entry-points sections beneath it.
+ */
+
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Card from "../../components/primitives/Card.astro";
+import SectionHeading from "../../components/primitives/SectionHeading.astro";
+import StatusDot from "../../components/primitives/StatusDot.astro";
+import TechPill from "../../components/primitives/TechPill.astro";
+import ProjectMedia from "../../components/primitives/ProjectMedia.astro";
+import Icon from "../../components/primitives/Icon.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((entry) => ({
+    params: { slug: entry.data.slug ?? entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const {
+  title,
+  tagline,
+  status,
+  tech,
+  media,
+  cover,
+  problem,
+  whyHard,
+  outcome,
+  repo,
+  metrics,
+  publishedAt,
+  updatedAt,
+} = entry.data;
+
+const statusMap: Record<
+  string,
+  { state: "ok" | "warn" | "off"; label: string }
+> = {
+  active: { state: "ok", label: "Active" },
+  paused: { state: "warn", label: "Paused" },
+  shipped: { state: "off", label: "Shipped" },
+  archived: { state: "off", label: "Archived" },
+};
+const dot = statusMap[status as string] ?? statusMap.shipped;
+---
+
+<BaseLayout
+  title={`${title} — Stephen Ullom`}
+  description={tagline}
+  seoType="project"
+  ogImage={cover?.src}
+  project={{
+    title,
+    tagline,
+    publishedAt,
+    updatedAt,
+    tech,
+    coverSrc: cover?.src,
+  }}
+>
+  <article class="case-study">
+    <header class="case-study__header">
+      <a class="case-study__back" href="/#projects">← Back to projects</a>
+      <div class="case-study__title-row">
+        <StatusDot state={dot.state} label={dot.label} />
+        <h1 class="case-study__title">{title}</h1>
+      </div>
+      <p class="case-study__tagline">{tagline}</p>
+      <ul class="case-study__tech" role="list" aria-label="Technologies used">
+        {
+          tech.map((t) => (
+            <li>
+              <TechPill label={t} />
+            </li>
+          ))
+        }
+      </ul>
+    </header>
+
+    {
+      media && (
+        <div class="case-study__media">
+          <ProjectMedia media={media} />
+        </div>
+      )
+    }
+
+    <Card class="case-study__problem" variant="accent">
+      <SectionHeading slot="header" as="h2">Problem</SectionHeading>
+      <p>{problem}</p>
+    </Card>
+
+    <section class="case-study__section">
+      <SectionHeading as="h2">Why it's hard</SectionHeading>
+      <p>{whyHard}</p>
+    </section>
+
+    <section class="case-study__body">
+      <SectionHeading as="h2">Case study</SectionHeading>
+      <div class="prose">
+        <Content />
+      </div>
+    </section>
+
+    <section class="case-study__section">
+      <SectionHeading as="h2">Outcome</SectionHeading>
+      <p>{outcome}</p>
+    </section>
+
+    {
+      metrics && metrics.length > 0 && (
+        <section class="case-study__section">
+          <SectionHeading as="h2">Metrics</SectionHeading>
+          <table class="case-study__metrics">
+            <thead>
+              <tr>
+                <th scope="col">Metric</th>
+                <th scope="col">Value</th>
+                <th scope="col">Δ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {metrics.map((m) => (
+                <tr>
+                  <td>{m.label}</td>
+                  <td>{m.value}</td>
+                  <td>{m.delta ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )
+    }
+
+    {
+      repo && (
+        <section class="case-study__section">
+          <SectionHeading as="h2">Code entry points</SectionHeading>
+          <p class="case-study__repo">
+            <Icon name="lucide:github" size={16} />
+            <a href={repo.url} target="_blank" rel="noopener noreferrer">
+              {repo.url.replace(/^https?:\/\//, "")}
+            </a>
+          </p>
+          {repo.entryPoints && repo.entryPoints.length > 0 && (
+            <ul class="case-study__entries" role="list">
+              {repo.entryPoints.map((ep) => (
+                <li>
+                  <a
+                    href={`${repo.url.replace(/\/$/, "")}/blob/main/${ep.path}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <code>{ep.path}</code> — {ep.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .case-study {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .case-study__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .case-study__back {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    align-self: flex-start;
+  }
+  .case-study__back:hover {
+    color: var(--color-accent);
+  }
+
+  .case-study__title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .case-study__title {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    line-height: var(--text-3xl-line);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-fg-default);
+    margin: 0;
+  }
+
+  .case-study__tagline {
+    font-size: var(--text-md);
+    color: var(--color-fg-muted);
+    margin: 0;
+  }
+
+  .case-study__tech {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .case-study__media {
+    margin: 0;
+  }
+
+  .case-study__problem p,
+  .case-study__section p {
+    font-size: var(--text-base);
+    line-height: var(--text-base-line);
+    color: var(--color-fg-muted);
+    margin: 0;
+  }
+
+  .case-study__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .case-study__body :global(p) {
+    margin: 0 0 var(--space-3);
+    color: var(--color-fg-default);
+  }
+
+  .case-study__metrics {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  .case-study__metrics th,
+  .case-study__metrics td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: var(--line-divider);
+    text-align: left;
+  }
+
+  .case-study__metrics th {
+    color: var(--color-fg-subtle);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .case-study__metrics td {
+    color: var(--color-fg-default);
+  }
+
+  .case-study__repo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-fg-muted);
+  }
+
+  .case-study__entries {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .case-study__entries code {
+    font-family: var(--font-mono);
+    color: var(--color-fg-default);
+    background: var(--color-surface-2);
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+  }
+</style>

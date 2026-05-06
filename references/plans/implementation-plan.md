@@ -214,29 +214,34 @@ Goal: every card on the landing page implemented per [component-spec.md §2](ref
 
 ---
 
-## Phase 6 — Routes and pages
+## Phase 6 — Routes and pages ✅
 
 Goal: all five routes from [architecture-spec.md §3](references/specs/architecture-spec.md) live and composing the right sections.
 
 ### Files to create / edit
 
-- [src/pages/index.astro](src/pages/index.astro) — composes `HeaderCard`, `HeroCard`, `AboutCard`, `SkillsCard`, `DomainsCard`, `ProjectsSection`, `ArchitectureSection`, `TechStackCard`, `ExperienceCard`, `ContactCard` in order; `<BaseLayout title=… description=…>`. No data logic.
-- `src/pages/projects/[...slug].astro` — `getStaticPaths()` over `getCollection("projects")`; renders cover, frontmatter `problem` callout, MDX body in a `prose` wrapper, frontmatter-derived sections (Why-it's-hard, Outcome, Metrics table, Code entry-points). Passes `cover.src` to `<SEO ogImage={…}>`.
-- `src/pages/resume.astro` — composes a fuller `ExperienceCard` (all entries) + structured prose; offers `/resume.pdf` download link if file exists in [public/](public/).
-- `src/pages/system-fault.astro` — banner ("Fault detected!…"), grid of `<BarChart>` mock metric panels, log-line block (using `logLines` `WARN|ERR` only), "Return to safety →" link home.
-- `src/pages/404.astro` — on-brand "page not found in the simulation" reusing system-fault visual language.
+- [x] [src/pages/index.astro](src/pages/index.astro) — composes `HeaderCard`, `HeroCard`, `AboutCard`, `SkillsCard`, `DomainsCard`, `ProjectsSection`, `ArchitectureSection`, `TechStackCard`, `ExperienceCard`, `ContactCard` in order; `<BaseLayout title=… description=…>`. No data logic. (Landed in Phase 5.)
+- [x] `src/pages/projects/[...slug].astro` — `getStaticPaths()` over `getCollection("projects")`; renders cover, frontmatter `problem` callout, MDX body in a `prose` wrapper, frontmatter-derived sections (Why-it's-hard, Outcome, Metrics table, Code entry-points). Passes `cover.src` to `<SEO ogImage={…}>` via BaseLayout's `ogImage` + `seoType="project"` props.
+- [x] `src/pages/resume.astro` — full `experience` collection (no top-N limit) + about/summary prose; offers `/resume.pdf` download via build-time `existsSync` check on `public/resume.pdf`.
+- [x] `src/pages/system-fault.astro` — banner ("Fault detected!…"), grid of 4 `<BarChart>` panels (CPU/latency/error-rate/queue), live-metrics grid, log-line block from `logLines` filtered to `WARN|ERR` (with SYS/INFO filler so the panel never reads empty), "Return to safety →" link, and `gauges={true}` so SimulationGauges show.
+- [x] `src/pages/404.astro` — on-brand "Page not found in the simulation" with a probe-trace `<BarChart>`, return-home + see-fault buttons. Reuses the system-fault visual language.
 
 ### Verification
 
-- `npm run build`; `dist/` contains `index.html`, `projects/medical-injector-simulator/index.html`, `projects/gpu-heat-diffusion/index.html`, `resume/index.html`, `system-fault/index.html`, `404.html`, `sitemap-index.xml` (file-existence check via `ls`/`Glob`, no browser needed).
-- `! grep -r "references/" dist/` exits zero.
-- **Playwright MCP — route smoke (against `npm run preview`):**
-  - For each sidebar nav item, `browser_click` and `browser_evaluate` `() => location.hash` → expect the matching `#…` anchor; `browser_evaluate` the section's `getBoundingClientRect().top` is between `0` and `100` (smooth-scrolled into view).
-  - For each "Read case study →" link, `browser_click` then `browser_evaluate` `() => location.pathname` → expect `/projects/<slug>/`. `browser_navigate_back` to `/`.
-  - `browser_click` theme toggle, system-status trigger, and Do-Not-Press in turn; assert each produces the expected DOM/URL state (see Phase 4 verification for the eval expressions).
-  - `browser_navigate` to `/asdf` → expect a `404` response and the on-brand fault language: `browser_evaluate` `() => document.querySelector('h1').textContent` matches `/page not found in the simulation/i`.
-- **Playwright MCP — network sanity:** before each click test, register `browser_network_requests` and after the suite assert no responses returned 4xx/5xx (other than the deliberate `/asdf` test).
-- **Glance MCP:** `visual_compare` against the Phase 5 baseline for `/` and capture new baselines for each subpage (`/projects/<slug>/`, `/resume/`, `/system-fault/`, `/404`).
+- [x] `npm run check` exits zero (45 files).
+- [x] `npm run lint` and `npm run format:check` exit zero.
+- [x] `npm run build`; produced 6 pages in `dist/`: `index.html`, `404.html`, `projects/medical-injector-simulator/index.html`, `projects/gpu-heat-diffusion/index.html`, `resume/index.html`, `system-fault/index.html`, plus `sitemap-index.xml` + `sitemap-0.xml`.
+- [x] `! grep -r "references/" dist/` exits zero (PASS).
+- [x] **Playwright MCP — route smoke (against `npm run preview` on port 4326):**
+  - All 7 sidebar links → correct hash + section scrolled to viewport top (Contact at 190 px is the last-section bottom-pin, expected). ✓
+  - Both "Read case study →" links navigate to `/projects/medical-injector-simulator` and `/projects/gpu-heat-diffusion` with correct H1, Problem + Outcome sections present, and `og:type=article`. ✓
+  - Theme toggle persisted to `localStorage`; system-status dialog opens (`open=true`, `aria-expanded=true`) and `Esc` closes (`open=false`, `aria-expanded=false`); Do-Not-Press lands at `/system-fault` with the FAULT banner + 4 BarCharts. ✓
+  - `/asdf` returns HTTP 404 with title `"404 — page not found in the simulation"` and matching H1 copy. ✓
+- [x] **Playwright MCP — network sanity:** all 5 routes (`/`, `/projects/<slug>` × 2, `/resume`, `/system-fault`) load with zero 4xx/5xx responses.
+- [x] **Glance MCP — visual:**
+  - `visual_compare` against Phase 5 baseline `home-dark-1280` → MATCH (0.18 % diff — solely the LogTicker rotating to a different random line).
+  - `visual_compare` against `home-light-1280` → MATCH (0.34 % diff — same).
+  - New baselines captured for both themes at 1280 px viewport: `project-medical-injector-{dark,light}-1280`, `project-gpu-heat-diffusion-{dark,light}-1280`, `resume-{dark,light}-1280`, `system-fault-{dark,light}-1280`, `404-{dark,light}-1280`. Plus full-page dark baselines for the four subpages saved at `*-dark-1280-full.png`. All in `.browser-sessions/baselines/`.
 
 ---
 

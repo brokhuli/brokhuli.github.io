@@ -1,0 +1,274 @@
+---
+/*
+ * /system-fault — fake observability dashboard.
+ * Whimsy idea 4 — opens from the "Do Not Press" chip in the footer.
+ *
+ * Spec: references/specs/component-spec.md §5 Do Not Press
+ *       references/specs/whimsical-elements.md (idea 4)
+ *       references/specs/interaction-spec.md §10
+ */
+
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Card from "../components/primitives/Card.astro";
+import SectionHeading from "../components/primitives/SectionHeading.astro";
+import BarChart from "../components/primitives/BarChart.astro";
+
+const lineEntries = await getCollection("logLines");
+const faultLines = lineEntries
+  .flatMap((e) => e.data.lines)
+  .filter((l) => l.level === "WARN" || l.level === "ERR")
+  .slice(0, 12);
+
+// If there aren't enough WARN/ERR lines in the seed data, mix in some realistic
+// SYS lines so the panel never reads empty.
+const fillerLines =
+  faultLines.length < 6
+    ? lineEntries
+        .flatMap((e) => e.data.lines)
+        .filter((l) => l.level !== "WARN" && l.level !== "ERR")
+        .slice(0, 6 - faultLines.length)
+    : [];
+
+const allLines = [...faultLines, ...fillerLines];
+
+// Mock observability metrics — pure decoration.
+const cpuChart = [
+  { label: "n0", value: 42, tone: "low" as const },
+  { label: "n1", value: 71, tone: "med" as const },
+  { label: "n2", value: 88, tone: "high" as const },
+  { label: "n3", value: 24, tone: "low" as const },
+  { label: "n4", value: 63, tone: "med" as const },
+  { label: "n5", value: 37, tone: "low" as const },
+];
+
+const latencyChart = [
+  { label: "p50", value: 12, tone: "low" as const },
+  { label: "p75", value: 24, tone: "low" as const },
+  { label: "p90", value: 58, tone: "med" as const },
+  { label: "p95", value: 82, tone: "med" as const },
+  { label: "p99", value: 96, tone: "high" as const },
+];
+
+const errorChart = [
+  { label: "−5m", value: 3, tone: "low" as const },
+  { label: "−4m", value: 8, tone: "low" as const },
+  { label: "−3m", value: 22, tone: "med" as const },
+  { label: "−2m", value: 67, tone: "high" as const },
+  { label: "−1m", value: 91, tone: "high" as const },
+  { label: "now", value: 14, tone: "med" as const },
+];
+
+const queueChart = [
+  { label: "in", value: 84, tone: "med" as const },
+  { label: "rdy", value: 41, tone: "low" as const },
+  { label: "ack", value: 19, tone: "low" as const },
+  { label: "dlq", value: 6, tone: "high" as const },
+];
+
+const metrics = [
+  { label: "Uptime", value: "20+ years" },
+  { label: "Pods", value: "42 / 42" },
+  { label: "Drift", value: "0.0001 ns" },
+  { label: "Hamster RPM", value: "2,340" },
+  { label: "Coffee level", value: "stable" },
+  { label: "Vibes", value: "passing" },
+];
+---
+
+<BaseLayout
+  title="System Fault — Stephen Ullom"
+  description="Fault detected. The system will recover."
+  gauges={true}
+>
+  <a class="fault__return" href="/">← Return to safety</a>
+
+  <Card class="fault__banner" variant="accent">
+    <h1 class="fault__heading">
+      <span class="fault__tag">FAULT</span>
+      Fault detected! The system will recover. In the meantime, here's the observability
+      report:
+    </h1>
+  </Card>
+
+  <section class="fault__metrics">
+    <SectionHeading as="h2">Live metrics</SectionHeading>
+    <ul class="fault__metric-grid" role="list">
+      {
+        metrics.map((m) => (
+          <li class="fault__metric">
+            <span class="fault__metric-label">{m.label}</span>
+            <span class="fault__metric-value">{m.value}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <div class="fault__chart-grid">
+    <Card>
+      <SectionHeading slot="header" as="h2">CPU per node (%)</SectionHeading>
+      <BarChart data={cpuChart} axisLabel="cluster nodes n0–n5" />
+    </Card>
+    <Card>
+      <SectionHeading slot="header" as="h2">Request latency (ms)</SectionHeading
+      >
+      <BarChart data={latencyChart} axisLabel="percentiles" />
+    </Card>
+    <Card>
+      <SectionHeading slot="header" as="h2">Error rate (rps)</SectionHeading>
+      <BarChart data={errorChart} axisLabel="last 6 minutes" />
+    </Card>
+    <Card>
+      <SectionHeading slot="header" as="h2">Queue depth</SectionHeading>
+      <BarChart data={queueChart} axisLabel="ingress / ready / ack / DLQ" />
+    </Card>
+  </div>
+
+  <Card>
+    <SectionHeading slot="header" as="h2">Recent log lines</SectionHeading>
+    <ul class="fault__log" role="list" aria-label="Recent log lines">
+      {
+        allLines.map((l) => (
+          <li class="fault__log-line">
+            <span class="fault__log-level" data-level={l.level}>
+              [{l.level}]
+            </span>
+            <span class="fault__log-text">{l.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </Card>
+
+  <a class="fault__return fault__return--bottom" href="/">← Return to safety</a>
+</BaseLayout>
+
+<style>
+  .fault__return {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    margin-bottom: var(--space-4);
+  }
+  .fault__return:hover {
+    color: var(--color-accent);
+  }
+  .fault__return--bottom {
+    margin-top: var(--space-6);
+  }
+
+  .fault__banner {
+    border-color: var(--color-danger);
+    margin-bottom: var(--space-6);
+  }
+
+  .fault__heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+    line-height: var(--text-md-line);
+    color: var(--color-fg-default);
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .fault__tag {
+    display: inline-block;
+    background: var(--color-danger);
+    color: #ffffff;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wider);
+    flex-shrink: 0;
+  }
+
+  .fault__metrics {
+    margin-bottom: var(--space-6);
+  }
+
+  .fault__metric-grid {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-4) 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .fault__metric {
+    background: var(--color-surface-1);
+    border: var(--line-card);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .fault__metric-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-subtle);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .fault__metric-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+    color: var(--color-fg-default);
+  }
+
+  .fault__chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .fault__log {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    color: var(--color-fg-muted);
+  }
+
+  .fault__log-line {
+    display: flex;
+    gap: var(--space-2);
+    align-items: baseline;
+  }
+
+  .fault__log-level {
+    flex-shrink: 0;
+    font-weight: var(--font-weight-medium);
+  }
+  .fault__log-level[data-level="WARN"] {
+    color: var(--color-warning);
+  }
+  .fault__log-level[data-level="ERR"] {
+    color: var(--color-danger);
+  }
+  .fault__log-level[data-level="INFO"] {
+    color: var(--color-info);
+  }
+  .fault__log-level[data-level="SYS"] {
+    color: var(--color-success);
+  }
+  .fault__log-level[data-level="DBG"] {
+    color: var(--color-debug);
+  }
+</style>
