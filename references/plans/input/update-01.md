@@ -20,6 +20,8 @@
   
 - Some of the anchor links' text extend horizontally beyond sidebar edges.  Fix this.
 
+- Ensure that these changes also work for mobile style widths. Ensure that both the sidebar and themetoggle don't overlap when sidebar is shown on top.
+
 ## LogTicker Visuals
 
 - Put the logticker in a trapezoidal visual container with rounded corners so its easier to see the logticker text.
@@ -38,7 +40,16 @@
 - Add my headshot to the contact card. don't make it too big. src\assets\img\head-shot-03.png
 
 ## Projects Page
-- Change "Why It's Hard" to "System Complexity"
+- Change "Why It's Hard" to "Complexity"
+- Update the Sections.  Instead of Problem, Why It's Hard (Complexity), Case Study, and Outcome, Have the following sections:
+  - Problem
+  - Discovery
+  - Complexity
+  - Architectural Design
+  - Architectural Tradeoffs
+  - Outcome
+  - Roadmap
+  - Lessons Learned
 
 ## Resume Page
 - Need an EducationEntry for the resume page. Position below experience
