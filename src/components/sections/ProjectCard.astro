@@ -53,7 +53,10 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
   {
     media && (
       <div class="project-card__media-wrap">
-        <ProjectMedia media={media} class="project-card__media" />
+        <ProjectMedia
+          media={{ ...media, caption: undefined }}
+          class="project-card__media"
+        />
       </div>
     )
   }

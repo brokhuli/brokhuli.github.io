@@ -33,7 +33,7 @@ const versionLabel = `v${pkg.version}`;
         <li class="sidebar__item">
           <a
             class="sidebar__link"
-            href={`#${item.id}`}
+            href={item.id === "home" ? "/" : `/#${item.id}`}
             data-section={item.id}
             aria-current={idx === 0 ? "location" : undefined}
           >
@@ -191,16 +191,15 @@ const versionLabel = `v${pkg.version}`;
   }
 
   /*
-   * Mobile: keep the floating treatment, switch to a horizontal pill
-   * pinned top-left, bounded so it never overlaps the fixed top-right
-   * page-header (SystemStatus + ThemeToggle cluster).
+   * Mobile: full-width floating bar; the page-header now flows below it
+   * in document order rather than overlapping it.
    */
   @media (max-width: 768px) {
     .sidebar {
       position: fixed;
       top: var(--space-3);
       left: var(--space-3);
-      right: calc(var(--space-3) + var(--page-header-width, 96px));
+      right: var(--space-3);
       width: auto;
       flex-direction: row;
       align-items: center;

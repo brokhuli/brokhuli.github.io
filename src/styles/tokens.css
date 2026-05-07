@@ -121,10 +121,13 @@
   --bp-lg: 1024px;
   --bp-xl: 1280px;
 
-  /* Chart tokens — consumed by BarChart */
+  /* Chart tokens — consumed by BarChart, LineChart */
   --chart-bar-low: var(--color-info);
   --chart-bar-med: var(--color-warning);
   --chart-bar-high: var(--color-success);
+  --chart-line-low: var(--color-info);
+  --chart-line-med: var(--color-warning);
+  --chart-line-high: var(--color-success);
   --chart-axis: var(--color-fg-muted);
   --chart-grid-line: var(--color-border);
 
@@ -143,7 +146,7 @@
   --tick-length: 6px;
   --tick-color: var(--color-fg-subtle);
 
-  --log-ticker-opacity: 0.65;
+  --log-ticker-opacity: 0.85;
 }
 
 /* Dark Mode (default): true black + indigo accent */

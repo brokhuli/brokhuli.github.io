@@ -1,0 +1,147 @@
+---
+/*
+ * LineChart — pure inline SVG line chart used by /system-fault.
+ * Mirrors BarChart's prop shape for drop-in symmetry.
+ * Spec: references/specs/component-spec.md §4 (line variant)
+ */
+
+interface Datum {
+  label: string;
+  value: number;
+  tone?: "low" | "med" | "high";
+}
+
+interface Props {
+  data: Datum[];
+  axisLabel?: string;
+  caption?: string;
+  height?: number;
+  class?: string;
+}
+
+const {
+  data,
+  axisLabel,
+  caption,
+  height = 64,
+  class: className = "",
+} = Astro.props;
+
+const max = Math.max(1, ...data.map((d) => d.value));
+const stepX = data.length > 1 ? 100 / (data.length - 1) : 0;
+const padY = 4;
+
+const points = data.map((d, i) => {
+  const x = data.length > 1 ? i * stepX : 50;
+  const y = height - padY - (d.value / max) * (height - padY * 2);
+  return { x, y, tone: d.tone ?? "low" };
+});
+
+const polyline = points.map((p) => `${p.x},${p.y}`).join(" ");
+
+const lastTone = data[data.length - 1]?.tone ?? "low";
+---
+
+<figure
+  class:list={["chart", "chart--line", className]}
+  role="figure"
+  aria-label={axisLabel}
+>
+  <svg
+    class="chart__svg"
+    viewBox={`0 0 100 ${height}`}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <polyline
+      class:list={["chart__line", `chart__line--${lastTone}`]}
+      points={polyline}
+      fill="none"></polyline>
+    {
+      points.map((p) => (
+        <circle
+          class:list={["chart__point", `chart__point--${p.tone}`]}
+          cx={p.x}
+          cy={p.y}
+          r={1.5}
+        />
+      ))
+    }
+  </svg>
+  {axisLabel && <figcaption class="chart__axis">{axisLabel}</figcaption>}
+  {caption && <figcaption class="chart__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .chart {
+    margin: 0;
+  }
+  .chart__svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: var(--border-width-thin) solid var(--chart-axis);
+  }
+  .chart__line {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: chart-line-draw var(--motion-slow) var(--ease-out-quart) forwards;
+  }
+  .chart__line--low {
+    stroke: var(--chart-line-low);
+  }
+  .chart__line--med {
+    stroke: var(--chart-line-med);
+  }
+  .chart__line--high {
+    stroke: var(--chart-line-high);
+  }
+  .chart__point {
+    opacity: 0;
+    animation: chart-point-fade var(--motion-quick) var(--ease-out-quart)
+      forwards;
+    animation-delay: var(--motion-slow);
+  }
+  .chart__point--low {
+    fill: var(--chart-line-low);
+  }
+  .chart__point--med {
+    fill: var(--chart-line-med);
+  }
+  .chart__point--high {
+    fill: var(--chart-line-high);
+  }
+  .chart__axis,
+  .chart__caption {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-muted);
+  }
+  @keyframes chart-line-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes chart-point-fade {
+    to {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .chart__line {
+      stroke-dasharray: none;
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+    .chart__point {
+      opacity: 1;
+      animation: none;
+    }
+  }
+</style>

@@ -71,13 +71,10 @@ const projects = defineCollection({
         .optional(),
 
       problem: z.string().max(400),
-      discovery: z.string().max(400),
       complexity: z.string().max(400),
       architecturalDesign: z.string().max(800),
       architecturalTradeoffs: z.string().max(800),
       outcome: z.string().max(400),
-      roadmap: z.string().max(400),
-      lessonsLearned: z.string().max(400),
 
       repo: z
         .object({

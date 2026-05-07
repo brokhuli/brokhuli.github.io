@@ -15,10 +15,10 @@ const gauges = [
 ];
 ---
 
-<div class="sim-gauges" aria-hidden="true">
+<div class="sim-gauges" aria-hidden="true" data-sim-gauges>
   {
     gauges.map((g) => (
-      <div class="sim-gauges__row">
+      <div class="sim-gauges__row" data-gauge>
         <span class="sim-gauges__label">{g.label}</span>
         <span class="sim-gauges__bar">
           <span class="sim-gauges__fill" style={`--fill: ${g.value}%`} />
@@ -28,6 +28,23 @@ const gauges = [
     ))
   }
 </div>
+
+<script>
+  // Randomize gauge values on each load. SSR fallback (88/72/64/33) is
+  // visible without JS; this just makes the dashboard feel less static.
+  (function () {
+    const root = document.querySelector<HTMLElement>("[data-sim-gauges]");
+    if (!root) return;
+    const rows = root.querySelectorAll<HTMLElement>("[data-gauge]");
+    for (const row of rows) {
+      const v = Math.floor(2 + Math.random() * 98);
+      const fill = row.querySelector<HTMLElement>(".sim-gauges__fill");
+      const value = row.querySelector<HTMLElement>(".sim-gauges__value");
+      if (fill) fill.style.setProperty("--fill", v + "%");
+      if (value) value.textContent = String(v);
+    }
+  })();
+</script>
 
 <style>
   .sim-gauges {

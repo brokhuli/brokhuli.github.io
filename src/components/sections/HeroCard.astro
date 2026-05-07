@@ -20,6 +20,9 @@ const parts = accentPhrase ? headline.split(accentPhrase) : [headline];
 ---
 
 <section class="hero-card" aria-label="Positioning headline">
+  <div class="hero-card__arrow" aria-hidden="true">
+    <Icon name="lucide:arrow-up-right" size={96} />
+  </div>
   <div class="hero-card__content">
     <h1 class="hero-card__headline">
       {
@@ -36,21 +39,14 @@ const parts = accentPhrase ? headline.split(accentPhrase) : [headline];
     </h1>
     <p class="hero-card__subhead">{subhead}</p>
   </div>
-  <div class="hero-card__arrow" aria-hidden="true">
-    <Icon name="lucide:arrow-up-right" size={64} />
-  </div>
 </section>
 
 <style>
   .hero-card {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr;
     gap: var(--space-4);
-  }
-
-  .hero-card__content {
-    flex: 1;
+    align-items: start;
   }
 
   .hero-card__headline {
@@ -78,13 +74,12 @@ const parts = accentPhrase ? headline.split(accentPhrase) : [headline];
   .hero-card__arrow {
     color: var(--color-fg-subtle);
     flex-shrink: 0;
-    align-self: center;
   }
 
   @media (max-width: 900px) {
     .hero-card__arrow :global(svg) {
-      width: 40px;
-      height: 40px;
+      width: 64px;
+      height: 64px;
     }
   }
 
