@@ -5,9 +5,9 @@
 [input/update-02-00.md](input/update-02-00.md) introduces the v0.2 retro/blueprint visual direction. Two changes:
 
 1. **Graph-paper grid background** on the body — major + minor rules, themed for both Dark (cyan-grey lines on near-black) and Eric Mode (faint slate lines on cream paper). The reference mockups [pre-mockup-retro-dark.png](../mockups/pre-mockup-retro-dark.png) / [pre-mockup-retro-light.png](../mockups/pre-mockup-retro-light.png) show the intended pattern (without the folded-page-edge effect — explicitly out of scope per the input).
-2. **Hand-coded SVG line-art "sketch" illustrations** as placeholders, embedded inline like the existing [ArchitectureDiagram.astro](../../src/components/sections/ArchitectureDiagram.astro). The user is producing real artwork later — these are stopgaps to validate placement, sizing, and theme-token wiring. Three subjects per [mockup-retro-dark-02.png](../mockups/mockup-retro-dark-02.png): **robotic arm** (in AboutCard), **train** (in ExperienceCard), **medical device / syringe** (in the medical-injector-simulator project media slot).
+2. **Hand-coded SVG line-art "sketch" illustrations** as **plain `.svg` files** (not Astro components) under `src/assets/img/sketches/`, inlined into pages via Vite's `?raw` import so `stroke="currentColor"` propagates the active theme color. The user is producing real artwork later — placeholder SVGs are drop-in replaceable: just overwrite the file. Three subjects per [mockup-retro-dark-02.png](../mockups/mockup-retro-dark-02.png): **robotic arm** (in AboutCard), **train** (in ExperienceCard), **medical device / syringe** (in the medical-injector-simulator project media slot).
 
-The implementation stays inside ADR-004 layer rules. New components live under a new `src/components/decorative/` folder (orthogonal to chrome/whimsy/sections — they are zero-data, zero-domain, theme-aware art). They consume only the design-token CSS variable contract, no collections.
+The implementation stays inside ADR-004 layer rules. The SVG files are static assets (zero-data, zero-domain). Theming relies on `stroke="currentColor"` and the consuming component setting `color: var(--color-fg-subtle)`.
 
 > **Tracking convention:** Every `[ ]` in this plan is a live checkbox. As each item lands, flip it to `[x]` — both in the **Scope summary** table and in the matching **Detailed plan** section heading. Mirror the same flip on each box under **Verification** as that check passes. Both lists must agree at PR time.
 
@@ -28,9 +28,9 @@ The implementation stays inside ADR-004 layer rules. New components live under a
 | # | ✓ | Item | Files |
 |---|---|---|---|
 | 1 | [ ] | Replace body dot-grid with graph-paper line grid (minor + major) | [../../src/styles/global.css](../../src/styles/global.css), [../../src/styles/tokens.css](../../src/styles/tokens.css) |
-| 2 | [ ] | New `RoboticArmSketch.astro` SVG primitive | new `src/components/decorative/RoboticArmSketch.astro` |
-| 3 | [ ] | New `TrainSketch.astro` SVG primitive | new `src/components/decorative/TrainSketch.astro` |
-| 4 | [ ] | New `MedicalDeviceSketch.astro` SVG primitive | new `src/components/decorative/MedicalDeviceSketch.astro` |
+| 2 | [ ] | New `robotic-arm.svg` placeholder | new `src/assets/img/sketches/robotic-arm.svg` |
+| 3 | [ ] | New `train.svg` placeholder | new `src/assets/img/sketches/train.svg` |
+| 4 | [ ] | New `medical-device.svg` placeholder | new `src/assets/img/sketches/medical-device.svg` |
 | 5 | [ ] | Wire RoboticArmSketch into AboutCard (2-col layout) | [../../src/components/sections/AboutCard.astro](../../src/components/sections/AboutCard.astro) |
 | 6 | [ ] | Wire TrainSketch into ExperienceCard footer | [../../src/components/sections/ExperienceCard.astro](../../src/components/sections/ExperienceCard.astro) |
 | 7 | [ ] | Wire MedicalDeviceSketch into medical-injector-simulator project media | content collection schema + [../../src/components/primitives/ProjectMedia.astro](../../src/components/primitives/ProjectMedia.astro) + [../../src/content/projects/medical-injector-simulator.mdx](../../src/content/projects/medical-injector-simulator.mdx) |
@@ -104,68 +104,34 @@ body {
 
 `background-attachment: fixed` keeps the grid anchored to the viewport on scroll — matching the "graph paper underlay" feeling. If this hurts CLS or scroll perf in Lighthouse, drop the property and accept the scrolling grid.
 
-### 2. [ ] `RoboticArmSketch.astro`
+### 2. [ ] `robotic-arm.svg`
 
-New file: `src/components/decorative/RoboticArmSketch.astro`
+New file: `src/assets/img/sketches/robotic-arm.svg`
 
-Modeled on [ArchitectureDiagram.astro](../../src/components/sections/ArchitectureDiagram.astro) (file-level structure, scoped `<style>`, no client JS). Inline SVG ~3KB. Subject: a 4-DOF articulated industrial arm — base, shoulder, elbow, wrist, gripper — drawn as single-stroke line art at 1.5px stroke-width with `vector-effect: non-scaling-stroke` so it remains crisp at any size. Optional decorative dimension ticks/center-mark to read as "blueprint."
+Single-file plain SVG. Subject: a 4-DOF articulated industrial arm — base, shoulder, elbow, wrist, gripper — drawn as single-stroke line art with `stroke="currentColor"` and `fill="none"` at the root, so consumers' `color` cascades through. Aim ~3KB.
 
-Interface:
-```ts
-interface Props {
-  class?: string;
-  width?: number;     // default 320
-  height?: number;    // default 240
-  ariaLabel?: string; // default undefined; component is decorative by default
-}
-```
-
-Output:
-```astro
-<svg
-  class:list={["sketch sketch--robotic-arm", className]}
-  viewBox="0 0 320 240"
-  width={width}
-  height={height}
-  fill="none"
-  stroke="currentColor"
-  stroke-width="1.5"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  aria-hidden={ariaLabel ? undefined : "true"}
-  role={ariaLabel ? "img" : undefined}
-  aria-label={ariaLabel}
->
-  <!-- base, column, segments, gripper paths -->
+Root attributes (consistent across all three sketches for swappability):
+```svg
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 320 240"
+     fill="none"
+     stroke="currentColor"
+     stroke-width="1.5"
+     stroke-linecap="round"
+     stroke-linejoin="round">
+  <!-- paths -->
 </svg>
 ```
 
-Scoped style:
-```css
-.sketch {
-  display: block;
-  color: var(--color-fg-subtle);
-  /* lets the consumer override color if needed: */
-  --sketch-stroke: currentColor;
-}
-.sketch path,
-.sketch line,
-.sketch circle,
-.sketch rect,
-.sketch polyline {
-  vector-effect: non-scaling-stroke;
-}
-```
+No `width` / `height` attributes on the root — the consuming component caps size via CSS so the SVG stays fluid (`width: 100%; height: auto;`).
 
-Reference: read [ArchitectureDiagram.astro:162-251](../../src/components/sections/ArchitectureDiagram.astro#L162-L251) for the exact CSS-variable theming idiom — replicate it.
+### 3. [ ] `train.svg`
 
-### 3. [ ] `TrainSketch.astro`
+Same conventions as item 2. Subject: a stylized high-speed train profile (single-cab silhouette with windows + bogies) drawn as one continuous outline plus a few interior detail lines. Wider than tall — `viewBox="0 0 480 160"`. Aim ~2.5KB.
 
-Same pattern as item 2. Subject: a stylized high-speed train (single-cab profile silhouette with windows + bogies) drawn as one continuous outline plus a few interior detail lines. Wider than tall — `viewBox="0 0 480 160"` default. Aim ~2.5KB.
+### 4. [ ] `medical-device.svg`
 
-### 4. [ ] `MedicalDeviceSketch.astro`
-
-Same pattern as item 2. Subject: an auto-injector / syringe-style device — barrel, plunger, finger flange, needle guard. Rectangular, slightly tilted; `viewBox="0 0 320 200"` default. Aim ~3KB. (Replaces the current `medical-injector-injection.gif` in the project's media slot.)
+Same conventions as item 2. Subject: an auto-injector / syringe-style device — barrel, plunger, finger flange, needle guard. `viewBox="0 0 320 200"`. Aim ~3KB. Replaces the current `medical-injector-injection.gif` in the project's media slot.
 
 ### 5. [ ] AboutCard layout — robotic arm on the right
 
@@ -186,19 +152,33 @@ to:
 
 Concretely:
 - Wrap the existing `.about__body` and `.about__ctas` in a new `.about__main` div.
-- Add a sibling `.about__illustration` rendering `<RoboticArmSketch />` with `aria-hidden="true"`.
+- Add a sibling `.about__illustration` div. Inline the SVG via `?raw` import:
+  ```astro
+  ---
+  import roboticArm from "../../assets/img/sketches/robotic-arm.svg?raw";
+  ---
+  <div class="about__illustration" aria-hidden="true" set:html={roboticArm} />
+  ```
 - Make `.about__grid` a 2-column grid: `grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-6); align-items: start;`. At `@media (max-width: 900px)`, switch to single-column and place the illustration *after* the main content (or hide it — see Verification §2 to decide based on visual judgment).
-- Cap the sketch at, say, `width: 240px; max-width: 100%;` in the desktop branch so it doesn't dominate the card.
+- `.about__illustration` styles: `color: var(--color-fg-subtle);` (cascades into the inline SVG via `stroke="currentColor"`); cap visual size at `width: 240px; max-width: 100%;`. Make sure inner `<svg>` gets `display: block; width: 100%; height: auto;` (existing `global.css` `svg { display: block; max-width: 100%; }` covers most of this).
 
 ### 6. [ ] ExperienceCard — train footer
 
 File: [../../src/components/sections/ExperienceCard.astro](../../src/components/sections/ExperienceCard.astro)
 
-Append a `<div class="exp-card__sketch" aria-hidden="true">` after the existing entries-list / footer-button block, holding `<TrainSketch />`. Style the wrapper:
+Inline the SVG via `?raw` import after the existing entries-list / footer-button block:
+```astro
+---
+import train from "../../assets/img/sketches/train.svg?raw";
+---
+<div class="exp-card__sketch" aria-hidden="true" set:html={train} />
+```
+
+Style the wrapper:
 - `margin-top: var(--space-6);`
 - `display: flex; justify-content: flex-end;` (train rolls in from the right — feels like the entries lead toward "now")
-- `opacity: 0.65;` to keep it ambient
-- Cap with `max-width: min(100%, 480px);` on the SVG itself.
+- `color: var(--color-fg-subtle); opacity: 0.65;` to keep it ambient
+- Inner `> svg { width: 100%; max-width: 480px; height: auto; }`.
 
 At `@media (max-width: 640px)`, hide the sketch (`display: none`) — too cramped to read on phone widths.
 
@@ -213,16 +193,23 @@ Files: [../../src/content/config.ts](../../src/content/config.ts), [../../src/co
 
 **ProjectMedia.astro update:**
 - Read `media.kind`. Default branch (`raster`) keeps today's behavior — Vite-glob asset lookup, `<Image>` render, GIF/poster swap.
-- New branch when `kind === "sketch"`: render the matching component via a small lookup map:
+- New branch when `kind === "sketch"`: resolve the SVG from a Vite glob with `?raw` so the SVG markup is inlined (preserving `currentColor` theming):
   ```astro
   ---
-  import MedicalDeviceSketch from "../decorative/MedicalDeviceSketch.astro";
-  const sketches = { "medical-device": MedicalDeviceSketch };
-  const Sketch = media.sketchId ? sketches[media.sketchId] : null;
+  const sketchModules = import.meta.glob<string>(
+    "../../assets/img/sketches/*.svg",
+    { query: "?raw", import: "default", eager: true }
+  );
+  // sketchId like "medical-device" maps to "../../assets/img/sketches/medical-device.svg"
+  const sketchKey = `../../assets/img/sketches/${media.sketchId}.svg`;
+  const sketchSvg = sketchModules[sketchKey];
   ---
-  {Sketch && <Sketch class="project-card__media-sketch" />}
+  {sketchSvg && (
+    <div class="project-card__media-sketch" aria-hidden="true" set:html={sketchSvg} />
+  )}
   ```
 - Keep the existing `<figcaption>` rendering; sketch branch reuses it if the project sets a caption, but the v0.1.1 ProjectCard call site already passes `caption: undefined` so this is a non-issue on the landing-page list.
+- Style `.project-card__media-sketch`: `color: var(--color-fg-subtle); display: block;` and inner `> svg { width: 100%; height: auto; }` to fill the existing media slot.
 
 **Project frontmatter update** (`medical-injector-simulator.mdx`):
 - Replace the current `media: { src: "../../assets/img/medical-injector-injection.gif", ... }` with `media: { kind: "sketch", sketchId: "medical-device", alt: "Sketch of a medical injector device" }`.
@@ -236,9 +223,9 @@ The other project (`gpu-heat-diffusion`) is untouched; it keeps `kind: "raster"`
 
 - [../../src/styles/tokens.css](../../src/styles/tokens.css) — grid-line color tokens (Dark + Light blocks)
 - [../../src/styles/global.css](../../src/styles/global.css) — body background rule replacement
-- New: `src/components/decorative/RoboticArmSketch.astro`
-- New: `src/components/decorative/TrainSketch.astro`
-- New: `src/components/decorative/MedicalDeviceSketch.astro`
+- New: `src/assets/img/sketches/robotic-arm.svg`
+- New: `src/assets/img/sketches/train.svg`
+- New: `src/assets/img/sketches/medical-device.svg`
 - [../../src/components/sections/AboutCard.astro](../../src/components/sections/AboutCard.astro)
 - [../../src/components/sections/ExperienceCard.astro](../../src/components/sections/ExperienceCard.astro)
 - [../../src/components/primitives/ProjectMedia.astro](../../src/components/primitives/ProjectMedia.astro)
@@ -247,8 +234,8 @@ The other project (`gpu-heat-diffusion`) is untouched; it keeps `kind: "raster"`
 
 ## Reused primitives & patterns
 
-- **ArchitectureDiagram.astro** ([../../src/components/sections/ArchitectureDiagram.astro](../../src/components/sections/ArchitectureDiagram.astro)) — exact precedent for inline SVG with theme-aware CSS variables. The new `decorative/*Sketch.astro` files copy its structural conventions verbatim.
-- **`currentColor` + `var(--color-fg-subtle)`** — existing theming idiom; sketches inherit theme tone without conditional CSS.
+- **`currentColor` + `var(--color-fg-subtle)`** — existing theming idiom; consumers of the inlined SVG set `color`, the SVG's `stroke="currentColor"` resolves to the active theme color. No per-theme CSS branches needed.
+- **Vite `?raw` imports** — Vite's built-in feature; no plugin or config change. Used so the SVG markup lands inline in HTML (vs. an external `<img>`, which can't inherit `currentColor`).
 - **Existing `--color-grid` token** — repurposed (value tweaked) rather than duplicated.
 - **ProjectMedia caption + sizing** — kept; only the source-resolution branch is new.
 
