@@ -3,112 +3,116 @@
  * ContactCard — email (obfuscated), LinkedIn, GitHub.
  *
  * Email obfuscation contract (component-spec.md §2):
- *   - Static HTML must never contain the full address or "mailto:sfullom".
- *   - data-l / data-d split at "@"; assembled by the inline <script>.
- *   - Click also writes to clipboard; icon + text swap to Copied! for 1.5 s.
- *   - JS-disabled: shows "Email" with href="#" (intentional no-op).
+ *   Static HTML must never contain the full address or "mailto:sfullom".
+ *   data-l / data-d split at "@"; assembled by the shared init script.
+ *   Click also writes to clipboard; the icon row briefly shows "Copied!".
  */
 
+import { Image } from "astro:assets";
 import Card from "../primitives/Card.astro";
 import SectionHeading from "../primitives/SectionHeading.astro";
 import Icon from "../primitives/Icon.astro";
+import headshot from "../../assets/img/head-shot-03.png";
 ---
 
 <Card id="contact">
   <SectionHeading slot="header" as="h2">Contact</SectionHeading>
 
-  <p class="contact__availability">
-    Open to Principal / Staff / Architect roles in simulation, digital
-    engineering, transportation, energy, robotics, industrial automation, or
-    medtech.
-  </p>
+  <div class="contact__lockup">
+    <Image
+      src={headshot}
+      alt="Stephen Ullom"
+      width={96}
+      height={96}
+      class="contact__headshot"
+      loading="lazy"
+    />
 
-  <ul class="contact__list" role="list">
-    <li class="contact__row">
-      <a
-        class="contact-email"
-        href="#"
-        data-l="sfullom"
-        data-d="gmail.com"
-        aria-label="Send email"
-      >
-        <span class="contact__icon" data-email-icon>
-          <Icon name="lucide:mail" size={18} />
-        </span>
-        <span class="contact__label">Email</span>
-        <span class="contact__value contact-email__text" data-fallback="Email"
-          >Email</span
-        >
-      </a>
-    </li>
-    <li class="contact__row">
-      <a
-        class="contact__link"
-        href="https://linkedin.com/in/stephen-ullom-7014a455"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span class="contact__icon"
-          ><Icon name="lucide:linkedin" size={18} /></span
-        >
-        <span class="contact__label">LinkedIn</span>
-        <span class="contact__value">/in/stephen-ullom-7014a455</span>
-      </a>
-    </li>
-    <li class="contact__row">
-      <a
-        class="contact__link"
-        href="https://github.com/brokhuli"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span class="contact__icon"
-          ><Icon name="lucide:github" size={18} /></span
-        >
-        <span class="contact__label">GitHub</span>
-        <span class="contact__value">/brokhuli</span>
-      </a>
-    </li>
-  </ul>
+    <div class="contact__body">
+      <p class="contact__availability">
+        Open to Principal / Staff / Architect roles in simulation, digital
+        engineering, transportation, energy, robotics, industrial automation, or
+        medtech.
+      </p>
+
+      <ul class="contact__list" role="list">
+        <li class="contact__row">
+          <a
+            class="contact__link"
+            href="#"
+            data-email-obfuscate
+            data-l="sfullom"
+            data-d="gmail.com"
+            aria-label="Send email"
+          >
+            <span class="contact__icon">
+              <Icon name="lucide:mail" size={18} />
+            </span>
+            <span class="contact__label">Email</span>
+            <span class="contact__value" data-email-text>Email</span>
+          </a>
+        </li>
+        <li class="contact__row">
+          <a
+            class="contact__link"
+            href="https://linkedin.com/in/stephen-ullom-7014a455"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="contact__icon">
+              <Icon name="lucide:linkedin" size={18} />
+            </span>
+            <span class="contact__label">LinkedIn</span>
+            <span class="contact__value"
+              >linkedin.com/in/stephen-ullom-7014a455</span
+            >
+          </a>
+        </li>
+        <li class="contact__row">
+          <a
+            class="contact__link"
+            href="https://github.com/brokhuli"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="contact__icon">
+              <Icon name="lucide:github" size={18} />
+            </span>
+            <span class="contact__label">GitHub</span>
+            <span class="contact__value">github.com/brokhuli</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </Card>
 
 <script>
-  // Email obfuscation + clipboard copy. Spec: component-spec.md §2.
-  // Runs at DOMContentLoaded (Astro bundles <script> as type=module).
-  (function () {
-    const links =
-      document.querySelectorAll<HTMLAnchorElement>(".contact-email");
-    if (links.length === 0) return;
-
-    for (const link of links) {
-      const local = link.dataset.l;
-      const domain = link.dataset.d;
-      if (!local || !domain) continue;
-      const address = `${local}@${domain}`;
-
-      const textEl = link.querySelector<HTMLElement>(".contact-email__text");
-
-      if (textEl) textEl.textContent = address;
-      link.href = `mailto:${address}`;
-      link.removeAttribute("aria-label");
-
-      link.addEventListener("click", (e) => {
-        if (!navigator.clipboard) return;
-        e.preventDefault();
-        navigator.clipboard.writeText(address).then(() => {
-          if (textEl) textEl.textContent = "Copied!";
-          link.href = "#";
-          setTimeout(() => {
-            if (textEl) textEl.textContent = address;
-            link.href = `mailto:${address}`;
-          }, 1500);
-        });
-      });
-    }
-  })();
+  import { initEmailObfuscation } from "../../scripts/email-obfuscate";
+  initEmailObfuscation();
 </script>
 
 <style>
+  .contact__lockup {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+
+  .contact__headshot {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-pill);
+    flex-shrink: 0;
+    object-fit: cover;
+    border: var(--line-divider);
+  }
+
+  .contact__body {
+    flex: 1;
+    min-width: 0;
+  }
+
   .contact__availability {
     font-size: var(--text-sm);
     line-height: var(--text-sm-line);
@@ -130,7 +134,6 @@ import Icon from "../primitives/Icon.astro";
     display: flex;
   }
 
-  .contact-email,
   .contact__link {
     display: flex;
     align-items: center;
@@ -144,7 +147,6 @@ import Icon from "../primitives/Icon.astro";
     width: 100%;
   }
 
-  .contact-email:hover,
   .contact__link:hover {
     color: var(--color-accent);
   }
@@ -167,5 +169,20 @@ import Icon from "../primitives/Icon.astro";
   .contact__value {
     font-size: var(--text-sm);
     color: var(--color-fg-default);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  @media (max-width: 520px) {
+    .contact__lockup {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .contact__availability {
+      text-align: left;
+    }
   }
 </style>

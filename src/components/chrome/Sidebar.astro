@@ -1,6 +1,6 @@
 ---
 /*
- * Sidebar — persistent left-rail navigation.
+ * Sidebar — persistent left-rail navigation, floating chrome.
  *
  * Specs:
  *   references/specs/component-spec.md §1 Sidebar
@@ -105,17 +105,19 @@ const versionLabel = `v${pkg.version}`;
 <style>
   .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    top: var(--space-4);
+    left: var(--space-4);
     width: var(--layout-sidebar-width);
     z-index: var(--z-sidebar);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: var(--space-6) 0 var(--space-4);
+    align-items: stretch;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-2);
     background: var(--color-surface-1);
-    border-right: var(--line-divider);
+    border: var(--line-divider);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
   }
 
   .sidebar__list {
@@ -124,8 +126,7 @@ const versionLabel = `v${pkg.version}`;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    flex: 1;
+    gap: var(--space-1);
   }
 
   .sidebar__item {
@@ -156,7 +157,7 @@ const versionLabel = `v${pkg.version}`;
   .sidebar__link[aria-current="location"]::before {
     content: "";
     position: absolute;
-    left: 0;
+    left: -2px;
     top: 8px;
     bottom: 8px;
     width: 2px;
@@ -173,6 +174,8 @@ const versionLabel = `v${pkg.version}`;
     font-size: var(--text-xs);
     line-height: var(--text-xs-line);
     letter-spacing: var(--tracking-wide);
+    text-align: center;
+    white-space: nowrap;
   }
 
   .sidebar__chip {
@@ -184,31 +187,40 @@ const versionLabel = `v${pkg.version}`;
     border: var(--line-divider);
     border-radius: var(--radius-sm);
     margin-top: var(--space-2);
+    text-align: center;
   }
 
-  /* Mobile: collapse to a top bar with horizontal links. */
+  /*
+   * Mobile: keep the floating treatment, switch to a horizontal pill
+   * pinned top-left, bounded so it never overlaps the fixed top-right
+   * page-header (SystemStatus + ThemeToggle cluster).
+   */
   @media (max-width: 768px) {
     .sidebar {
-      position: sticky;
-      top: 0;
-      width: 100%;
-      height: auto;
+      position: fixed;
+      top: var(--space-3);
+      left: var(--space-3);
+      right: calc(var(--space-3) + var(--page-header-width, 96px));
+      width: auto;
       flex-direction: row;
-      padding: var(--space-2) var(--layout-gutter-mobile);
-      border-right: none;
-      border-bottom: var(--line-divider);
-      gap: var(--space-3);
-      overflow-x: auto;
+      align-items: center;
+      padding: var(--space-2) var(--space-3);
+      gap: var(--space-2);
     }
     .sidebar__list {
       flex-direction: row;
-      flex: 0 1 auto;
+      flex: 1 1 auto;
       gap: var(--space-1);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .sidebar__list::-webkit-scrollbar {
+      display: none;
     }
     .sidebar__link {
       flex-direction: row;
       gap: var(--space-2);
-      padding: var(--space-2) var(--space-3);
+      padding: var(--space-1) var(--space-2);
     }
     .sidebar__link[aria-current="location"]::before {
       left: 4px;
@@ -220,7 +232,7 @@ const versionLabel = `v${pkg.version}`;
     }
     .sidebar__chip {
       margin-top: 0;
-      margin-left: auto;
+      flex-shrink: 0;
     }
   }
 </style>

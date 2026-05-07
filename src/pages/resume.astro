@@ -15,9 +15,14 @@ import Card from "../components/primitives/Card.astro";
 import Button from "../components/primitives/Button.astro";
 import SectionHeading from "../components/primitives/SectionHeading.astro";
 import ExperienceEntry from "../components/sections/ExperienceEntry.astro";
+import EducationEntry from "../components/sections/EducationEntry.astro";
 import Icon from "../components/primitives/Icon.astro";
 
 const experience = (await getCollection("experience")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const education = (await getCollection("education")).sort(
   (a, b) => a.data.order - b.data.order,
 );
 
@@ -80,6 +85,21 @@ const hasResumePdf = existsSync(publicDir);
         {experience.map((e) => <ExperienceEntry entry={e} />)}
       </div>
     </Card>
+
+    {
+      education.length > 0 && (
+        <Card>
+          <SectionHeading slot="header" as="h2">
+            Education
+          </SectionHeading>
+          <div class="resume__entries">
+            {education.map((e) => (
+              <EducationEntry entry={e} />
+            ))}
+          </div>
+        </Card>
+      )
+    }
 
     <Card>
       <SectionHeading slot="header" as="h2">Contact</SectionHeading>

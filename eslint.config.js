@@ -61,4 +61,19 @@ export default [
       },
     },
   },
+  {
+    // Browser-targeted scripts that ship via Astro <script> bundling.
+    files: ["src/scripts/**/*.{ts,tsx}"],
+    languageOptions: {
+      globals: {
+        document: "readonly",
+        window: "readonly",
+        navigator: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        HTMLAnchorElement: "readonly",
+        HTMLElement: "readonly",
+      },
+    },
+  },
 ];

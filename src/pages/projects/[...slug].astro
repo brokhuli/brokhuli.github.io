@@ -8,7 +8,7 @@
  * Metrics / Code-entry-points sections beneath it.
  */
 
-import { getCollection, render, type CollectionEntry } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Card from "../../components/primitives/Card.astro";
 import SectionHeading from "../../components/primitives/SectionHeading.astro";
@@ -30,7 +30,6 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
 const {
   title,
   tagline,
@@ -39,8 +38,13 @@ const {
   media,
   cover,
   problem,
-  whyHard,
+  discovery,
+  complexity,
+  architecturalDesign,
+  architecturalTradeoffs,
   outcome,
+  roadmap,
+  lessonsLearned,
   repo,
   metrics,
   publishedAt,
@@ -106,20 +110,38 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
     </Card>
 
     <section class="case-study__section">
-      <SectionHeading as="h2">Why it's hard</SectionHeading>
-      <p>{whyHard}</p>
+      <SectionHeading as="h2">Discovery</SectionHeading>
+      <p>{discovery}</p>
     </section>
 
-    <section class="case-study__body">
-      <SectionHeading as="h2">Case study</SectionHeading>
-      <div class="prose">
-        <Content />
-      </div>
+    <section class="case-study__section">
+      <SectionHeading as="h2">Complexity</SectionHeading>
+      <p>{complexity}</p>
+    </section>
+
+    <section class="case-study__section">
+      <SectionHeading as="h2">Architectural Design</SectionHeading>
+      <p>{architecturalDesign}</p>
+    </section>
+
+    <section class="case-study__section">
+      <SectionHeading as="h2">Architectural Tradeoffs</SectionHeading>
+      <p>{architecturalTradeoffs}</p>
     </section>
 
     <section class="case-study__section">
       <SectionHeading as="h2">Outcome</SectionHeading>
       <p>{outcome}</p>
+    </section>
+
+    <section class="case-study__section">
+      <SectionHeading as="h2">Roadmap</SectionHeading>
+      <p>{roadmap}</p>
+    </section>
+
+    <section class="case-study__section">
+      <SectionHeading as="h2">Lessons Learned</SectionHeading>
+      <p>{lessonsLearned}</p>
     </section>
 
     {

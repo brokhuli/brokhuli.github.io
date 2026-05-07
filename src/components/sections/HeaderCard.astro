@@ -13,17 +13,43 @@ import Icon from "../primitives/Icon.astro";
   </div>
   <div class="header-card__meta">
     <span class="header-card__role">Software Architect</span>
-    <a
-      class="header-card__linkedin"
-      href="https://linkedin.com/in/stephen-ullom-7014a455"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="LinkedIn profile"
-    >
-      <Icon name="lucide:linkedin" size={18} />
-    </a>
+    <div class="header-card__links">
+      <a
+        class="header-card__link"
+        href="#"
+        data-email-obfuscate
+        data-l="sfullom"
+        data-d="gmail.com"
+        aria-label="Send email"
+      >
+        <Icon name="lucide:mail" size={18} />
+      </a>
+      <a
+        class="header-card__link"
+        href="https://linkedin.com/in/stephen-ullom-7014a455"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="LinkedIn profile"
+      >
+        <Icon name="lucide:linkedin" size={18} />
+      </a>
+      <a
+        class="header-card__link"
+        href="https://github.com/brokhuli"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub profile"
+      >
+        <Icon name="lucide:github" size={18} />
+      </a>
+    </div>
   </div>
 </header>
+
+<script>
+  import { initEmailObfuscation } from "../../scripts/email-obfuscate";
+  initEmailObfuscation();
+</script>
 
 <style>
   .header-card {
@@ -58,12 +84,18 @@ import Icon from "../primitives/Icon.astro";
     letter-spacing: var(--tracking-wide);
   }
 
-  .header-card__linkedin {
+  .header-card__links {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .header-card__link {
     display: inline-flex;
     color: var(--color-fg-subtle);
     transition: color var(--motion-quick) var(--ease-out-quart);
   }
-  .header-card__linkedin:hover {
+  .header-card__link:hover {
     color: var(--color-accent);
   }
 </style>

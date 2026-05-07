@@ -8,18 +8,18 @@ Two items add real surface area: the resume needs a new `education` content coll
 
 ## Scope summary
 
-| # | Item | Files |
-|---|---|---|
-| 1 | Header icons (Email, LinkedIn, GitHub) | `src/components/sections/HeaderCard.astro` |
-| 2 | SkillsCard alongside HeroCard | `src/pages/index.astro` |
-| 3 | Bigger HeroCard arrow | `src/components/sections/HeroCard.astro` |
-| 4 | Floating, content-sized sidebar; fix label overflow; mobile non-overlap with ThemeToggle | `src/components/chrome/Sidebar.astro`, `src/layouts/BaseLayout.astro` |
-| 5 | LogTicker: 3-line stack in trapezoidal container | `src/components/whimsy/LogTicker.astro` |
-| 6 | ProjectCard image at bottom | `src/components/sections/ProjectCard.astro` |
-| 7 | ContactCard: drop email text, expand handles, add headshot | `src/components/sections/ContactCard.astro` |
-| 8 | Project case-study restructure: 4 sections → 8 sections | `src/content/config.ts`, `src/pages/projects/[...slug].astro`, both project mdx files |
-| 9 | Education collection + EducationEntry on `/resume` | new collection + new component + `src/pages/resume.astro` |
-| 10 | Randomized `/system-fault` + JSON download | `src/pages/system-fault.astro` |
+| # | ✓ | Item | Files |
+|---|---|---|---|
+| 1 | [x] | Header icons (Email, LinkedIn, GitHub) | `src/components/sections/HeaderCard.astro` |
+| 2 | [x] | SkillsCard alongside HeroCard | `src/pages/index.astro` |
+| 3 | [x] | Bigger HeroCard arrow | `src/components/sections/HeroCard.astro` |
+| 4 | [x] | Floating, content-sized sidebar; fix label overflow; mobile non-overlap with ThemeToggle | `src/components/chrome/Sidebar.astro`, `src/layouts/BaseLayout.astro` |
+| 5 | [x] | LogTicker: 3-line stack in trapezoidal container | `src/components/whimsy/LogTicker.astro` |
+| 6 | [x] | ProjectCard image at bottom | `src/components/sections/ProjectCard.astro` |
+| 7 | [x] | ContactCard: drop email text, expand handles, add headshot | `src/components/sections/ContactCard.astro` |
+| 8 | [x] | Project case-study restructure: 4 sections → 8 sections | `src/content/config.ts`, `src/pages/projects/[...slug].astro`, both project mdx files |
+| 9 | [x] | Education collection + EducationEntry on `/resume` | new collection + new component + `src/pages/resume.astro` |
+| 10 | [x] | Randomized `/system-fault` + JSON download | `src/pages/system-fault.astro` |
 
 ---
 
@@ -250,20 +250,24 @@ Stay inside the existing JS budget (≤50KB gz/page). The inline script is tiny 
 
 ## Verification
 
-1. **Dev server** — `npm run dev`, walk through:
-   - Landing page renders HeroCard + SkillsCard side-by-side; AboutCard + DomainsCard below; HeaderCard shows three icon links.
-   - Sidebar floats with rounded corners and shadow; height fits items; labels don't clip. On a 375px viewport, sidebar and the top-right ThemeToggle/SystemStatus cluster have visible separation.
-   - LogTicker shows three lines at once in a trapezoidal frame; cycling rotates the queue (oldest off the top, newest at the bottom).
-   - Click a project card: detail page shows all 8 sections in order (Problem → Discovery → Complexity → Architectural Design → Architectural Tradeoffs → Outcome → Roadmap → Lessons Learned).
-   - `/resume`: Education card appears below Experience with the placeholder entry rendered.
-   - `/system-fault`: refresh several times — metrics, charts, and logs differ each load. Click "Download fault report" — receives a `.json` file matching what's on screen.
-2. **Unit tests** — `npm run test` (no new tests required by the brief, but ensure existing snapshot/parsing tests still pass; LogTicker's queue logic warrants one new vitest if there's existing coverage there).
-3. **Content / type checks** — `npm run check` (validates new `education` schema and updated `projects` schema), `npm run validate:content` (ensures cross-collection invariants survive).
-4. **Build & guard** — `npm run build` succeeds, `dist/` does not contain references to `/references/` (CI guard).
-5. **Lighthouse** — `npm run preview` then run Lighthouse against `/`, `/projects/<one>`, `/resume`, `/system-fault`. Confirm ≥0.95 on Performance/Accessibility/Best Practices/SEO. Headshot must be sized + lazy-loaded.
-6. **Reduced-motion** — toggle OS setting; verify LogTicker stops cycling and project card entry-animations don't fire.
-7. **Themes** — toggle Eric Mode; floating sidebar shadow + LogTicker frame still legible.
-8. **Playwright smoke** — `npm run test:e2e` (Phase 7 smoke tests should still pass; if any depend on the moved/renamed elements, update selectors).
+1. [x] **Dev server** — `npm run preview` walkthrough via Playwright MCP:
+   - [x] Landing page renders HeroCard + SkillsCard side-by-side; AboutCard + DomainsCard below; HeaderCard shows three icon links.
+   - [x] Sidebar floats with rounded corners and shadow; height fits items; labels don't clip.
+   - [ ] 375px viewport visible-separation check — not run (desktop-only walk-through).
+   - [x] LogTicker shows three lines at once in a trapezoidal frame; cycling rotates content.
+   - [x] Project detail page shows all 8 sections in order (Problem → Discovery → Complexity → Architectural Design → Architectural Tradeoffs → Outcome → Roadmap → Lessons Learned).
+   - [x] `/resume`: Education card appears between Experience and Contact with the placeholder entry rendered.
+   - [x] `/system-fault`: metrics differ across reloads; Download button produces a JSON Blob (verified via stub).
+2. [x] **Unit tests** — `npm run test` (10/10 passed).
+3. [x] **Content / type checks** — `npm run check` (0/0/0), `npm run validate:content` (OK).
+4. [x] **Build & guard** — `npm run build` succeeds; `dist/` contains no `references/` paths.
+5. [~] **Lighthouse** — Ran via `lhci autorun`. Results vs main baseline:
+   - `/` perf 1.0 → **0.85** (regression). Driver is CLS 0.029 → **0.289** under simulated throttling. Real-browser CLS measured via PerformanceObserver was 0.048 — the Lighthouse delta is dominated by a single ~0.047 shift around 502 ms covering `landing__top-grid` + `card__body` + `page-header` + `header-card__meta`, consistent with font-swap reflow amplified by simulated CPU throttling. A11y regression (link-name on the icon-only HeaderCard email link) was fixed in `src/scripts/email-obfuscate.ts` and a11y returned to 0.97 (matching baseline).
+   - `/projects/medical-injector-simulator/` perf 0.84 — pre-existing baseline (unchanged).
+   - `/system-fault/` SEO 0.66 — pre-existing baseline; intentional `Disallow: /system-fault` in `public/robots.txt`. Recommend excluding this URL from the LH SEO assertion.
+6. [x] **Reduced-motion** — emulated via Playwright `reducedMotion: "reduce"`. LogTicker rendered 3 static lines at opacity 0.7 with no rotation over 3 s. Project cards rendered at opacity 1 (no entry animation).
+7. [x] **Themes** — Eric Mode (light) and Dark Mode both render correctly. Floating sidebar shadow + trapezoidal LogTicker frame legible in both palettes.
+8. [x] **Playwright smoke** — 5/5 passed on Chromium; 10/10 passed on Firefox + WebKit when run in a clean shell (initial cross-browser run flaked on a stale preview-server process, not a real regression).
 
 ## Out of scope
 

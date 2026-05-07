@@ -71,8 +71,13 @@ const projects = defineCollection({
         .optional(),
 
       problem: z.string().max(400),
-      whyHard: z.string().max(400),
+      discovery: z.string().max(400),
+      complexity: z.string().max(400),
+      architecturalDesign: z.string().max(800),
+      architecturalTradeoffs: z.string().max(800),
       outcome: z.string().max(400),
+      roadmap: z.string().max(400),
+      lessonsLearned: z.string().max(400),
 
       repo: z
         .object({
@@ -119,6 +124,21 @@ const experience = defineCollection({
     impacts: z.array(z.string().max(240)).min(1).max(8),
     highlights: z.array(z.string().max(40)).max(6).optional(),
     companyIcon: iconName.optional(),
+    summary: z.string().max(280).optional(),
+  }),
+});
+
+const education = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/education" }),
+  schema: z.object({
+    institution: z.string().max(80),
+    degree: z.string().max(80),
+    field: z.string().max(80).optional(),
+    location: z.string().max(60),
+    years: yearRange,
+    order: z.number().int().nonnegative(),
+    highlights: z.array(z.string().max(40)).max(6).optional(),
+    institutionIcon: iconName.optional(),
     summary: z.string().max(280).optional(),
   }),
 });
@@ -171,6 +191,7 @@ export const collections = {
   domains,
   projects,
   experience,
+  education,
   techStack,
   principles,
   logLines,

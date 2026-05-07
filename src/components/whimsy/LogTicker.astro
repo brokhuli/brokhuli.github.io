@@ -1,6 +1,7 @@
 ---
 /*
- * LogTicker — quiet cycling log line at the bottom of the viewport.
+ * LogTicker — quiet 3-line stack at the bottom of the viewport, framed in
+ * a subtle trapezoid.
  *
  * Specs:
  *   references/specs/component-spec.md §5 LogTicker
@@ -19,16 +20,30 @@ const lines = entries
   .flatMap((e) => e.data.lines)
   .filter((l) => l.level === "INFO" || l.level === "SYS" || l.level === "DBG");
 
+// Pre-render 3 static lines so SSR + <noscript> visitors see something.
+const initial = lines.slice(0, 3);
+while (initial.length < 3 && lines.length > 0) initial.push(lines[0]);
+
 const dataId = "log-ticker-data";
 ---
 
 <div class="log-ticker" data-log-ticker aria-hidden="true">
-  <span class="log-ticker__line" data-log-ticker-line>
-    <span class="log-ticker__level" data-log-ticker-level>INFO</span>
-    <span class="log-ticker__text" data-log-ticker-text
-      >Initializing telemetry…</span
-    >
-  </span>
+  <div class="log-ticker__frame">
+    <div class="log-ticker__stack" data-log-ticker-stack>
+      {
+        initial.map((l) => (
+          <span class="log-ticker__line" data-log-ticker-line>
+            <span class="log-ticker__level" data-level={l.level}>
+              [{l.level}]
+            </span>
+            <span class="log-ticker__text" data-log-ticker-text>
+              {l.text}
+            </span>
+          </span>
+        ))
+      }
+    </div>
+  </div>
 </div>
 
 <script
@@ -39,11 +54,13 @@ const dataId = "log-ticker-data";
 />
 
 <script>
-  // Cycling log line. Spec: interaction-spec.md §9.
-  //   - fade in 800ms (linear), hold 4000ms, fade out 800ms, 200ms gap
-  //   - weighted random 70% realistic / 30% absurd, never repeat the previous
+  // 3-line stack cycler. Spec: interaction-spec.md §9.
+  //   - oldest line fades out at the top (800ms)
+  //   - middle two slide up
+  //   - new line fades in at the bottom (800ms)
+  //   - 70% realistic / 30% absurd; never repeat the previous
   //   - pause when tab is hidden or pointer hovers
-  //   - reduced-motion: render one line statically and stop
+  //   - reduced-motion: render three static lines and stop
   (function () {
     type Line = {
       level: "INFO" | "SYS" | "DBG";
@@ -52,8 +69,11 @@ const dataId = "log-ticker-data";
     };
 
     const ticker = document.querySelector<HTMLElement>("[data-log-ticker]");
+    const stack = document.querySelector<HTMLElement>(
+      "[data-log-ticker-stack]",
+    );
     const dataNode = document.getElementById("log-ticker-data");
-    if (!ticker || !dataNode) return;
+    if (!ticker || !stack || !dataNode) return;
 
     let lines: Line[] = [];
     try {
@@ -62,13 +82,6 @@ const dataId = "log-ticker-data";
       return;
     }
     if (lines.length === 0) return;
-
-    const lineEl = ticker.querySelector<HTMLElement>("[data-log-ticker-line]");
-    const levelEl = ticker.querySelector<HTMLElement>(
-      "[data-log-ticker-level]",
-    );
-    const textEl = ticker.querySelector<HTMLElement>("[data-log-ticker-text]");
-    if (!lineEl || !levelEl || !textEl) return;
 
     const realistic = lines.filter((l) => l.tone === "realistic");
     const absurd = lines.filter((l) => l.tone === "absurd");
@@ -85,51 +98,112 @@ const dataId = "log-ticker-data";
       return next;
     };
 
-    const render = (l: Line) => {
-      levelEl.textContent = `[${l.level}]`;
-      levelEl.dataset.level = l.level;
-      textEl.textContent = l.text;
+    const buildLine = (l: Line): HTMLElement => {
+      const span = document.createElement("span");
+      span.className = "log-ticker__line";
+      span.setAttribute("data-log-ticker-line", "");
+      const level = document.createElement("span");
+      level.className = "log-ticker__level";
+      level.dataset.level = l.level;
+      level.textContent = `[${l.level}]`;
+      const text = document.createElement("span");
+      text.className = "log-ticker__text";
+      text.setAttribute("data-log-ticker-text", "");
+      text.textContent = l.text;
+      span.appendChild(level);
+      span.appendChild(text);
+      return span;
     };
 
     const reduced =
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
-      render(pick());
-      lineEl.style.opacity = "0.7";
+      // Replace SSR with three fresh static lines, no cycling.
+      stack.innerHTML = "";
+      for (let i = 0; i < 3; i++) {
+        const el = buildLine(pick());
+        el.style.opacity = "0.7";
+        stack.appendChild(el);
+      }
       return;
     }
 
+    // Reuse the SSR-rendered slot elements; only their text content cycles.
+    // Keeping the same DOM nodes avoids the layout shift that an
+    // innerHTML wipe-and-rebuild would cause inside the fixed-width frame.
+    const existing = Array.from(
+      stack.querySelectorAll<HTMLElement>(".log-ticker__line"),
+    );
+    while (existing.length < 3) {
+      const fresh = buildLine(pick());
+      stack.appendChild(fresh);
+      existing.push(fresh);
+    }
+    const slots = existing.slice(0, 3);
+    for (const slot of slots) slot.style.opacity = "1";
+
     let paused = false;
-    let timer: number | null = null;
-    const clear = () => {
-      if (timer !== null) {
-        clearTimeout(timer);
-        timer = null;
+
+    const FADE = 600;
+    const TICK = 2200;
+
+    const setSlotText = (slot: HTMLElement, line: Line) => {
+      const level = slot.querySelector<HTMLElement>(".log-ticker__level");
+      const text = slot.querySelector<HTMLElement>(".log-ticker__text");
+      if (level) {
+        level.dataset.level = line.level;
+        level.textContent = `[${line.level}]`;
       }
+      if (text) text.textContent = line.text;
     };
 
-    const FADE = 800;
-    const HOLD = 4000;
-    const GAP = 200;
+    const rotate = () => {
+      // Shift content up: slot[0] takes slot[1], slot[1] takes slot[2],
+      // slot[2] gets a freshly picked line with a brief fade-in.
+      const next0 = slots[1].cloneNode(true) as HTMLElement;
+      const next1 = slots[2].cloneNode(true) as HTMLElement;
+      const fresh = pick();
+
+      const lvl0 = next0.querySelector<HTMLElement>(".log-ticker__level");
+      const txt0 = next0.querySelector<HTMLElement>(".log-ticker__text");
+      const lvl1 = next1.querySelector<HTMLElement>(".log-ticker__level");
+      const txt1 = next1.querySelector<HTMLElement>(".log-ticker__text");
+
+      // Apply text directly to the live slots (no DOM swap).
+      if (lvl0 && txt0) {
+        const lvlA = slots[0].querySelector<HTMLElement>(".log-ticker__level");
+        const txtA = slots[0].querySelector<HTMLElement>(".log-ticker__text");
+        if (lvlA) {
+          lvlA.dataset.level = lvl0.dataset.level || "INFO";
+          lvlA.textContent = lvl0.textContent;
+        }
+        if (txtA) txtA.textContent = txt0.textContent;
+      }
+      if (lvl1 && txt1) {
+        const lvlB = slots[1].querySelector<HTMLElement>(".log-ticker__level");
+        const txtB = slots[1].querySelector<HTMLElement>(".log-ticker__text");
+        if (lvlB) {
+          lvlB.dataset.level = lvl1.dataset.level || "INFO";
+          lvlB.textContent = lvl1.textContent;
+        }
+        if (txtB) txtB.textContent = txt1.textContent;
+      }
+
+      const tail = slots[2];
+      tail.style.transition = `opacity ${FADE}ms linear`;
+      tail.style.opacity = "0";
+      window.setTimeout(() => {
+        setSlotText(tail, fresh);
+        requestAnimationFrame(() => {
+          tail.style.opacity = "1";
+        });
+      }, FADE / 2);
+    };
 
     const cycle = () => {
-      if (paused) {
-        timer = window.setTimeout(cycle, 500);
-        return;
-      }
-      render(pick());
-      lineEl.style.transition = `opacity ${FADE}ms linear`;
-      lineEl.style.opacity = "0";
-      // Force layout, then animate to full opacity.
-      void lineEl.offsetHeight;
-      requestAnimationFrame(() => {
-        lineEl.style.opacity = "1";
-        timer = window.setTimeout(() => {
-          lineEl.style.opacity = "0";
-          timer = window.setTimeout(cycle, FADE + GAP);
-        }, FADE + HOLD);
-      });
+      if (!paused) rotate();
+      window.setTimeout(cycle, TICK);
     };
 
     document.addEventListener("visibilitychange", () => {
@@ -146,12 +220,6 @@ const dataId = "log-ticker-data";
       resumeTimer = window.setTimeout(() => (paused = false), 500);
     });
 
-    const start = () => {
-      clear();
-      cycle();
-    };
-
-    // Approximate client:idle: defer the cycle until the browser is idle.
     type IdleWin = Window & {
       requestIdleCallback?: (
         cb: () => void,
@@ -159,6 +227,9 @@ const dataId = "log-ticker-data";
       ) => void;
     };
     const w = window as IdleWin;
+    const start = () => {
+      window.setTimeout(cycle, TICK);
+    };
     if (typeof w.requestIdleCallback === "function") {
       w.requestIdleCallback(start, { timeout: 1500 });
     } else {
@@ -180,22 +251,46 @@ const dataId = "log-ticker-data";
     line-height: var(--text-xs-line);
     color: var(--color-fg-muted);
     opacity: var(--log-ticker-opacity);
-    max-width: min(80vw, 600px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* Fixed width keeps the centered frame from shifting when line text
+     * changes (CLS-safe). */
+    width: min(90vw, 640px);
+  }
+
+  .log-ticker__frame {
+    /* Subtle trapezoid — wider at the bottom. */
+    clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%);
+    background: var(--color-surface-1);
+    border: var(--line-divider);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-2) var(--space-5);
+  }
+
+  .log-ticker__stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .log-ticker__line {
-    display: inline-flex;
+    display: flex;
     gap: var(--space-2);
     align-items: baseline;
-    opacity: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .log-ticker__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
   }
 
   .log-ticker__level {
     font-weight: var(--font-weight-medium);
     color: var(--color-info);
+    flex-shrink: 0;
   }
   .log-ticker__level[data-level="INFO"] {
     color: var(--color-info);
@@ -205,6 +300,12 @@ const dataId = "log-ticker-data";
   }
   .log-ticker__level[data-level="DBG"] {
     color: var(--color-debug);
+  }
+  .log-ticker__level[data-level="WARN"] {
+    color: var(--color-warning);
+  }
+  .log-ticker__level[data-level="ERR"] {
+    color: var(--color-danger);
   }
 
   /* Mobile: hide to avoid covering content */

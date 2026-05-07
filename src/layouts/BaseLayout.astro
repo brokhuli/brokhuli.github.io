@@ -222,6 +222,12 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
 </html>
 
 <style is:global>
+  :root {
+    /* Width reserved on mobile for the fixed top-right page-header cluster
+     * (SystemStatus + ThemeToggle). Used by Sidebar to bound its right edge. */
+    --page-header-width: 110px;
+  }
+
   .page-main {
     margin-left: var(--layout-sidebar-width);
     padding: var(--space-8) var(--layout-gutter-desktop);
@@ -249,7 +255,9 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
   @media (max-width: 768px) {
     .page-main {
       margin-left: 0;
-      padding: var(--space-6) var(--layout-gutter-mobile);
+      /* Reserve top space for the fixed floating sidebar bar. */
+      padding: calc(var(--space-12) + var(--space-4))
+        var(--layout-gutter-mobile) var(--space-6);
     }
     .page-gauges {
       display: none;

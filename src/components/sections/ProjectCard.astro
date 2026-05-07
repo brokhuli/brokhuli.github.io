@@ -31,13 +31,6 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
 ---
 
 <article class="project-card" data-project-card>
-  {
-    media && (
-      <div class="project-card__media-wrap">
-        <ProjectMedia media={media} class="project-card__media" />
-      </div>
-    )
-  }
   <div class="project-card__body">
     <div class="project-card__header">
       <StatusDot state={dot.state} label={dot.label} />
@@ -57,6 +50,13 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
       Read case study →
     </a>
   </div>
+  {
+    media && (
+      <div class="project-card__media-wrap">
+        <ProjectMedia media={media} class="project-card__media" />
+      </div>
+    )
+  }
 </article>
 
 <script>

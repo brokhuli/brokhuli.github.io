@@ -23,16 +23,15 @@ import ContactCard from "../components/sections/ContactCard.astro";
   description="Personal portfolio for Stephen Ullom — software architect specializing in real-time simulation, digital twins, and safety-critical control systems."
 >
   <HeaderCard />
-  <HeroCard />
+
+  <div class="landing__hero-grid">
+    <HeroCard />
+    <SkillsCard />
+  </div>
 
   <div class="landing__top-grid">
-    <div class="landing__main">
-      <AboutCard />
-    </div>
-    <div class="landing__sidebar-right">
-      <SkillsCard />
-      <DomainsCard />
-    </div>
+    <AboutCard />
+    <DomainsCard />
   </div>
 
   <ProjectsSection />
@@ -47,18 +46,13 @@ import ContactCard from "../components/sections/ContactCard.astro";
 </BaseLayout>
 
 <style>
+  .landing__hero-grid,
   .landing__top-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: var(--space-6);
     margin-bottom: var(--space-8);
     align-items: start;
-  }
-
-  .landing__sidebar-right {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
   }
 
   .landing__bottom-grid {
@@ -70,6 +64,7 @@ import ContactCard from "../components/sections/ContactCard.astro";
   }
 
   @media (max-width: 900px) {
+    .landing__hero-grid,
     .landing__top-grid,
     .landing__bottom-grid {
       grid-template-columns: 1fr;
