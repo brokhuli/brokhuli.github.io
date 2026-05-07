@@ -10,7 +10,6 @@
  *   - <SEO /> in <head>.
  *   - Persistent chrome: <Sidebar />, <Footer />.
  *   - Persistent whimsy: <ThemeToggle />, <SystemStatus />, <LogTicker />.
- *     Optional <SimulationGauges /> via the `gauges` prop.
  *   - Inline keyboard-shortcut script (g h | g p | g a | g e | g c | t | ?).
  *
  * Specs:
@@ -28,7 +27,6 @@ import Footer from "../components/chrome/Footer.astro";
 import ThemeToggle from "../components/whimsy/ThemeToggle.astro";
 import SystemStatus from "../components/whimsy/SystemStatus.astro";
 import LogTicker from "../components/whimsy/LogTicker.astro";
-import SimulationGauges from "../components/whimsy/SimulationGauges.astro";
 
 interface Props {
   title?: string;
@@ -44,7 +42,6 @@ interface Props {
     tech?: string[];
     coverSrc?: string;
   };
-  gauges?: boolean;
 }
 
 const {
@@ -54,7 +51,6 @@ const {
   ogImage,
   seoType = "website",
   project,
-  gauges = false,
 } = Astro.props;
 
 // GoatCounter site code: env-driven so dev/CI omit the beacon entirely.
@@ -190,14 +186,6 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
 
     <Footer />
 
-    {
-      gauges && (
-        <div class="page-gauges">
-          <SimulationGauges />
-        </div>
-      )
-    }
-
     <LogTicker />
 
     {
@@ -223,9 +211,7 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
 
 <style is:global>
   .page-main {
-    margin-left: calc(
-      var(--space-4) + var(--layout-sidebar-width) + var(--space-6)
-    );
+    margin-left: calc(var(--space-4) + var(--layout-sidebar-width));
     padding: var(--space-8) var(--layout-gutter-desktop);
     max-width: var(--layout-max-width);
   }
@@ -238,14 +224,6 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
     display: inline-flex;
     align-items: center;
     gap: var(--space-3);
-  }
-
-  .page-gauges {
-    position: fixed;
-    right: var(--space-4);
-    bottom: var(--space-12);
-    z-index: var(--z-overlay);
-    width: 240px;
   }
 
   @media (max-width: 768px) {
@@ -263,9 +241,6 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
       padding: var(--space-2) var(--layout-gutter-mobile);
       /* Clear the fixed floating sidebar bar above. */
       margin-top: calc(var(--space-12) + var(--space-3));
-    }
-    .page-gauges {
-      display: none;
     }
   }
 </style>

@@ -7,7 +7,7 @@
     },
     {
       "level": "SYS",
-      "text": "Linking deterministic subsystems…",
+      "text": "Winding-up deterministic tight loops…",
       "tone": "realistic"
     },
     {
@@ -23,11 +23,6 @@
     {
       "level": "SYS",
       "text": "Checking dependency graph integrity…",
-      "tone": "realistic"
-    },
-    {
-      "level": "DBG",
-      "text": "Rehydrating UI components…",
       "tone": "realistic"
     },
     {
@@ -62,17 +57,17 @@
     },
     {
       "level": "SYS",
-      "text": "Baby-proofing critical systems…",
+      "text": "Baby-proofing edge and corner cases…",
       "tone": "absurd"
     },
     {
       "level": "DBG",
-      "text": "Monitoring quantum fluctuations in UI…",
+      "text": "Monitoring quantum fluctuations in system…",
       "tone": "absurd"
     },
     {
       "level": "INFO",
-      "text": "Recharging simulation hamsters…",
+      "text": "Feeding simulation hamsters…",
       "tone": "absurd"
     },
     {
@@ -81,38 +76,18 @@
       "tone": "absurd"
     },
     {
-      "level": "DBG",
-      "text": "Running vibe check on layout… passed.",
-      "tone": "absurd"
-    },
-    {
       "level": "INFO",
       "text": "Contacting satellite cluster… they say hi.",
       "tone": "absurd"
     },
     {
-      "level": "SYS",
-      "text": "Aligning cosmic bit-flip shields…",
-      "tone": "absurd"
-    },
-    {
       "level": "DBG",
-      "text": "Queueing up messages to be sent to the queue…",
-      "tone": "absurd"
-    },
-    {
-      "level": "DBG",
-      "text": "Recalibrating sarcasm detector…",
+      "text": "Queing up pre-queue messages…",
       "tone": "absurd"
     },
     {
       "level": "INFO",
       "text": "Negotiating with stubborn microservice…",
-      "tone": "absurd"
-    },
-    {
-      "level": "SYS",
-      "text": "Monitoring cosmic ray interference… low risk.",
       "tone": "absurd"
     },
     {
@@ -122,10 +97,9 @@
     },
     {
       "level": "SYS",
-      "text": "Polling alternate universe cluster… no response.",
+      "text": "Stabilizing entropy levels…",
       "tone": "absurd"
     },
-    { "level": "SYS", "text": "Stabilizing entropy levels…", "tone": "absurd" },
     {
       "level": "DBG",
       "text": "Running empathy simulation… system burnout.",
@@ -147,21 +121,6 @@
       "tone": "absurd"
     },
     {
-      "level": "SYS",
-      "text": "Checking wormhole latency… return ping received in unexpected port.",
-      "tone": "absurd"
-    },
-    {
-      "level": "DBG",
-      "text": "Running humor compression algorithm…",
-      "tone": "absurd"
-    },
-    {
-      "level": "SYS",
-      "text": "Inspecting incoming interdimensional message queue… empty.",
-      "tone": "absurd"
-    },
-    {
       "level": "WARN",
       "text": "Telemetry stream lag exceeds 50ms — investigating.",
       "tone": "realistic"
@@ -173,12 +132,7 @@
     },
     {
       "level": "ERR",
-      "text": "Fault detected in subsystem ALPHA: deterministic guarantees violated.",
-      "tone": "realistic"
-    },
-    {
-      "level": "ERR",
-      "text": "Watchdog tripped — operator intervention required.",
+      "text": "Fault detected in subsystem: deterministic guarantees violated.",
       "tone": "realistic"
     },
     {
@@ -187,13 +141,28 @@
       "tone": "absurd"
     },
     {
-      "level": "ERR",
-      "text": "Reality buffer overflow — please reload the simulation.",
+      "level": "WARN",
+      "text": "Garbage collection day is on Tuesday... or is it Wednesday?",
       "tone": "absurd"
     },
     {
       "level": "WARN",
-      "text": "Eric Mode requested by an unrecognized timeline.",
+      "text": "Robots need more biofuel...",
+      "tone": "absurd"
+    },
+    {
+      "level": "ERR",
+      "text": "Reality buffer overflow — please reload reality.",
+      "tone": "absurd"
+    },
+    {
+      "level": "ERR",
+      "text": "Watchdog tripped — untangle his leash.",
+      "tone": "absurd"
+    },
+    {
+      "level": "WARN",
+      "text": "Eric Mode is really just for Eric.",
       "tone": "absurd"
     }
   ]

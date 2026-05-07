@@ -38,9 +38,11 @@ import ContactCard from "../components/sections/ContactCard.astro";
   <ArchitectureSection />
 
   <div class="landing__bottom-grid">
-    <div class="bottom-grid__tech"><TechStackCard /></div>
+    <div class="bottom-grid__left">
+      <TechStackCard />
+      <ContactCard />
+    </div>
     <div class="bottom-grid__experience"><ExperienceCard /></div>
-    <div class="bottom-grid__contact"><ContactCard /></div>
   </div>
 </BaseLayout>
 
@@ -57,34 +59,21 @@ import ContactCard from "../components/sections/ContactCard.astro";
   .landing__bottom-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "tech    experience"
-      "contact experience";
     gap: var(--space-6);
     margin-bottom: var(--space-8);
     align-items: start;
   }
-  .bottom-grid__tech {
-    grid-area: tech;
-  }
-  .bottom-grid__experience {
-    grid-area: experience;
-  }
-  .bottom-grid__contact {
-    grid-area: contact;
+  .bottom-grid__left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
   }
 
   @media (max-width: 900px) {
     .landing__hero-grid,
-    .landing__top-grid {
-      grid-template-columns: 1fr;
-    }
+    .landing__top-grid,
     .landing__bottom-grid {
       grid-template-columns: 1fr;
-      grid-template-areas:
-        "tech"
-        "contact"
-        "experience";
     }
   }
 </style>
