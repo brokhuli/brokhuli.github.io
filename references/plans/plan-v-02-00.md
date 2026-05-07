@@ -5,7 +5,7 @@
 [input/update-02-00.md](input/update-02-00.md) introduces the v0.2 retro/blueprint visual direction. Two changes:
 
 1. **Graph-paper grid background** on the body — major + minor rules, themed for both Dark (cyan-grey lines on near-black) and Eric Mode (faint slate lines on cream paper). The reference mockups [pre-mockup-retro-dark.png](../mockups/pre-mockup-retro-dark.png) / [pre-mockup-retro-light.png](../mockups/pre-mockup-retro-light.png) show the intended pattern (without the folded-page-edge effect — explicitly out of scope per the input).
-2. **Hand-coded SVG line-art "sketch" illustrations** as **plain `.svg` files** (not Astro components) under `src/assets/img/sketches/`, inlined into pages via Vite's `?raw` import so `stroke="currentColor"` propagates the active theme color. The user is producing real artwork later — placeholder SVGs are drop-in replaceable: just overwrite the file. Three subjects per [mockup-retro-dark-02.png](../mockups/mockup-retro-dark-02.png): **robotic arm** (in AboutCard), **train** (in ExperienceCard), **medical device / syringe** (in the medical-injector-simulator project media slot).
+2. **Hand-coded SVG line-art "sketch" illustrations** as **plain `.svg` files** (not Astro components) under `src/assets/img/sketches/`, inlined into pages via Vite's `?raw` import so `stroke="currentColor"` propagates the active theme color. The user is producing real artwork later — placeholder SVGs are drop-in replaceable: just overwrite the file. Three subjects per [mockup-retro-dark-02.png](../mockups/mockup-retro-dark-02.png): **robotic arm** (in AboutCard), **train** (in ExperienceCard), **medical device / syringe** (in ContactCard).
 
 The implementation stays inside ADR-004 layer rules. The SVG files are static assets (zero-data, zero-domain). Theming relies on `stroke="currentColor"` and the consuming component setting `color: var(--color-fg-subtle)`.
 
@@ -18,7 +18,7 @@ The implementation stays inside ADR-004 layer rules. The SVG files are static as
 3. **Sketch placement:**
    - **Robotic arm** → AboutCard, right column. AboutCard is currently single-column prose + CTAs ([AboutCard.astro:18-35](../../src/components/sections/AboutCard.astro#L18-L35)); restructure to a 2-col layout (prose left, illustration right) collapsing to single-column at ≤900px. The illustration is decorative (`aria-hidden="true"`).
    - **Train** → ExperienceCard, decorative footer below the entries list, full-width with bounded height. The mockup places the train in the bottom-right contact area, but our v0.1.1 layout puts ContactCard in the left column — Experience is the spatially correct home for a long horizontal sketch.
-   - **Medical device (syringe)** → Replaces the current GIF in [medical-injector-simulator.mdx](../../src/content/projects/medical-injector-simulator.mdx) `media.src`. The MDX `media` schema accepts an image asset path; for the placeholder we'll wrap the SVG in an Astro component and update the project frontmatter to a new optional `media.illustrationComponent` field (or add a sibling field — see §3 detail). The existing GIF stays in the repo; we just stop pointing to it.
+   - **Medical device (syringe)** → ContactCard, decorative footer below the email/LinkedIn/GitHub list. Same wiring pattern as items 5 and 6 — a div with `set:html` from a `?raw` import. Bounded width so it doesn't dominate the small card. Decorative (`aria-hidden="true"`). No project-card or content-schema changes; the existing `medical-injector-injection.gif` in the project's media slot stays untouched.
 4. **Sketch style contract:** monochrome line-art, stroke = `currentColor`, fill = `none`. The parent component sets `color: var(--color-fg-subtle)` (or a dedicated `--sketch-stroke` token if we add one) so each theme picks the right tone automatically. No fills, no gradients — keeps the SVG small and authentic to the "ink-on-paper" reference.
 5. **No accessibility surface:** all three illustrations are `aria-hidden="true"`, with empty `<title>` omitted. They're decorative.
 6. **No raster fallbacks:** inline SVG works in every supported browser; no `<picture>` / fallback image needed.
@@ -33,7 +33,7 @@ The implementation stays inside ADR-004 layer rules. The SVG files are static as
 | 4 | [ ] | New `medical-device.svg` placeholder | new `src/assets/img/sketches/medical-device.svg` |
 | 5 | [ ] | Wire RoboticArmSketch into AboutCard (2-col layout) | [../../src/components/sections/AboutCard.astro](../../src/components/sections/AboutCard.astro) |
 | 6 | [ ] | Wire TrainSketch into ExperienceCard footer | [../../src/components/sections/ExperienceCard.astro](../../src/components/sections/ExperienceCard.astro) |
-| 7 | [ ] | Wire MedicalDeviceSketch into medical-injector-simulator project media | content collection schema + [../../src/components/primitives/ProjectMedia.astro](../../src/components/primitives/ProjectMedia.astro) + [../../src/content/projects/medical-injector-simulator.mdx](../../src/content/projects/medical-injector-simulator.mdx) |
+| 7 | [ ] | Wire medical-device.svg into ContactCard | [../../src/components/sections/ContactCard.astro](../../src/components/sections/ContactCard.astro) |
 
 ---
 
@@ -131,7 +131,7 @@ Same conventions as item 2. Subject: a stylized high-speed train profile (single
 
 ### 4. [ ] `medical-device.svg`
 
-Same conventions as item 2. Subject: an auto-injector / syringe-style device — barrel, plunger, finger flange, needle guard. `viewBox="0 0 320 200"`. Aim ~3KB. Replaces the current `medical-injector-injection.gif` in the project's media slot.
+Same conventions as item 2. Subject: an auto-injector / syringe-style device — barrel, plunger, finger flange, needle guard. `viewBox="0 0 320 200"`. Aim ~3KB.
 
 ### 5. [ ] AboutCard layout — robotic arm on the right
 
@@ -182,40 +182,27 @@ Style the wrapper:
 
 At `@media (max-width: 640px)`, hide the sketch (`display: none`) — too cramped to read on phone widths.
 
-### 7. [ ] Medical device illustration in the project media slot
+### 7. [ ] ContactCard — medical device sketch
 
-Files: [../../src/content/config.ts](../../src/content/config.ts), [../../src/components/primitives/ProjectMedia.astro](../../src/components/primitives/ProjectMedia.astro), [../../src/content/projects/medical-injector-simulator.mdx](../../src/content/projects/medical-injector-simulator.mdx)
+File: [../../src/components/sections/ContactCard.astro](../../src/components/sections/ContactCard.astro)
 
-**Schema change** (`config.ts`, projects collection's `media` object):
-- Add an optional discriminator `kind: z.enum(["raster", "sketch"]).default("raster")`.
-- Add an optional `sketchId: z.enum(["medical-device"])` (extensible enum — list every sketch the runtime knows how to render).
-- Keep the existing `src` / `alt` / `caption` fields; mark `src` optional when `kind === "sketch"` (refine).
+Inline the SVG via `?raw` import after the existing contact-list / headshot block (placement and exact insertion point should mirror what makes visual sense — read the current layout first):
+```astro
+---
+import medicalDevice from "../../assets/img/sketches/medical-device.svg?raw";
+---
+<div class="contact__sketch" aria-hidden="true" set:html={medicalDevice} />
+```
 
-**ProjectMedia.astro update:**
-- Read `media.kind`. Default branch (`raster`) keeps today's behavior — Vite-glob asset lookup, `<Image>` render, GIF/poster swap.
-- New branch when `kind === "sketch"`: resolve the SVG from a Vite glob with `?raw` so the SVG markup is inlined (preserving `currentColor` theming):
-  ```astro
-  ---
-  const sketchModules = import.meta.glob<string>(
-    "../../assets/img/sketches/*.svg",
-    { query: "?raw", import: "default", eager: true }
-  );
-  // sketchId like "medical-device" maps to "../../assets/img/sketches/medical-device.svg"
-  const sketchKey = `../../assets/img/sketches/${media.sketchId}.svg`;
-  const sketchSvg = sketchModules[sketchKey];
-  ---
-  {sketchSvg && (
-    <div class="project-card__media-sketch" aria-hidden="true" set:html={sketchSvg} />
-  )}
-  ```
-- Keep the existing `<figcaption>` rendering; sketch branch reuses it if the project sets a caption, but the v0.1.1 ProjectCard call site already passes `caption: undefined` so this is a non-issue on the landing-page list.
-- Style `.project-card__media-sketch`: `color: var(--color-fg-subtle); display: block;` and inner `> svg { width: 100%; height: auto; }` to fill the existing media slot.
+Style the wrapper:
+- `margin-top: var(--space-4);`
+- `display: flex; justify-content: flex-end;` (sits in the lower-right area of the card, similar in spirit to how the train sits in Experience)
+- `color: var(--color-fg-subtle); opacity: 0.65;` to keep it ambient
+- Inner `> svg { width: 100%; max-width: 200px; height: auto; }` — smaller cap than train/arm because ContactCard is a smaller surface
 
-**Project frontmatter update** (`medical-injector-simulator.mdx`):
-- Replace the current `media: { src: "../../assets/img/medical-injector-injection.gif", ... }` with `media: { kind: "sketch", sketchId: "medical-device", alt: "Sketch of a medical injector device" }`.
-- Leave the GIF file in `src/assets/img/` for now (real artwork drop will likely overwrite it later; deleting now is unnecessary churn).
+At narrow widths where the sketch crowds the card content, hide it (`display: none` at `@media (max-width: 640px)`) — confirm the threshold during the walkthrough.
 
-The other project (`gpu-heat-diffusion`) is untouched; it keeps `kind: "raster"` (the default) and renders as before.
+No project-card / ProjectMedia / content-collection-schema changes. The medical-injector-simulator project keeps its existing GIF media.
 
 ---
 
@@ -228,36 +215,31 @@ The other project (`gpu-heat-diffusion`) is untouched; it keeps `kind: "raster"`
 - New: `src/assets/img/sketches/medical-device.svg`
 - [../../src/components/sections/AboutCard.astro](../../src/components/sections/AboutCard.astro)
 - [../../src/components/sections/ExperienceCard.astro](../../src/components/sections/ExperienceCard.astro)
-- [../../src/components/primitives/ProjectMedia.astro](../../src/components/primitives/ProjectMedia.astro)
-- [../../src/content/config.ts](../../src/content/config.ts) — projects.media schema extension
-- [../../src/content/projects/medical-injector-simulator.mdx](../../src/content/projects/medical-injector-simulator.mdx) — frontmatter switch to sketch kind
+- [../../src/components/sections/ContactCard.astro](../../src/components/sections/ContactCard.astro)
 
 ## Reused primitives & patterns
 
 - **`currentColor` + `var(--color-fg-subtle)`** — existing theming idiom; consumers of the inlined SVG set `color`, the SVG's `stroke="currentColor"` resolves to the active theme color. No per-theme CSS branches needed.
 - **Vite `?raw` imports** — Vite's built-in feature; no plugin or config change. Used so the SVG markup lands inline in HTML (vs. an external `<img>`, which can't inherit `currentColor`).
 - **Existing `--color-grid` token** — repurposed (value tweaked) rather than duplicated.
-- **ProjectMedia caption + sizing** — kept; only the source-resolution branch is new.
 
 ## Verification
 
 > Tick each `[ ]` as you complete the corresponding check. Same hygiene rules as v0.1.x — one chained gate run, single Playwright session, single Lighthouse run.
 
-1. [ ] **Combined gate** — `npm run lint && npm run check && npm run validate:content && npm run test && npm run build`. Pass = all gates green; `dist/` contains no `references/` paths; no schema validation regressions on the medical-injector-simulator project.
+1. [ ] **Combined gate** — `npm run lint && npm run check && npm run validate:content && npm run test && npm run build`. Pass = all gates green; `dist/` contains no `references/` paths.
 2. [ ] **Single Playwright session** (`npm run dev` background, one browser):
-   - [ ] `/` desktop (≥1280): graph-paper grid visible behind every card; minor rules form a 24px field; major rules at 96px give visible structure without overpowering. Robotic arm sits to the right of About text. Train sketch sits at the bottom-right of Experience card. None of the SVGs visibly clip cards or shift other content (CLS-safe — they're inline with intrinsic dimensions).
-   - [ ] `/projects/medical-injector-simulator/` and `/` ProjectCard list: medical-device sketch renders in place of the prior GIF. Caption empty (per v0.1.1 ProjectCard call), positioning unchanged.
+   - [ ] `/` desktop (≥1280): graph-paper grid visible behind every card; minor rules form a 24px field; major rules at 96px give visible structure without overpowering. Robotic arm sits to the right of About text. Train sketch sits at the bottom-right of Experience card. Medical-device sketch sits in the lower portion of the ContactCard. None of the SVGs visibly clip cards or shift other content.
    - [ ] Toggle Eric Mode: grid color flips to slate-on-cream; sketch strokes flip with `currentColor`. No hardcoded colors leaking through.
-   - [ ] 375px viewport: AboutCard collapses to single column with sketch beneath the prose (or hidden, per implementation choice — confirm visual quality). Train sketch hidden at ≤640px.
+   - [ ] 375px viewport: AboutCard collapses to single column with sketch beneath the prose (or hidden, per implementation choice — confirm visual quality). Train sketch hidden at ≤640px. ContactCard sketch hidden if it crowds at narrow widths.
    - [ ] Reduced-motion (`reducedMotion: "reduce"`): no animation regressions on the sketches (they have no animation today, so this is a sanity check).
-3. [ ] **Lighthouse single run** — `npx lhci autorun`. Watch HTML page-weight delta on `/` (~7–10KB total inline-SVG payload added; expected gzip cost ~3–4KB). Confirm perf / a11y / SEO scores don't regress vs the v0.1.2 baseline. Specifically: CLS for `/` should stay at the v0.1.2 level (sketches have explicit width/height attrs to prevent reflow).
-4. [ ] **e2e smoke** — `npm run test:e2e`. No tests reference the GIF or AboutCard layout structure today (verified pre-implementation via grep), so this should pass without test edits.
-5. [ ] **No-stragglers grep** — after the schema change, search for `medical-injector-injection.gif` references; expected: zero in `src/` (the file may still exist on disk but should no longer be imported).
+3. [ ] **Lighthouse single run** — `npx lhci autorun`. Watch HTML page-weight delta on `/` (~7–10KB total inline-SVG payload added; expected gzip cost ~3–4KB). Confirm perf / a11y / SEO scores don't regress vs the v0.1.2 baseline. CLS on `/` should stay at the v0.1.2 level.
+4. [ ] **e2e smoke** — `npm run test:e2e`. No tests reference the new sketch DOM today (verified pre-implementation via grep), so this should pass without test edits.
 
 ## Out of scope
 
 - **Real artwork.** These three SVGs are placeholders; the user will drop in final art later. Do not invest extra time on artistic fidelity beyond "reads as the right object at a glance."
 - **Folded-page-edge mockup effect** — explicitly excluded by the input.
 - **Additional sketches** suggested by the mockups (CRT terminal in Tech Stack, Domains row icons, etc.) — out of scope here; can be a v0.2.x follow-up.
-- **Spec sync** — [content-schema.md](../specs/content-schema.md) drift continues with the `media.kind` extension; logged for the same follow-up doc PR that v0.1 / v0.1.1 / v0.1.2 already deferred.
+- **Project-card / ProjectMedia / content-schema changes** — explicitly out of scope. The medical-injector-simulator project's existing GIF stays as-is.
 - **No CI workflow changes.**
