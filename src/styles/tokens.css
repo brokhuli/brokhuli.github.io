@@ -80,8 +80,8 @@
   --border-width-strong: 2px;
 
   --line-divider: var(--border-width-thin) solid var(--color-border);
-  --line-card: var(--border-width-thin) solid var(--color-border);
-  --line-card-hover: var(--border-width-thin) solid var(--color-border-hover);
+  --line-card: var(--border-width-strong) solid var(--color-border);
+  --line-card-hover: var(--border-width-strong) solid var(--color-border-hover);
   --line-focus-ring: var(--border-width-strong) solid var(--color-accent);
 
   /* Motion */
@@ -176,7 +176,7 @@
   --color-debug: #94a3b8;
 
   --color-grid: rgba(120, 200, 220, 0.05);
-  --color-grid-major: rgba(120, 200, 220, 0.1);
+  --color-grid-major: rgba(120, 200, 220, 0.05);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
@@ -210,7 +210,7 @@
   --color-debug: #6b7280;
 
   --color-grid: rgba(40, 60, 90, 0.06);
-  --color-grid-major: rgba(40, 60, 90, 0.11);
+  --color-grid-major: rgba(40, 60, 90, 0.1);
 
   --shadow-sm: 0 1px 2px rgba(20, 24, 32, 0.06);
   --shadow-md: 0 4px 14px rgba(20, 24, 32, 0.08);

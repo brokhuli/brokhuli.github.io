@@ -9,20 +9,33 @@
  *   references/specs/whimsical-elements.md (idea 5)
  *
  * Lines are read from the `logLines` collection at build time and embedded
- * into a JSON script so the runtime needs no network. Filtered to INFO|SYS|DBG
- * (WARN/ERR are reserved for the system-fault page).
+ * into a JSON script so the runtime needs no network. The cycler picks from
+ * a calm pool (INFO|SYS|DBG) by default and surfaces a rare WARN/ERR (~5%).
  */
 
 import { getCollection } from "astro:content";
 
 const entries = await getCollection("logLines");
-const lines = entries
-  .flatMap((e) => e.data.lines)
-  .filter((l) => l.level === "INFO" || l.level === "SYS" || l.level === "DBG");
+const allLines = entries.flatMap((e) => e.data.lines);
+const calm = allLines.filter(
+  (l) => l.level === "INFO" || l.level === "SYS" || l.level === "DBG",
+);
+const alert = allLines.filter((l) => l.level === "WARN" || l.level === "ERR");
 
 // Pre-render 3 static lines so SSR + <noscript> visitors see something.
-const initial = lines.slice(0, 3);
-while (initial.length < 3 && lines.length > 0) initial.push(lines[0]);
+const initial = calm.slice(0, 3);
+while (initial.length < 3 && calm.length > 0) initial.push(calm[0]);
+
+// Build-time timestamps; the client script refreshes them on hydration.
+const pad = (n: number) => String(n).padStart(2, "0");
+const fmtTime = (d: Date) =>
+  `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+const buildNow = new Date();
+const initialTimes = [
+  fmtTime(new Date(buildNow.getTime() - 4000)),
+  fmtTime(new Date(buildNow.getTime() - 2000)),
+  fmtTime(buildNow),
+];
 
 const dataId = "log-ticker-data";
 ---
@@ -31,8 +44,11 @@ const dataId = "log-ticker-data";
   <div class="log-ticker__frame">
     <div class="log-ticker__stack" data-log-ticker-stack>
       {
-        initial.map((l) => (
+        initial.map((l, i) => (
           <span class="log-ticker__line" data-log-ticker-line>
+            <span class="log-ticker__time" data-log-ticker-time>
+              [{initialTimes[i]}]
+            </span>
             <span class="log-ticker__level" data-level={l.level}>
               [{l.level}]
             </span>
@@ -50,7 +66,7 @@ const dataId = "log-ticker-data";
   is:inline
   id={dataId}
   type="application/json"
-  set:html={JSON.stringify(lines)}
+  set:html={JSON.stringify({ calm, alert })}
 />
 
 <script>
@@ -63,10 +79,11 @@ const dataId = "log-ticker-data";
   //   - reduced-motion: render three static lines and stop
   (function () {
     type Line = {
-      level: "INFO" | "SYS" | "DBG";
+      level: "INFO" | "SYS" | "DBG" | "WARN" | "ERR";
       text: string;
       tone: "realistic" | "absurd";
     };
+    type Payload = { calm: Line[]; alert: Line[] };
 
     const ticker = document.querySelector<HTMLElement>("[data-log-ticker]");
     const stack = document.querySelector<HTMLElement>(
@@ -75,21 +92,35 @@ const dataId = "log-ticker-data";
     const dataNode = document.getElementById("log-ticker-data");
     if (!ticker || !stack || !dataNode) return;
 
-    let lines: Line[] = [];
+    let calm: Line[] = [];
+    let alert: Line[] = [];
     try {
-      lines = JSON.parse(dataNode.textContent || "[]") as Line[];
+      const parsed = JSON.parse(dataNode.textContent || "{}") as Payload;
+      calm = parsed.calm || [];
+      alert = parsed.alert || [];
     } catch {
       return;
     }
-    if (lines.length === 0) return;
+    if (calm.length === 0) return;
 
-    const realistic = lines.filter((l) => l.tone === "realistic");
-    const absurd = lines.filter((l) => l.tone === "absurd");
+    const realistic = calm.filter((l) => l.tone === "realistic");
+    const absurd = calm.filter((l) => l.tone === "absurd");
+
+    const ALERT_RATE = 0.05;
 
     let prev: Line | null = null;
     const pick = (): Line => {
+      // Rare-ish WARN/ERR drop-in.
+      if (alert.length > 0 && Math.random() < ALERT_RATE) {
+        let next = alert[Math.floor(Math.random() * alert.length)];
+        if (prev && alert.length > 1 && next.text === prev.text) {
+          next = alert[(alert.indexOf(next) + 1) % alert.length];
+        }
+        prev = next;
+        return next;
+      }
       const useAbsurd = absurd.length > 0 && Math.random() < 0.3;
-      const pool = useAbsurd ? absurd : realistic.length ? realistic : lines;
+      const pool = useAbsurd ? absurd : realistic.length ? realistic : calm;
       let next = pool[Math.floor(Math.random() * pool.length)];
       if (prev && pool.length > 1 && next.text === prev.text) {
         next = pool[(pool.indexOf(next) + 1) % pool.length];
@@ -98,10 +129,20 @@ const dataId = "log-ticker-data";
       return next;
     };
 
+    const pad2 = (n: number) => String(n).padStart(2, "0");
+    const nowStamp = (): string => {
+      const d = new Date();
+      return `[${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}]`;
+    };
+
     const buildLine = (l: Line): HTMLElement => {
       const span = document.createElement("span");
       span.className = "log-ticker__line";
       span.setAttribute("data-log-ticker-line", "");
+      const time = document.createElement("span");
+      time.className = "log-ticker__time";
+      time.setAttribute("data-log-ticker-time", "");
+      time.textContent = nowStamp();
       const level = document.createElement("span");
       level.className = "log-ticker__level";
       level.dataset.level = l.level;
@@ -110,6 +151,7 @@ const dataId = "log-ticker-data";
       text.className = "log-ticker__text";
       text.setAttribute("data-log-ticker-text", "");
       text.textContent = l.text;
+      span.appendChild(time);
       span.appendChild(level);
       span.appendChild(text);
       return span;
@@ -143,14 +185,29 @@ const dataId = "log-ticker-data";
     const slots = existing.slice(0, 3);
     for (const slot of slots) slot.style.opacity = "1";
 
+    // Refresh the SSR-baked timestamps on hydration so visitors see "now"
+    // instead of the build-time clock. Stagger by a couple of seconds so the
+    // existing lines read like a recent run rather than three identical ticks.
+    const refreshSeed = new Date();
+    slots.forEach((slot, idx) => {
+      const time = slot.querySelector<HTMLElement>(".log-ticker__time");
+      if (!time) return;
+      const stamp = new Date(refreshSeed.getTime() - (2 - idx) * 2000);
+      time.textContent = `[${pad2(stamp.getHours())}:${pad2(stamp.getMinutes())}:${pad2(stamp.getSeconds())}]`;
+    });
+
     let paused = false;
 
     const FADE = 600;
-    const TICK = 2200;
+    const TICK_MIN = 2000;
+    const TICK_MAX = 6000;
+    const nextTick = () => TICK_MIN + Math.random() * (TICK_MAX - TICK_MIN);
 
     const setSlotText = (slot: HTMLElement, line: Line) => {
+      const time = slot.querySelector<HTMLElement>(".log-ticker__time");
       const level = slot.querySelector<HTMLElement>(".log-ticker__level");
       const text = slot.querySelector<HTMLElement>(".log-ticker__text");
+      if (time) time.textContent = nowStamp();
       if (level) {
         level.dataset.level = line.level;
         level.textContent = `[${line.level}]`;
@@ -170,10 +227,15 @@ const dataId = "log-ticker-data";
       const lvl1 = next1.querySelector<HTMLElement>(".log-ticker__level");
       const txt1 = next1.querySelector<HTMLElement>(".log-ticker__text");
 
+      const tm0 = next0.querySelector<HTMLElement>(".log-ticker__time");
+      const tm1 = next1.querySelector<HTMLElement>(".log-ticker__time");
+
       // Apply text directly to the live slots (no DOM swap).
       if (lvl0 && txt0) {
+        const tmA = slots[0].querySelector<HTMLElement>(".log-ticker__time");
         const lvlA = slots[0].querySelector<HTMLElement>(".log-ticker__level");
         const txtA = slots[0].querySelector<HTMLElement>(".log-ticker__text");
+        if (tmA && tm0) tmA.textContent = tm0.textContent;
         if (lvlA) {
           lvlA.dataset.level = lvl0.dataset.level || "INFO";
           lvlA.textContent = lvl0.textContent;
@@ -181,8 +243,10 @@ const dataId = "log-ticker-data";
         if (txtA) txtA.textContent = txt0.textContent;
       }
       if (lvl1 && txt1) {
+        const tmB = slots[1].querySelector<HTMLElement>(".log-ticker__time");
         const lvlB = slots[1].querySelector<HTMLElement>(".log-ticker__level");
         const txtB = slots[1].querySelector<HTMLElement>(".log-ticker__text");
+        if (tmB && tm1) tmB.textContent = tm1.textContent;
         if (lvlB) {
           lvlB.dataset.level = lvl1.dataset.level || "INFO";
           lvlB.textContent = lvl1.textContent;
@@ -203,7 +267,7 @@ const dataId = "log-ticker-data";
 
     const cycle = () => {
       if (!paused) rotate();
-      window.setTimeout(cycle, TICK);
+      window.setTimeout(cycle, nextTick());
     };
 
     document.addEventListener("visibilitychange", () => {
@@ -228,7 +292,7 @@ const dataId = "log-ticker-data";
     };
     const w = window as IdleWin;
     const start = () => {
-      window.setTimeout(cycle, TICK);
+      window.setTimeout(cycle, nextTick());
     };
     if (typeof w.requestIdleCallback === "function") {
       w.requestIdleCallback(start, { timeout: 1500 });
@@ -253,12 +317,12 @@ const dataId = "log-ticker-data";
     opacity: var(--log-ticker-opacity);
     /* Fixed width keeps the centered frame from shifting when line text
      * changes (CLS-safe). */
-    width: min(90vw, 420px);
+    width: min(90vw, 520px);
   }
 
   .log-ticker__frame {
     background: var(--color-surface-1);
-    border: var(--line-divider);
+    border: var(--border-width-strong) solid var(--color-border);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     padding: var(--space-2) var(--space-5);
@@ -284,6 +348,11 @@ const dataId = "log-ticker-data";
     text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
+  }
+
+  .log-ticker__time {
+    color: var(--color-fg-subtle);
+    flex-shrink: 0;
   }
 
   .log-ticker__level {

@@ -16,8 +16,8 @@ const items = [
   { id: "home", label: "Home", icon: "lucide:home" },
   { id: "about", label: "About", icon: "lucide:user" },
   { id: "projects", label: "Projects", icon: "lucide:layout-grid" },
-  { id: "architecture", label: "Architecture", icon: "lucide:network" },
-  { id: "tech-stack", label: "Tech Stack", icon: "lucide:cpu" },
+  { id: "architecture", label: "Architecture", icon: "lucide:cuboid" },
+  { id: "tech-stack", label: "Tech Stack", icon: "lucide:square-stack" },
   { id: "experience", label: "Experience", icon: "lucide:briefcase" },
   { id: "contact", label: "Contact", icon: "lucide:mail" },
 ];
@@ -115,7 +115,7 @@ const versionLabel = `v${pkg.version}`;
     gap: var(--space-2);
     padding: var(--space-4) var(--space-2);
     background: var(--color-surface-1);
-    border: var(--line-divider);
+    border: var(--border-width-strong) solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
   }
