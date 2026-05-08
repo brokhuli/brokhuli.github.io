@@ -8,6 +8,7 @@ import { getCollection, render } from "astro:content";
 import Card from "../primitives/Card.astro";
 import Button from "../primitives/Button.astro";
 import SectionHeading from "../primitives/SectionHeading.astro";
+import roboticArmSvg from "../../assets/img/sketches/robotic-arm.svg?raw";
 
 const entries = await getCollection("about");
 const about = entries[0];
@@ -17,24 +18,44 @@ const resumeHref = about?.data.resumeHref ?? "/resume";
 
 <Card id="about">
   <SectionHeading slot="header" as="h2">About</SectionHeading>
-  {
-    Content && (
-      <div class="about__body prose">
-        <Content />
+  <div class="about__grid">
+    <div class="about__main">
+      {
+        Content && (
+          <div class="about__body prose">
+            <Content />
+          </div>
+        )
+      }
+      <div class="about__ctas">
+        <Button href={resumeHref} variant="outline" icon="lucide:file-text">
+          Resume
+        </Button>
+        <Button href="#projects" variant="primary" icon="lucide:layout-grid">
+          View Projects
+        </Button>
       </div>
-    )
-  }
-  <div class="about__ctas">
-    <Button href={resumeHref} variant="outline" icon="lucide:file-text">
-      Resume
-    </Button>
-    <Button href="#projects" variant="primary" icon="lucide:layout-grid">
-      View Projects
-    </Button>
+    </div>
+    <div
+      class="about__illustration"
+      aria-hidden="true"
+      set:html={roboticArmSvg}
+    />
   </div>
 </Card>
 
 <style>
+  .about__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .about__main {
+    min-width: 0;
+  }
+
   .about__body {
     margin-bottom: var(--space-6);
     color: var(--color-fg-default);
@@ -55,5 +76,26 @@ const resumeHref = about?.data.resumeHref ?? "/resume";
     display: flex;
     gap: var(--space-3);
     flex-wrap: wrap;
+  }
+
+  .about__illustration {
+    color: var(--color-fg-subtle);
+    width: 240px;
+    max-width: 100%;
+  }
+
+  .about__illustration :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 900px) {
+    .about__grid {
+      grid-template-columns: 1fr;
+    }
+    .about__illustration {
+      justify-self: center;
+      width: 200px;
+    }
   }
 </style>

@@ -32,11 +32,36 @@ body {
   line-height: var(--text-base-line);
   color: var(--color-fg-default);
   background-color: var(--color-bg);
-  background-image: radial-gradient(
-    var(--grid-line-color) var(--grid-dot-size),
-    transparent var(--grid-dot-size)
-  );
-  background-size: var(--grid-dot-gap) var(--grid-dot-gap);
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--color-grid-major) 0,
+      var(--color-grid-major) var(--grid-line-width),
+      transparent var(--grid-line-width),
+      transparent var(--grid-major-gap)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--color-grid-major) 0,
+      var(--color-grid-major) var(--grid-line-width),
+      transparent var(--grid-line-width),
+      transparent var(--grid-major-gap)
+    ),
+    repeating-linear-gradient(
+      to right,
+      var(--color-grid) 0,
+      var(--color-grid) var(--grid-line-width),
+      transparent var(--grid-line-width),
+      transparent var(--grid-minor-gap)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--color-grid) 0,
+      var(--color-grid) var(--grid-line-width),
+      transparent var(--grid-line-width),
+      transparent var(--grid-minor-gap)
+    );
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

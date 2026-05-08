@@ -13,6 +13,7 @@ import Card from "../primitives/Card.astro";
 import SectionHeading from "../primitives/SectionHeading.astro";
 import Icon from "../primitives/Icon.astro";
 import headshot from "../../assets/img/head-shot-03.png";
+import medicalDeviceSvg from "../../assets/img/sketches/medical-device.svg?raw";
 ---
 
 <Card id="contact">
@@ -85,6 +86,7 @@ import headshot from "../../assets/img/head-shot-03.png";
       </ul>
     </div>
   </div>
+  <div class="contact__sketch" aria-hidden="true" set:html={medicalDeviceSvg} />
 </Card>
 
 <script>
@@ -173,6 +175,26 @@ import headshot from "../../assets/img/head-shot-03.png";
     text-overflow: ellipsis;
     white-space: nowrap;
     min-width: 0;
+  }
+
+  .contact__sketch {
+    margin-top: var(--space-4);
+    display: flex;
+    justify-content: flex-end;
+    color: var(--color-fg-subtle);
+    opacity: 0.65;
+  }
+
+  .contact__sketch :global(svg) {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+  }
+
+  @media (max-width: 640px) {
+    .contact__sketch {
+      display: none;
+    }
   }
 
   @media (max-width: 520px) {
