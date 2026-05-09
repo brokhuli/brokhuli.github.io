@@ -175,8 +175,9 @@
   --color-info: #60a5fa;
   --color-debug: #94a3b8;
 
-  --color-grid: rgba(120, 200, 220, 0.05);
-  --color-grid-major: rgba(120, 200, 220, 0.05);
+  --color-grid: rgba(180, 225, 240, 0.1);
+  --color-grid-major: rgba(180, 225, 240, 0.18);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
@@ -209,8 +210,9 @@
   --color-info: #2563eb;
   --color-debug: #6b7280;
 
-  --color-grid: rgba(40, 60, 90, 0.06);
-  --color-grid-major: rgba(40, 60, 90, 0.1);
+  --color-grid: rgba(40, 90, 150, 0.1);
+  --color-grid-major: rgba(40, 90, 150, 0.18);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
 
   --shadow-sm: 0 1px 2px rgba(20, 24, 32, 0.06);
   --shadow-md: 0 4px 14px rgba(20, 24, 32, 0.08);
