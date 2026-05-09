@@ -116,6 +116,11 @@
       "tone": "absurd"
     },
     {
+      "level": "INFO",
+      "text": "Murmel, murmel, murmel…",
+      "tone": "absurd"
+    },
+    {
       "level": "WARN",
       "text": "Telemetry stream lag exceeds 50ms — investigating.",
       "tone": "realistic"
