@@ -5,6 +5,7 @@
  * Phase 6 will wire real routes for subpages.
  */
 
+import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HeaderCard from "../components/sections/HeaderCard.astro";
 import HeroCard from "../components/sections/HeroCard.astro";
@@ -16,6 +17,8 @@ import ArchitectureSection from "../components/sections/ArchitectureSection.astr
 import TechStackCard from "../components/sections/TechStackCard.astro";
 import ExperienceCard from "../components/sections/ExperienceCard.astro";
 import ContactCard from "../components/sections/ContactCard.astro";
+import roboticArm from "../assets/img/sketches/robotic-arm.png";
+import medicalDevice from "../assets/img/sketches/medical-device.png";
 ---
 
 <BaseLayout
@@ -31,7 +34,12 @@ import ContactCard from "../components/sections/ContactCard.astro";
 
   <div class="landing__top-grid">
     <AboutCard />
-    <DomainsCard />
+    <div class="top-grid__right">
+      <DomainsCard />
+      <div class="landing__sketch landing__sketch--arm" aria-hidden="true">
+        <Image src={roboticArm} alt="" />
+      </div>
+    </div>
   </div>
 
   <ProjectsSection />
@@ -42,6 +50,9 @@ import ContactCard from "../components/sections/ContactCard.astro";
     <div class="bottom-grid__right">
       <TechStackCard />
       <ContactCard />
+      <div class="landing__sketch landing__sketch--device" aria-hidden="true">
+        <Image src={medicalDevice} alt="" />
+      </div>
     </div>
   </div>
 </BaseLayout>
@@ -63,10 +74,27 @@ import ContactCard from "../components/sections/ContactCard.astro";
     margin-bottom: var(--space-4);
     align-items: start;
   }
+  .top-grid__right,
   .bottom-grid__right {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+  }
+
+  .landing__sketch {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .landing__sketch :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .landing__sketch--arm :global(img) {
+    max-width: 240px;
+  }
+  .landing__sketch--device :global(img) {
+    max-width: 200px;
   }
 
   @media (max-width: 900px) {

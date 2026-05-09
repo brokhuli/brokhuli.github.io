@@ -9,7 +9,6 @@ import Card from "../primitives/Card.astro";
 import SectionHeading from "../primitives/SectionHeading.astro";
 import Button from "../primitives/Button.astro";
 import ExperienceEntry from "./ExperienceEntry.astro";
-import trainSvg from "../../assets/img/sketches/train.svg?raw";
 
 interface Props {
   limit?: number;
@@ -32,7 +31,6 @@ const entries = (await getCollection("experience"))
       View Full Resume
     </Button>
   </div>
-  <div class="exp-card__sketch" aria-hidden="true" set:html={trainSvg} />
 </Card>
 
 <style>
@@ -46,25 +44,5 @@ const entries = (await getCollection("experience"))
   .exp-card__footer {
     border-top: var(--line-divider);
     padding-top: var(--space-4);
-  }
-
-  .exp-card__sketch {
-    margin-top: var(--space-6);
-    display: flex;
-    justify-content: flex-end;
-    color: var(--color-fg-subtle);
-    opacity: 0.65;
-  }
-
-  .exp-card__sketch :global(svg) {
-    width: 100%;
-    max-width: 480px;
-    height: auto;
-  }
-
-  @media (max-width: 640px) {
-    .exp-card__sketch {
-      display: none;
-    }
   }
 </style>
