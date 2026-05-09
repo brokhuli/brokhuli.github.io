@@ -151,7 +151,7 @@
 
 /* Dark Mode (default): true black + indigo accent */
 [data-theme="dark"] {
-  --color-bg: #000000;
+  --color-bg: #020308;
   --color-surface-1: #0a0d14;
   --color-surface-2: #11151f;
   --color-surface-3: #1a2244;
