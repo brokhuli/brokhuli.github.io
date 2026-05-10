@@ -14,6 +14,13 @@
 - The background should be the same blue as the sidebar's highlight rectangle
 - Update content within to show up well against bacground (text, icons, etc)
 
+## [ ] Color Schemes Tests
+- We currently have two color themes (Dark and Eric).
+- I want to test out a number of different themes in both dark and light categories.
+- Let's add a feature where we have 3 more color themes.
+- Change the ThemeToggle to Dark, Theme 2, Theme 3, Theme 4, Eric
+- Make up some color themes for 2, 3, 4.
+
 ## [ ] Sketch Measurements visual whimsy
 - I'm looking to add a fun effect.  When a card is hovered over for a bit, I'd like to have an animation that draws measurement lines for the left and top sides of the card.
 - They should look like a person is drawing them with a pencil.  Don't show the pencil, just the lines being drawn.

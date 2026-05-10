@@ -3,7 +3,7 @@
  * Spec: references/specs/design-tokens.md
  *
  * Tokens emit as CSS custom properties under :root (theme-agnostic) or
- * under [data-theme="dark"] / [data-theme="light"] (theme-specific).
+ * under [data-theme="..."] blocks (theme-specific).
  * Tailwind v4's CSS-first config in tailwind.css reads these values.
  */
 
@@ -177,6 +177,111 @@
 
   --color-grid: rgba(180, 225, 240, 0.1);
   --color-grid-major: rgba(180, 225, 240, 0.18);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Theme 3: Ultraviolet Night - dark aubergine + dark mint signal */
+[data-theme="theme-3"] {
+  --color-bg: #100a16;
+  --color-surface-1: #1a1123;
+  --color-surface-2: #251936;
+  --color-surface-3: #37224a;
+
+  --color-fg-default: #f1edf7;
+  --color-fg-muted: #beb4cc;
+  --color-fg-subtle: #82738f;
+  --color-fg-on-accent: #101406;
+
+  --color-accent: #2f8f78;
+  --color-accent-hover: #3aa68c;
+  --color-accent-muted: #142c27;
+
+  --color-border: #33233f;
+  --color-border-hover: #4e3561;
+  --color-border-strong: #72508b;
+
+  --color-success: #86efac;
+  --color-warning: #f0c35a;
+  --color-danger: #fb7185;
+  --color-info: #8bd5ff;
+  --color-debug: #a9a0b3;
+
+  --color-grid: rgba(47, 143, 120, 0.08);
+  --color-grid-major: rgba(139, 213, 255, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.42);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.52);
+}
+
+/* Theme 5: Rose - deep ink surfaces + raspberry accents */
+[data-theme="theme-5"] {
+  --color-bg: #12080f;
+  --color-surface-1: #1d1018;
+  --color-surface-2: #2b1824;
+  --color-surface-3: #412233;
+
+  --color-fg-default: #f5edf1;
+  --color-fg-muted: #c4aeb8;
+  --color-fg-subtle: #8b6f7b;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #d44c80;
+  --color-accent-hover: #ec6a9b;
+  --color-accent-muted: #442033;
+
+  --color-border: #3a2330;
+  --color-border-hover: #573348;
+  --color-border-strong: #7f5068;
+
+  --color-success: #74e5a2;
+  --color-warning: #f2c66d;
+  --color-danger: #fb7185;
+  --color-info: #8bd5ff;
+  --color-debug: #a9a0b3;
+
+  --color-grid: rgba(212, 76, 128, 0.08);
+  --color-grid-major: rgba(139, 213, 255, 0.13);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Theme 8: Copperline - dark navy + copper signal */
+[data-theme="theme-8"] {
+  --color-bg: #06101c;
+  --color-surface-1: #0d1b2a;
+  --color-surface-2: #15263a;
+  --color-surface-3: #2b3445;
+
+  --color-fg-default: #eef3f8;
+  --color-fg-muted: #aeb9c6;
+  --color-fg-subtle: #748092;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #b85c38;
+  --color-accent-hover: #d1784f;
+  --color-accent-muted: #3a241d;
+
+  --color-border: #24364b;
+  --color-border-hover: #38516c;
+  --color-border-strong: #58708f;
+
+  --color-success: #5ee092;
+  --color-warning: #f4b860;
+  --color-danger: #fb7185;
+  --color-info: #7dd3fc;
+  --color-debug: #94a3b8;
+
+  --color-grid: rgba(184, 92, 56, 0.08);
+  --color-grid-major: rgba(125, 211, 252, 0.14);
   --blueprint-grid-image: url("/blueprint-grid-dark.svg");
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);

@@ -1,54 +1,72 @@
 ---
 /*
- * ThemeToggle — segmented control switching between Dark Mode and Eric Mode.
+ * ThemeToggle - segmented control for the site's finite theme set.
  *
  * Specs:
- *   references/specs/component-spec.md §5 ThemeToggle
- *   references/specs/interaction-spec.md §7
+ *   references/specs/component-spec.md section 5 ThemeToggle
+ *   references/specs/interaction-spec.md section 7
  *
  * Initial theme is set synchronously by the inline <script is:inline> in
  * BaseLayout; this component only handles user clicks and persistence.
  */
 
 import Icon from "../primitives/Icon.astro";
+
+const themes = [
+  {
+    value: "dark",
+    label: "Dark",
+    icon: "lucide:moon",
+    tip: "For late-night systems thinking",
+  },
+  {
+    value: "theme-3",
+    label: "Ultraviolet",
+    icon: "lucide:moon-star",
+    tip: "Ultraviolet Night: dark aubergine with dark mint signal",
+  },
+  {
+    value: "theme-5",
+    label: "Rose",
+    icon: "lucide:flower-2",
+    tip: "Rose: deep ink surfaces with raspberry accents",
+  },
+  {
+    value: "theme-8",
+    label: "Copper",
+    icon: "lucide:cable",
+    tip: "Copperline: dark navy with copper signal",
+  },
+  {
+    value: "light",
+    label: "Eric",
+    icon: "lucide:sun",
+    tip: "For daylight clarity, but mostly for Eric",
+  },
+];
 ---
 
 <fieldset class="theme-toggle" data-theme-toggle>
   <legend class="sr-only">Theme</legend>
 
-  <label class="theme-toggle__option">
-    <input
-      type="radio"
-      name="theme"
-      value="dark"
-      class="theme-toggle__input"
-      aria-describedby="theme-tip-dark"
-    />
-    <span class="theme-toggle__chip">
-      <Icon name="lucide:moon" size={14} />
-      <span class="theme-toggle__label">Dark Mode</span>
-    </span>
-    <span id="theme-tip-dark" role="tooltip" class="theme-toggle__tip">
-      For late-night systems thinking
-    </span>
-  </label>
-
-  <label class="theme-toggle__option">
-    <input
-      type="radio"
-      name="theme"
-      value="light"
-      class="theme-toggle__input"
-      aria-describedby="theme-tip-light"
-    />
-    <span class="theme-toggle__chip">
-      <Icon name="lucide:sun" size={14} />
-      <span class="theme-toggle__label">Eric Mode</span>
-    </span>
-    <span id="theme-tip-light" role="tooltip" class="theme-toggle__tip">
-      For daylight clarity, but mostly for Eric
-    </span>
-  </label>
+  {
+    themes.map((theme) => (
+      <label class="theme-toggle__option">
+        <input
+          type="radio"
+          name="theme"
+          value={theme.value}
+          class="theme-toggle__input"
+          aria-label={`${theme.label} theme`}
+          title={theme.tip}
+        />
+        <span class="theme-toggle__chip">
+          <Icon name={theme.icon} size={14} />
+          <span class="theme-toggle__label">{theme.label}</span>
+        </span>
+      </label>
+    ))
+  }
 </fieldset>
 
 <script>
@@ -56,8 +74,9 @@ import Icon from "../primitives/Icon.astro";
   // theme-init script in BaseLayout; this script only:
   //   1. syncs the radio's checked state from data-theme on mount, and
   //   2. writes data-theme + localStorage.theme on user change.
-  // Spec: interaction-spec.md §7.
+  // Spec: interaction-spec.md section 7.
   (function () {
+    const themes = ["dark", "theme-3", "theme-5", "theme-8", "light"];
     const root = document.documentElement;
     const fieldsets = document.querySelectorAll<HTMLFieldSetElement>(
       "[data-theme-toggle]",
@@ -73,31 +92,33 @@ import Icon from "../primitives/Icon.astro";
       }
     };
 
-    const current = root.dataset.theme === "light" ? "light" : "dark";
+    const current = themes.includes(root.dataset.theme || "")
+      ? root.dataset.theme || "dark"
+      : "dark";
     sync(current);
 
     for (const fs of fieldsets) {
       fs.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement | null;
         if (!target || target.name !== "theme") return;
-        const next = target.value === "light" ? "light" : "dark";
+        const next = themes.includes(target.value) ? target.value : "dark";
         root.dataset.theme = next;
         try {
           localStorage.setItem("theme", next);
         } catch {
-          // Storage unavailable (Safari private mode, etc.) — DOM update is enough.
+          // Storage unavailable (Safari private mode, etc.) - DOM update is enough.
         }
         sync(next);
       });
     }
 
-    // `t` keyboard shortcut (interaction-spec.md §2) flips the theme; we
-    // listen on the document so any focused element outside an input works.
+    // `t` keyboard shortcut cycles the theme list.
     document.addEventListener("keydown", (e) => {
       if (e.key !== "t" || e.metaKey || e.ctrlKey || e.altKey) return;
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
-      const next = root.dataset.theme === "light" ? "dark" : "light";
+      const currentIndex = themes.indexOf(root.dataset.theme || "");
+      const next = themes[(currentIndex + 1) % themes.length] || "dark";
       root.dataset.theme = next;
       try {
         localStorage.setItem("theme", next);
@@ -124,12 +145,15 @@ import Icon from "../primitives/Icon.astro";
 
   .theme-toggle {
     display: inline-flex;
+    flex-wrap: wrap;
     gap: 2px;
     padding: 2px;
     margin: 0;
     border: var(--border-width-strong) solid var(--color-border);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
     background: var(--color-surface-1);
+    max-width: min(100%, calc(100vw - var(--space-6)));
+    justify-content: flex-end;
   }
 
   .theme-toggle__option {
@@ -150,7 +174,7 @@ import Icon from "../primitives/Icon.astro";
     align-items: center;
     gap: var(--space-1);
     padding: var(--space-1) var(--space-3);
-    border-radius: var(--radius-pill);
+    border-radius: calc(var(--radius-md) - 2px);
     color: var(--color-fg-muted);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
@@ -171,33 +195,19 @@ import Icon from "../primitives/Icon.astro";
     outline-offset: 2px;
   }
 
-  .theme-toggle__tip {
-    position: absolute;
-    top: calc(100% + var(--space-2));
-    right: 0;
-    background: var(--color-surface-2);
-    color: var(--color-fg-default);
-    border: var(--line-divider);
-    border-radius: var(--radius-sm);
-    padding: var(--space-1) var(--space-2);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    line-height: var(--text-xs-line);
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--motion-quick) var(--ease-out-quart) 400ms;
-    z-index: var(--z-popover);
-  }
-
-  .theme-toggle__option:hover .theme-toggle__tip,
-  .theme-toggle__input:focus-visible ~ .theme-toggle__tip {
-    opacity: 1;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .theme-toggle__chip {
       transition-duration: var(--motion-instant);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .theme-toggle {
+      justify-content: flex-end;
+    }
+
+    .theme-toggle__chip {
+      padding-inline: var(--space-2);
     }
   }
 </style>
