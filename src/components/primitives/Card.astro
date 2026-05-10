@@ -7,7 +7,7 @@
 interface Props {
   title?: string;
   id?: string;
-  variant?: "default" | "accent";
+  variant?: "default" | "accent" | "filled";
   class?: string;
 }
 
@@ -44,6 +44,14 @@ const { title, id, variant = "default", class: className = "" } = Astro.props;
   }
   .card[data-variant="accent"] {
     border-color: var(--color-accent-muted);
+  }
+  .card[data-variant="filled"] {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-fg-on-accent);
+  }
+  .card[data-variant="filled"] .card__title {
+    color: var(--color-fg-on-accent);
   }
   .card__header {
     margin-bottom: var(--space-4);

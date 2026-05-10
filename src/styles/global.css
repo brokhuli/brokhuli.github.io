@@ -92,6 +92,64 @@ button {
 }
 
 /*
+ * Filled-card variant: descendant overrides so headings, pills, group
+ * labels, and skill rows read against the saturated accent background.
+ * Specificity (0,3,0) beats the (0,2,0) of the scoped child styles.
+ */
+.card[data-variant="filled"] .heading {
+  color: var(--color-fg-on-accent);
+  border-bottom-color: rgba(255, 255, 255, 0.55);
+}
+.card[data-variant="filled"] .skills__icon {
+  color: var(--color-fg-on-accent);
+}
+.card[data-variant="filled"] .skills__label {
+  color: var(--color-fg-on-accent);
+}
+.card[data-variant="filled"] .tech-stack__group-label {
+  color: rgba(255, 255, 255, 0.75);
+}
+.card[data-variant="filled"] .pill {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--color-fg-on-accent);
+}
+.card[data-variant="filled"] .contact__availability {
+  color: rgba(255, 255, 255, 0.8);
+}
+.card[data-variant="filled"] .contact__link,
+.card[data-variant="filled"] .contact__value {
+  color: var(--color-fg-on-accent);
+}
+.card[data-variant="filled"] .contact__link:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+.card[data-variant="filled"] .contact__icon,
+.card[data-variant="filled"] .contact__label {
+  color: rgba(255, 255, 255, 0.75);
+}
+.card[data-variant="filled"] .contact__headshot {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/*
+ * Mobile sidebar overlay clearance: when the sidebar is the floating top
+ * bar (≤768px), section anchors need a scroll-margin so their headings
+ * aren't hidden beneath it after a click-to-section navigation.
+ */
+@media (max-width: 768px) {
+  #home,
+  #about,
+  #projects,
+  #architecture,
+  #tech-stack,
+  #experience,
+  #contact {
+    scroll-margin-top: 5rem;
+  }
+}
+
+/*
  * Global reduced-motion short-circuit.
  * Individual interactions document their reduced-motion behavior
  * (e.g., the log ticker freezes on a single line) on top of this.
