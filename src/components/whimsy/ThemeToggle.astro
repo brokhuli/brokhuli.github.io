@@ -29,7 +29,7 @@ import Icon from "../primitives/Icon.astro";
       <span class="theme-toggle__label">Dark Mode</span>
     </span>
     <span id="theme-tip-dark" role="tooltip" class="theme-toggle__tip">
-      For late-night systems thinking.
+      For late-night systems thinking
     </span>
   </label>
 
@@ -46,7 +46,7 @@ import Icon from "../primitives/Icon.astro";
       <span class="theme-toggle__label">Eric Mode</span>
     </span>
     <span id="theme-tip-light" role="tooltip" class="theme-toggle__tip">
-      For daylight clarity.
+      For daylight clarity, but mostly for Eric
     </span>
   </label>
 </fieldset>
@@ -127,7 +127,7 @@ import Icon from "../primitives/Icon.astro";
     gap: 2px;
     padding: 2px;
     margin: 0;
-    border: var(--line-divider);
+    border: var(--border-width-strong) solid var(--color-border);
     border-radius: var(--radius-pill);
     background: var(--color-surface-1);
   }
@@ -174,8 +174,7 @@ import Icon from "../primitives/Icon.astro";
   .theme-toggle__tip {
     position: absolute;
     top: calc(100% + var(--space-2));
-    left: 50%;
-    transform: translateX(-50%);
+    right: 0;
     background: var(--color-surface-2);
     color: var(--color-fg-default);
     border: var(--line-divider);

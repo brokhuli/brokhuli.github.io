@@ -101,6 +101,14 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
         } catch {
           document.documentElement.dataset.theme = "dark";
         }
+        try {
+          var storedLines = localStorage.getItem("logTickerLines");
+          var n = parseInt(storedLines || "", 10);
+          if (!(n >= 0 && n <= 4)) n = 3;
+          document.documentElement.dataset.logLines = String(n);
+        } catch {
+          document.documentElement.dataset.logLines = "3";
+        }
         requestAnimationFrame(function () {
           document.documentElement.dataset.themeReady = "true";
         });
@@ -212,7 +220,7 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
 <style is:global>
   .page-main {
     margin-left: calc(var(--space-4) + var(--layout-sidebar-width));
-    padding: var(--space-8) var(--layout-gutter-desktop);
+    padding: var(--space-8) var(--space-4);
     max-width: var(--layout-max-width);
   }
 

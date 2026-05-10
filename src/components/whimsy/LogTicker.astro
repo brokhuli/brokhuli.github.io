@@ -9,30 +9,47 @@
  *   references/specs/whimsical-elements.md (idea 5)
  *
  * Lines are read from the `logLines` collection at build time and embedded
- * into a JSON script so the runtime needs no network. Filtered to INFO|SYS|DBG
- * (WARN/ERR are reserved for the system-fault page).
+ * into a JSON script so the runtime needs no network. The cycler picks from
+ * a calm pool (INFO|SYS|DBG) by default and surfaces a rare WARN/ERR (~5%).
  */
 
 import { getCollection } from "astro:content";
+import Icon from "../primitives/Icon.astro";
 
 const entries = await getCollection("logLines");
-const lines = entries
-  .flatMap((e) => e.data.lines)
-  .filter((l) => l.level === "INFO" || l.level === "SYS" || l.level === "DBG");
+const allLines = entries.flatMap((e) => e.data.lines);
+const calm = allLines.filter(
+  (l) => l.level === "INFO" || l.level === "SYS" || l.level === "DBG",
+);
+const alert = allLines.filter((l) => l.level === "WARN" || l.level === "ERR");
 
 // Pre-render 3 static lines so SSR + <noscript> visitors see something.
-const initial = lines.slice(0, 3);
-while (initial.length < 3 && lines.length > 0) initial.push(lines[0]);
+const initial = calm.slice(0, 3);
+while (initial.length < 3 && calm.length > 0) initial.push(calm[0]);
+
+// Build-time timestamps; the client script refreshes them on hydration.
+const pad = (n: number) => String(n).padStart(2, "0");
+const fmtTime = (d: Date) =>
+  `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+const buildNow = new Date();
+const initialTimes = [
+  fmtTime(new Date(buildNow.getTime() - 4000)),
+  fmtTime(new Date(buildNow.getTime() - 2000)),
+  fmtTime(buildNow),
+];
 
 const dataId = "log-ticker-data";
 ---
 
-<div class="log-ticker" data-log-ticker aria-hidden="true">
-  <div class="log-ticker__frame">
+<div class="log-ticker" data-log-ticker>
+  <div class="log-ticker__frame" aria-hidden="true">
     <div class="log-ticker__stack" data-log-ticker-stack>
       {
-        initial.map((l) => (
+        initial.map((l, i) => (
           <span class="log-ticker__line" data-log-ticker-line>
+            <span class="log-ticker__time" data-log-ticker-time>
+              [{initialTimes[i]}]
+            </span>
             <span class="log-ticker__level" data-level={l.level}>
               [{l.level}]
             </span>
@@ -44,52 +61,119 @@ const dataId = "log-ticker-data";
       }
     </div>
   </div>
+
+  <div class="log-ticker__stepper" data-log-ticker-stepper>
+    <button
+      type="button"
+      class="log-ticker__step"
+      data-log-ticker-inc
+      aria-label="Show more log lines"
+    >
+      <Icon name="lucide:chevron-up" size={12} />
+    </button>
+    <button
+      type="button"
+      class="log-ticker__step"
+      data-log-ticker-dec
+      aria-label="Show fewer log lines"
+    >
+      <Icon name="lucide:chevron-down" size={12} />
+    </button>
+    <span
+      class="log-ticker__count sr-only"
+      data-log-ticker-count
+      aria-live="polite"
+      aria-atomic="true">3 log lines visible</span
+    >
+  </div>
+
+  <span class="log-ticker__hint" aria-hidden="true">Log Ticker</span>
 </div>
 
 <script
   is:inline
   id={dataId}
   type="application/json"
-  set:html={JSON.stringify(lines)}
+  set:html={JSON.stringify({ calm, alert })}
 />
 
 <script>
-  // 3-line stack cycler. Spec: interaction-spec.md §9.
-  //   - oldest line fades out at the top (800ms)
-  //   - middle two slide up
+  // N-line stack cycler (N in 0..4, default 3). Spec: interaction-spec.md §9.
+  //   - oldest visible line fades out at the top (800ms)
+  //   - middle lines slide up
   //   - new line fades in at the bottom (800ms)
   //   - 70% realistic / 30% absurd; never repeat the previous
   //   - pause when tab is hidden or pointer hovers
-  //   - reduced-motion: render three static lines and stop
+  //   - reduced-motion: render static lines and stop
+  //   - stepper buttons let the user set how many lines are visible;
+  //     persisted in localStorage as `logTickerLines`.
   (function () {
     type Line = {
-      level: "INFO" | "SYS" | "DBG";
+      level: "INFO" | "SYS" | "DBG" | "WARN" | "ERR";
       text: string;
       tone: "realistic" | "absurd";
     };
+    type Payload = { calm: Line[]; alert: Line[] };
 
+    const root = document.documentElement;
     const ticker = document.querySelector<HTMLElement>("[data-log-ticker]");
     const stack = document.querySelector<HTMLElement>(
       "[data-log-ticker-stack]",
     );
     const dataNode = document.getElementById("log-ticker-data");
+    const decBtn = document.querySelector<HTMLButtonElement>(
+      "[data-log-ticker-dec]",
+    );
+    const incBtn = document.querySelector<HTMLButtonElement>(
+      "[data-log-ticker-inc]",
+    );
+    const countEl = document.querySelector<HTMLElement>(
+      "[data-log-ticker-count]",
+    );
     if (!ticker || !stack || !dataNode) return;
 
-    let lines: Line[] = [];
+    const MIN_COUNT = 0;
+    const MAX_COUNT = 4;
+    const DEFAULT_COUNT = 3;
+    const STORAGE_KEY = "logTickerLines";
+
+    const clampCount = (n: number) =>
+      Math.max(MIN_COUNT, Math.min(MAX_COUNT, n));
+    const readCount = (): number => {
+      const raw = parseInt(root.dataset.logLines || "", 10);
+      return Number.isFinite(raw) ? clampCount(raw) : DEFAULT_COUNT;
+    };
+    let count = readCount();
+
+    let calm: Line[] = [];
+    let alert: Line[] = [];
     try {
-      lines = JSON.parse(dataNode.textContent || "[]") as Line[];
+      const parsed = JSON.parse(dataNode.textContent || "{}") as Payload;
+      calm = parsed.calm || [];
+      alert = parsed.alert || [];
     } catch {
       return;
     }
-    if (lines.length === 0) return;
+    if (calm.length === 0) return;
 
-    const realistic = lines.filter((l) => l.tone === "realistic");
-    const absurd = lines.filter((l) => l.tone === "absurd");
+    const realistic = calm.filter((l) => l.tone === "realistic");
+    const absurd = calm.filter((l) => l.tone === "absurd");
+
+    const ALERT_RATE = 0.05;
 
     let prev: Line | null = null;
     const pick = (): Line => {
+      // Rare-ish WARN/ERR drop-in.
+      if (alert.length > 0 && Math.random() < ALERT_RATE) {
+        let next = alert[Math.floor(Math.random() * alert.length)];
+        if (prev && alert.length > 1 && next.text === prev.text) {
+          next = alert[(alert.indexOf(next) + 1) % alert.length];
+        }
+        prev = next;
+        return next;
+      }
       const useAbsurd = absurd.length > 0 && Math.random() < 0.3;
-      const pool = useAbsurd ? absurd : realistic.length ? realistic : lines;
+      const pool = useAbsurd ? absurd : realistic.length ? realistic : calm;
       let next = pool[Math.floor(Math.random() * pool.length)];
       if (prev && pool.length > 1 && next.text === prev.text) {
         next = pool[(pool.indexOf(next) + 1) % pool.length];
@@ -98,59 +182,17 @@ const dataId = "log-ticker-data";
       return next;
     };
 
-    const buildLine = (l: Line): HTMLElement => {
-      const span = document.createElement("span");
-      span.className = "log-ticker__line";
-      span.setAttribute("data-log-ticker-line", "");
-      const level = document.createElement("span");
-      level.className = "log-ticker__level";
-      level.dataset.level = l.level;
-      level.textContent = `[${l.level}]`;
-      const text = document.createElement("span");
-      text.className = "log-ticker__text";
-      text.setAttribute("data-log-ticker-text", "");
-      text.textContent = l.text;
-      span.appendChild(level);
-      span.appendChild(text);
-      return span;
+    const pad2 = (n: number) => String(n).padStart(2, "0");
+    const nowStamp = (): string => {
+      const d = new Date();
+      return `[${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}]`;
     };
 
-    const reduced =
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      // Replace SSR with three fresh static lines, no cycling.
-      stack.innerHTML = "";
-      for (let i = 0; i < 3; i++) {
-        const el = buildLine(pick());
-        el.style.opacity = "0.7";
-        stack.appendChild(el);
-      }
-      return;
-    }
-
-    // Reuse the SSR-rendered slot elements; only their text content cycles.
-    // Keeping the same DOM nodes avoids the layout shift that an
-    // innerHTML wipe-and-rebuild would cause inside the fixed-width frame.
-    const existing = Array.from(
-      stack.querySelectorAll<HTMLElement>(".log-ticker__line"),
-    );
-    while (existing.length < 3) {
-      const fresh = buildLine(pick());
-      stack.appendChild(fresh);
-      existing.push(fresh);
-    }
-    const slots = existing.slice(0, 3);
-    for (const slot of slots) slot.style.opacity = "1";
-
-    let paused = false;
-
-    const FADE = 600;
-    const TICK = 2200;
-
     const setSlotText = (slot: HTMLElement, line: Line) => {
+      const time = slot.querySelector<HTMLElement>(".log-ticker__time");
       const level = slot.querySelector<HTMLElement>(".log-ticker__level");
       const text = slot.querySelector<HTMLElement>(".log-ticker__text");
+      if (time) time.textContent = nowStamp();
       if (level) {
         level.dataset.level = line.level;
         level.textContent = `[${line.level}]`;
@@ -158,39 +200,122 @@ const dataId = "log-ticker-data";
       if (text) text.textContent = line.text;
     };
 
+    const reduced =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let slots = Array.from(
+      stack.querySelectorAll<HTMLElement>(".log-ticker__line"),
+    );
+
+    // Ensure DOM has at least max(3, count) slots — SSR renders 3 by default;
+    // the 4th slot only exists when the user has bumped the count to 4.
+    // Slots beyond `count` are hidden via CSS rules tied to data-log-lines
+    // on <html>, but the cycler keeps populating them so re-revealing shows
+    // fresh content rather than stale build-time text.
+    //
+    // We clone an SSR-rendered slot (rather than building from scratch) so
+    // the new node carries Astro's scoped-style attribute (data-astro-cid-…)
+    // and inherits the same flex spacing and level-color rules as the
+    // original 3 lines. document.createElement nodes lack that cid and would
+    // render unstyled.
+    const ensureSlotCount = (n: number) => {
+      const needed = Math.max(3, n);
+      while (slots.length < needed && slots.length > 0) {
+        const fresh = slots[0].cloneNode(true) as HTMLElement;
+        setSlotText(fresh, pick());
+        fresh.style.opacity = reduced ? "0.7" : "1";
+        stack.appendChild(fresh);
+        slots.push(fresh);
+      }
+    };
+
+    const updateStepperUI = () => {
+      if (countEl) {
+        countEl.textContent = `${count} log line${count === 1 ? "" : "s"} visible`;
+      }
+      if (decBtn) decBtn.disabled = count <= MIN_COUNT;
+      if (incBtn) incBtn.disabled = count >= MAX_COUNT;
+    };
+
+    const applyCount = (next: number) => {
+      const clamped = clampCount(next);
+      if (clamped === count) return;
+      count = clamped;
+      ensureSlotCount(count);
+      root.dataset.logLines = String(count);
+      try {
+        localStorage.setItem(STORAGE_KEY, String(count));
+      } catch {
+        // Storage unavailable — DOM update is enough.
+      }
+      updateStepperUI();
+    };
+
+    if (decBtn) {
+      decBtn.addEventListener("click", () => applyCount(count - 1));
+    }
+    if (incBtn) {
+      incBtn.addEventListener("click", () => applyCount(count + 1));
+    }
+
+    ensureSlotCount(count);
+    updateStepperUI();
+
+    if (reduced) {
+      // Refresh SSR build-time picks with hydration-time picks; no cycling.
+      for (const slot of slots) {
+        setSlotText(slot, pick());
+        slot.style.opacity = "0.7";
+      }
+      return;
+    }
+
+    for (const slot of slots) slot.style.opacity = "1";
+
+    // Refresh the SSR-baked timestamps on hydration so visitors see "now"
+    // instead of the build-time clock. Stagger by a couple of seconds so the
+    // existing lines read like a recent run rather than identical ticks.
+    const refreshSeed = new Date();
+    slots.forEach((slot, idx) => {
+      const time = slot.querySelector<HTMLElement>(".log-ticker__time");
+      if (!time) return;
+      const offsetSlots = slots.length - 1 - idx;
+      const stamp = new Date(refreshSeed.getTime() - offsetSlots * 2000);
+      time.textContent = `[${pad2(stamp.getHours())}:${pad2(stamp.getMinutes())}:${pad2(stamp.getSeconds())}]`;
+    });
+
+    let paused = false;
+
+    const FADE = 600;
+    const TICK_MIN = 2000;
+    const TICK_MAX = 6000;
+    const nextTick = () => TICK_MIN + Math.random() * (TICK_MAX - TICK_MIN);
+
+    const copySlotContent = (src: HTMLElement, dst: HTMLElement) => {
+      const tmS = src.querySelector<HTMLElement>(".log-ticker__time");
+      const lvlS = src.querySelector<HTMLElement>(".log-ticker__level");
+      const txtS = src.querySelector<HTMLElement>(".log-ticker__text");
+      const tmD = dst.querySelector<HTMLElement>(".log-ticker__time");
+      const lvlD = dst.querySelector<HTMLElement>(".log-ticker__level");
+      const txtD = dst.querySelector<HTMLElement>(".log-ticker__text");
+      if (tmD && tmS) tmD.textContent = tmS.textContent;
+      if (lvlD && lvlS) {
+        lvlD.dataset.level = lvlS.dataset.level || "INFO";
+        lvlD.textContent = lvlS.textContent;
+      }
+      if (txtD && txtS) txtD.textContent = txtS.textContent;
+    };
+
     const rotate = () => {
-      // Shift content up: slot[0] takes slot[1], slot[1] takes slot[2],
-      // slot[2] gets a freshly picked line with a brief fade-in.
-      const next0 = slots[1].cloneNode(true) as HTMLElement;
-      const next1 = slots[2].cloneNode(true) as HTMLElement;
+      if (slots.length === 0) return;
       const fresh = pick();
-
-      const lvl0 = next0.querySelector<HTMLElement>(".log-ticker__level");
-      const txt0 = next0.querySelector<HTMLElement>(".log-ticker__text");
-      const lvl1 = next1.querySelector<HTMLElement>(".log-ticker__level");
-      const txt1 = next1.querySelector<HTMLElement>(".log-ticker__text");
-
-      // Apply text directly to the live slots (no DOM swap).
-      if (lvl0 && txt0) {
-        const lvlA = slots[0].querySelector<HTMLElement>(".log-ticker__level");
-        const txtA = slots[0].querySelector<HTMLElement>(".log-ticker__text");
-        if (lvlA) {
-          lvlA.dataset.level = lvl0.dataset.level || "INFO";
-          lvlA.textContent = lvl0.textContent;
-        }
-        if (txtA) txtA.textContent = txt0.textContent;
+      // Shift content up: slot[i] takes slot[i+1] for i < last; tail gets a
+      // freshly picked line with a brief fade-in.
+      for (let i = 0; i < slots.length - 1; i++) {
+        copySlotContent(slots[i + 1], slots[i]);
       }
-      if (lvl1 && txt1) {
-        const lvlB = slots[1].querySelector<HTMLElement>(".log-ticker__level");
-        const txtB = slots[1].querySelector<HTMLElement>(".log-ticker__text");
-        if (lvlB) {
-          lvlB.dataset.level = lvl1.dataset.level || "INFO";
-          lvlB.textContent = lvl1.textContent;
-        }
-        if (txtB) txtB.textContent = txt1.textContent;
-      }
-
-      const tail = slots[2];
+      const tail = slots[slots.length - 1];
       tail.style.transition = `opacity ${FADE}ms linear`;
       tail.style.opacity = "0";
       window.setTimeout(() => {
@@ -203,7 +328,7 @@ const dataId = "log-ticker-data";
 
     const cycle = () => {
       if (!paused) rotate();
-      window.setTimeout(cycle, TICK);
+      window.setTimeout(cycle, nextTick());
     };
 
     document.addEventListener("visibilitychange", () => {
@@ -228,7 +353,7 @@ const dataId = "log-ticker-data";
     };
     const w = window as IdleWin;
     const start = () => {
-      window.setTimeout(cycle, TICK);
+      window.setTimeout(cycle, nextTick());
     };
     if (typeof w.requestIdleCallback === "function") {
       w.requestIdleCallback(start, { timeout: 1500 });
@@ -239,6 +364,18 @@ const dataId = "log-ticker-data";
 </script>
 
 <style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .log-ticker {
     position: fixed;
     bottom: var(--space-3);
@@ -251,17 +388,26 @@ const dataId = "log-ticker-data";
     line-height: var(--text-xs-line);
     color: var(--color-fg-muted);
     opacity: var(--log-ticker-opacity);
-    /* Fixed width keeps the centered frame from shifting when line text
-     * changes (CLS-safe). */
-    width: min(90vw, 420px);
+    display: flex;
+    align-items: end;
+    gap: var(--space-2);
   }
 
   .log-ticker__frame {
     background: var(--color-surface-1);
-    border: var(--line-divider);
+    border: var(--border-width-strong) solid var(--color-border);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     padding: var(--space-2) var(--space-5);
+    /* Fixed width keeps the centered frame from shifting when line text
+     * changes (CLS-safe). */
+    width: min(90vw, 520px);
+  }
+
+  /* At count=0 the frame is invisible but keeps its layout space, so the
+   * stepper stays in the same position it occupies when lines are visible. */
+  :global([data-log-lines="0"]) .log-ticker__frame {
+    visibility: hidden;
   }
 
   .log-ticker__stack {
@@ -286,6 +432,11 @@ const dataId = "log-ticker-data";
     min-width: 0;
   }
 
+  .log-ticker__time {
+    color: var(--color-fg-subtle);
+    flex-shrink: 0;
+  }
+
   .log-ticker__level {
     font-weight: var(--font-weight-medium);
     color: var(--color-info);
@@ -305,6 +456,106 @@ const dataId = "log-ticker-data";
   }
   .log-ticker__level[data-level="ERR"] {
     color: var(--color-danger);
+  }
+
+  .log-ticker__stepper {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1px;
+    padding: 2px;
+    border: var(--border-width-strong) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-1);
+    color: var(--color-fg-muted);
+    opacity: 0;
+    transition: opacity var(--motion-base) var(--ease-in-out-quad);
+    transition-delay: 200ms;
+  }
+
+  .log-ticker:hover .log-ticker__stepper,
+  .log-ticker:has(:focus-visible) .log-ticker__stepper,
+  .log-ticker__stepper:hover {
+    opacity: 1;
+    transition-delay: 0ms;
+  }
+
+  :global([data-log-lines="0"]) .log-ticker__stepper {
+    opacity: 1;
+    transition-delay: 0ms;
+  }
+
+  .log-ticker__step {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    margin: 0;
+    padding: 2px 4px;
+    color: var(--color-fg-muted);
+    font: inherit;
+    line-height: 0;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: color var(--motion-quick) var(--ease-in-out-quad);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .log-ticker__step:hover:not(:disabled) {
+    color: var(--color-fg-default);
+  }
+
+  .log-ticker__step:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .log-ticker__step:focus-visible {
+    outline: var(--border-width-strong) solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Hide line slots above the user-chosen visible count. The cycler keeps
+   * populating hidden slots so re-revealing them shows fresh content.
+   * `:global(...)` is required because data-log-lines lives on <html>,
+   * which is outside this component's scoped style boundary.
+   *
+   * Counts 1–3 use `display: none` so the frame collapses to fit the visible
+   * lines. Count 0 deliberately omits a line-hiding rule — the frame's
+   * `visibility: hidden` cascades to its lines, so they stay invisible while
+   * still occupying layout space. That keeps the stepper anchored to the
+   * same position it would have if the ticker were visible. */
+  :global([data-log-lines="1"]) .log-ticker__line:nth-last-child(n + 2) {
+    display: none;
+  }
+  :global([data-log-lines="2"]) .log-ticker__line:nth-last-child(n + 3) {
+    display: none;
+  }
+  :global([data-log-lines="3"]) .log-ticker__line:nth-last-child(n + 4) {
+    display: none;
+  }
+
+  .log-ticker__hint {
+    display: none;
+    position: absolute;
+    left: 100%;
+    bottom: 0;
+    margin-left: var(--space-2);
+    color: var(--color-fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    white-space: nowrap;
+  }
+  :global([data-log-lines="0"]) .log-ticker__hint {
+    display: inline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .log-ticker__stepper {
+      transition-duration: var(--motion-instant);
+    }
   }
 
   /* Mobile: hide to avoid covering content */

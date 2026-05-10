@@ -16,8 +16,8 @@ const items = [
   { id: "home", label: "Home", icon: "lucide:home" },
   { id: "about", label: "About", icon: "lucide:user" },
   { id: "projects", label: "Projects", icon: "lucide:layout-grid" },
-  { id: "architecture", label: "Architecture", icon: "lucide:network" },
-  { id: "tech-stack", label: "Tech Stack", icon: "lucide:cpu" },
+  { id: "architecture", label: "Architecture", icon: "lucide:cuboid" },
+  { id: "tech-stack", label: "Tech Stack", icon: "lucide:square-stack" },
   { id: "experience", label: "Experience", icon: "lucide:briefcase" },
   { id: "contact", label: "Contact", icon: "lucide:mail" },
 ];
@@ -84,8 +84,23 @@ const versionLabel = `v${pkg.version}`;
       }
     };
 
+    // When the user clicks a sidebar link, lock the highlight to that target
+    // until the smooth-scroll settles — short sections (Experience, Contact)
+    // never reach the observer's central band, so without this lock the
+    // highlight snaps back to whichever taller section dominates the viewport.
+    let lockedId: string | null = null;
+    let unlockTimer: number | null = null;
+    const unlockSoon = () => {
+      if (unlockTimer !== null) window.clearTimeout(unlockTimer);
+      unlockTimer = window.setTimeout(() => {
+        lockedId = null;
+        unlockTimer = null;
+      }, 120);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
+        if (lockedId) return;
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort(
@@ -99,6 +114,23 @@ const versionLabel = `v${pkg.version}`;
     );
 
     for (const t of targets) observer.observe(t);
+
+    for (const link of links) {
+      link.addEventListener("click", () => {
+        const id = link.dataset.section;
+        if (!id) return;
+        lockedId = id;
+        setActive(id);
+        // Hold the lock until scrolling stops; "scrollend" fires on modern
+        // browsers, with a timeout fallback for Safari.
+        const release = () => {
+          window.removeEventListener("scrollend", release);
+          unlockSoon();
+        };
+        window.addEventListener("scrollend", release, { once: true });
+        window.setTimeout(release, 1000);
+      });
+    }
   })();
 </script>
 
@@ -115,7 +147,7 @@ const versionLabel = `v${pkg.version}`;
     gap: var(--space-2);
     padding: var(--space-4) var(--space-2);
     background: var(--color-surface-1);
-    border: var(--line-divider);
+    border: var(--border-width-strong) solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
   }

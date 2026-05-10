@@ -5,6 +5,7 @@
  * Phase 6 will wire real routes for subpages.
  */
 
+import type { ImageMetadata } from "astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HeaderCard from "../components/sections/HeaderCard.astro";
 import HeroCard from "../components/sections/HeroCard.astro";
@@ -16,6 +17,34 @@ import ArchitectureSection from "../components/sections/ArchitectureSection.astr
 import TechStackCard from "../components/sections/TechStackCard.astro";
 import ExperienceCard from "../components/sections/ExperienceCard.astro";
 import ContactCard from "../components/sections/ContactCard.astro";
+
+const sketchModules = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/img/sketches/*.png",
+  { eager: true },
+);
+const pool = Object.entries(sketchModules)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, m]) => m.default);
+
+const rand = (n: number) => Math.floor(Math.random() * n);
+
+let ssrTopIdx = -1;
+let ssrBottomIdx = -1;
+if (pool.length > 0) {
+  ssrTopIdx = rand(pool.length);
+  ssrBottomIdx = ssrTopIdx;
+  if (pool.length > 1) {
+    do {
+      ssrBottomIdx = rand(pool.length);
+    } while (ssrBottomIdx === ssrTopIdx);
+  }
+}
+
+const poolPayload = pool.map((p) => ({
+  src: p.src,
+  width: p.width,
+  height: p.height,
+}));
 ---
 
 <BaseLayout
@@ -31,42 +60,179 @@ import ContactCard from "../components/sections/ContactCard.astro";
 
   <div class="landing__top-grid">
     <AboutCard />
-    <DomainsCard />
+    <div class="top-grid__right">
+      <DomainsCard />
+      {
+        pool.length > 0 && (
+          <button
+            type="button"
+            class="landing__sketch landing__sketch--top"
+            data-sketch-slot
+            data-sketch-index={ssrTopIdx}
+            aria-label="Show another sketch"
+          >
+            <img
+              src={pool[ssrTopIdx].src}
+              width={pool[ssrTopIdx].width}
+              height={pool[ssrTopIdx].height}
+              alt=""
+            />
+          </button>
+        )
+      }
+    </div>
   </div>
 
   <ProjectsSection />
   <ArchitectureSection />
 
   <div class="landing__bottom-grid">
-    <div class="bottom-grid__left">
+    <div class="bottom-grid__experience"><ExperienceCard /></div>
+    <div class="bottom-grid__right">
       <TechStackCard />
       <ContactCard />
+      {
+        pool.length > 0 && (
+          <button
+            type="button"
+            class="landing__sketch landing__sketch--bottom"
+            data-sketch-slot
+            data-sketch-index={ssrBottomIdx}
+            aria-label="Show another sketch"
+          >
+            <img
+              src={pool[ssrBottomIdx].src}
+              width={pool[ssrBottomIdx].width}
+              height={pool[ssrBottomIdx].height}
+              alt=""
+            />
+          </button>
+        )
+      }
     </div>
-    <div class="bottom-grid__experience"><ExperienceCard /></div>
   </div>
+
+  <script
+    is:inline
+    type="application/json"
+    id="sketch-pool"
+    set:html={JSON.stringify(poolPayload)}
+  />
 </BaseLayout>
+
+<script>
+  type SketchEntry = { src: string; width: number; height: number };
+
+  const node = document.getElementById("sketch-pool");
+  const slots = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-sketch-slot]"),
+  );
+
+  if (node && slots.length >= 2) {
+    let pool: SketchEntry[] = [];
+    try {
+      pool = JSON.parse(node.textContent || "[]") as SketchEntry[];
+    } catch {
+      pool = [];
+    }
+
+    if (pool.length > 0) {
+      const apply = (slot: HTMLButtonElement, idx: number) => {
+        slot.dataset.sketchIndex = String(idx);
+        const img = slot.querySelector("img");
+        if (!img) return;
+        img.src = pool[idx].src;
+        img.width = pool[idx].width;
+        img.height = pool[idx].height;
+      };
+
+      const pickDistinct = (
+        excludeA: number,
+        excludeB: number,
+      ): number | null => {
+        const candidates = pool
+          .map((_, i) => i)
+          .filter((i) => i !== excludeA && i !== excludeB);
+        if (candidates.length === 0) return null;
+        return candidates[Math.floor(Math.random() * candidates.length)];
+      };
+
+      // Re-randomize on hydration so each visit gets a fresh pair.
+      if (pool.length >= 2) {
+        const top = Math.floor(Math.random() * pool.length);
+        let bottom = top;
+        while (bottom === top) {
+          bottom = Math.floor(Math.random() * pool.length);
+        }
+        apply(slots[0], top);
+        apply(slots[1], bottom);
+      }
+
+      slots.forEach((slot, slotIdx) => {
+        slot.addEventListener("click", () => {
+          const otherIdx = parseInt(
+            slots[1 - slotIdx].dataset.sketchIndex || "0",
+            10,
+          );
+          const currentIdx = parseInt(slot.dataset.sketchIndex || "0", 10);
+          const next = pickDistinct(currentIdx, otherIdx);
+          if (next === null) return;
+          apply(slot, next);
+        });
+      });
+    }
+  }
+</script>
 
 <style>
   .landing__hero-grid,
   .landing__top-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: var(--space-6);
-    margin-bottom: var(--space-8);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
     align-items: start;
   }
 
   .landing__bottom-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-6);
-    margin-bottom: var(--space-8);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
     align-items: start;
   }
-  .bottom-grid__left {
+  .top-grid__right,
+  .bottom-grid__right {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
+    gap: var(--space-4);
+  }
+
+  .landing__sketch {
+    display: flex;
+    justify-content: flex-start;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    transition: opacity var(--motion-quick) var(--ease-out-quart);
+  }
+  .landing__sketch:hover,
+  .landing__sketch:focus-visible {
+    opacity: 0.8;
+  }
+  .landing__sketch :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
+  }
+  .landing__sketch--top :global(img) {
+    max-width: 240px;
+  }
+  .landing__sketch--bottom :global(img) {
+    max-width: 200px;
   }
 
   @media (max-width: 900px) {

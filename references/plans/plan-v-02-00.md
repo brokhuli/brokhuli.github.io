@@ -27,19 +27,19 @@ The implementation stays inside ADR-004 layer rules. The SVG files are static as
 
 | # | ✓ | Item | Files |
 |---|---|---|---|
-| 1 | [ ] | Replace body dot-grid with graph-paper line grid (minor + major) | [../../src/styles/global.css](../../src/styles/global.css), [../../src/styles/tokens.css](../../src/styles/tokens.css) |
-| 2 | [ ] | New `robotic-arm.svg` placeholder | new `src/assets/img/sketches/robotic-arm.svg` |
-| 3 | [ ] | New `train.svg` placeholder | new `src/assets/img/sketches/train.svg` |
-| 4 | [ ] | New `medical-device.svg` placeholder | new `src/assets/img/sketches/medical-device.svg` |
-| 5 | [ ] | Wire RoboticArmSketch into AboutCard (2-col layout) | [../../src/components/sections/AboutCard.astro](../../src/components/sections/AboutCard.astro) |
-| 6 | [ ] | Wire TrainSketch into ExperienceCard footer | [../../src/components/sections/ExperienceCard.astro](../../src/components/sections/ExperienceCard.astro) |
-| 7 | [ ] | Wire medical-device.svg into ContactCard | [../../src/components/sections/ContactCard.astro](../../src/components/sections/ContactCard.astro) |
+| 1 | [x] | Replace body dot-grid with graph-paper line grid (minor + major) | [../../src/styles/global.css](../../src/styles/global.css), [../../src/styles/tokens.css](../../src/styles/tokens.css) |
+| 2 | [x] | New `robotic-arm.svg` placeholder | new `src/assets/img/sketches/robotic-arm.svg` |
+| 3 | [x] | New `train.svg` placeholder | new `src/assets/img/sketches/train.svg` |
+| 4 | [x] | New `medical-device.svg` placeholder | new `src/assets/img/sketches/medical-device.svg` |
+| 5 | [x] | Wire RoboticArmSketch into AboutCard (2-col layout) | [../../src/components/sections/AboutCard.astro](../../src/components/sections/AboutCard.astro) |
+| 6 | [x] | Wire TrainSketch into ExperienceCard footer | [../../src/components/sections/ExperienceCard.astro](../../src/components/sections/ExperienceCard.astro) |
+| 7 | [x] | Wire medical-device.svg into ContactCard | [../../src/components/sections/ContactCard.astro](../../src/components/sections/ContactCard.astro) |
 
 ---
 
 ## Detailed plan
 
-### 1. [ ] Body background → graph-paper grid
+### 1. [x] Body background → graph-paper grid
 
 Files: [../../src/styles/tokens.css](../../src/styles/tokens.css), [../../src/styles/global.css](../../src/styles/global.css)
 
@@ -104,7 +104,7 @@ body {
 
 `background-attachment: fixed` keeps the grid anchored to the viewport on scroll — matching the "graph paper underlay" feeling. If this hurts CLS or scroll perf in Lighthouse, drop the property and accept the scrolling grid.
 
-### 2. [ ] `robotic-arm.svg`
+### 2. [x] `robotic-arm.svg`
 
 New file: `src/assets/img/sketches/robotic-arm.svg`
 
@@ -125,15 +125,15 @@ Root attributes (consistent across all three sketches for swappability):
 
 No `width` / `height` attributes on the root — the consuming component caps size via CSS so the SVG stays fluid (`width: 100%; height: auto;`).
 
-### 3. [ ] `train.svg`
+### 3. [x] `train.svg`
 
 Same conventions as item 2. Subject: a stylized high-speed train profile (single-cab silhouette with windows + bogies) drawn as one continuous outline plus a few interior detail lines. Wider than tall — `viewBox="0 0 480 160"`. Aim ~2.5KB.
 
-### 4. [ ] `medical-device.svg`
+### 4. [x] `medical-device.svg`
 
 Same conventions as item 2. Subject: an auto-injector / syringe-style device — barrel, plunger, finger flange, needle guard. `viewBox="0 0 320 200"`. Aim ~3KB.
 
-### 5. [ ] AboutCard layout — robotic arm on the right
+### 5. [x] AboutCard layout — robotic arm on the right
 
 File: [../../src/components/sections/AboutCard.astro](../../src/components/sections/AboutCard.astro)
 
@@ -162,7 +162,7 @@ Concretely:
 - Make `.about__grid` a 2-column grid: `grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-6); align-items: start;`. At `@media (max-width: 900px)`, switch to single-column and place the illustration *after* the main content (or hide it — see Verification §2 to decide based on visual judgment).
 - `.about__illustration` styles: `color: var(--color-fg-subtle);` (cascades into the inline SVG via `stroke="currentColor"`); cap visual size at `width: 240px; max-width: 100%;`. Make sure inner `<svg>` gets `display: block; width: 100%; height: auto;` (existing `global.css` `svg { display: block; max-width: 100%; }` covers most of this).
 
-### 6. [ ] ExperienceCard — train footer
+### 6. [x] ExperienceCard — train footer
 
 File: [../../src/components/sections/ExperienceCard.astro](../../src/components/sections/ExperienceCard.astro)
 
@@ -182,7 +182,7 @@ Style the wrapper:
 
 At `@media (max-width: 640px)`, hide the sketch (`display: none`) — too cramped to read on phone widths.
 
-### 7. [ ] ContactCard — medical device sketch
+### 7. [x] ContactCard — medical device sketch
 
 File: [../../src/components/sections/ContactCard.astro](../../src/components/sections/ContactCard.astro)
 
@@ -227,14 +227,14 @@ No project-card / ProjectMedia / content-collection-schema changes. The medical-
 
 > Tick each `[ ]` as you complete the corresponding check. Same hygiene rules as v0.1.x — one chained gate run, single Playwright session, single Lighthouse run.
 
-1. [ ] **Combined gate** — `npm run lint && npm run check && npm run validate:content && npm run test && npm run build`. Pass = all gates green; `dist/` contains no `references/` paths.
-2. [ ] **Single Playwright session** (`npm run dev` background, one browser):
-   - [ ] `/` desktop (≥1280): graph-paper grid visible behind every card; minor rules form a 24px field; major rules at 96px give visible structure without overpowering. Robotic arm sits to the right of About text. Train sketch sits at the bottom-right of Experience card. Medical-device sketch sits in the lower portion of the ContactCard. None of the SVGs visibly clip cards or shift other content.
-   - [ ] Toggle Eric Mode: grid color flips to slate-on-cream; sketch strokes flip with `currentColor`. No hardcoded colors leaking through.
-   - [ ] 375px viewport: AboutCard collapses to single column with sketch beneath the prose (or hidden, per implementation choice — confirm visual quality). Train sketch hidden at ≤640px. ContactCard sketch hidden if it crowds at narrow widths.
-   - [ ] Reduced-motion (`reducedMotion: "reduce"`): no animation regressions on the sketches (they have no animation today, so this is a sanity check).
-3. [ ] **Lighthouse single run** — `npx lhci autorun`. Watch HTML page-weight delta on `/` (~7–10KB total inline-SVG payload added; expected gzip cost ~3–4KB). Confirm perf / a11y / SEO scores don't regress vs the v0.1.2 baseline. CLS on `/` should stay at the v0.1.2 level.
-4. [ ] **e2e smoke** — `npm run test:e2e`. No tests reference the new sketch DOM today (verified pre-implementation via grep), so this should pass without test edits.
+1. [x] **Combined gate** — all gates green; 10/10 unit tests; build succeeded; `dist/` references/ guard clean (build runs the guard).
+2. [x] **Single Playwright session**:
+   - [x] `/` desktop (1280): all four `repeating-linear-gradient` layers active on body; robotic arm SVG inlined in `.about__illustration` (viewBox `0 0 320 240`); train SVG in `.exp-card__sketch` (viewBox `0 0 480 160`); medical-device SVG in `.contact__sketch` (viewBox `0 0 320 200`). Each picks up `color: var(--color-fg-subtle)` so `currentColor` strokes resolve correctly.
+   - [x] Eric Mode (light): toggled via `dataset.theme = 'light'`. Grid color flips to slate-on-cream tokens; sketch strokes follow `currentColor` to the light-theme `--color-fg-subtle`. Full-page screenshot captured.
+   - [x] 375px mobile: AboutCard collapses to single column (`grid-template-columns: 278px`), arm shrinks to 200px and centers via `justify-self: center`. Train and medical-device sketches both `display: none` at ≤640px.
+   - [x] Reduced-motion: sketches have no animation; no regressions to verify (sanity check by code review).
+3. [x] **Lighthouse single run** — `npx lhci autorun` ran 3x against `/` and `/resume/`; all assertions passed.
+4. [x] **e2e smoke** — `npm run test:e2e`: 15/15 passed across Chromium/Firefox/WebKit.
 
 ## Out of scope
 

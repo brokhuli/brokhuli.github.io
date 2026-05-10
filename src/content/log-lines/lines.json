@@ -1,11 +1,6 @@
 {
   "lines": [
     {
-      "level": "INFO",
-      "text": "Compiling architecture modules…",
-      "tone": "realistic"
-    },
-    {
       "level": "SYS",
       "text": "Winding-up deterministic tight loops…",
       "tone": "realistic"
@@ -23,11 +18,6 @@
     {
       "level": "SYS",
       "text": "Checking dependency graph integrity…",
-      "tone": "realistic"
-    },
-    {
-      "level": "INFO",
-      "text": "Validating distributed consensus…",
       "tone": "realistic"
     },
     {
@@ -121,6 +111,16 @@
       "tone": "absurd"
     },
     {
+      "level": "INFO",
+      "text": "Balloons popped, pushing more to stack…",
+      "tone": "absurd"
+    },
+    {
+      "level": "INFO",
+      "text": "Murmel, murmel, murmel…",
+      "tone": "absurd"
+    },
+    {
       "level": "WARN",
       "text": "Telemetry stream lag exceeds 50ms — investigating.",
       "tone": "realistic"
@@ -142,12 +142,12 @@
     },
     {
       "level": "WARN",
-      "text": "Garbage collection day is on Tuesday... or is it Wednesday?",
+      "text": "Garbage collection day is on Tuesday… or is it Wednesday?",
       "tone": "absurd"
     },
     {
       "level": "WARN",
-      "text": "Robots need more biofuel...",
+      "text": "Robots need more biofuel…",
       "tone": "absurd"
     },
     {
@@ -164,6 +164,66 @@
       "level": "WARN",
       "text": "Eric Mode is really just for Eric.",
       "tone": "absurd"
+    },
+    {
+      "level": "ERR",
+      "text": "The last in was the first out in the Queue.",
+      "tone": "absurd"
+    },
+    {
+      "level": "INFO",
+      "text": "Hot reload applied: 3 modules in 84ms.",
+      "tone": "realistic"
+    },
+    {
+      "level": "INFO",
+      "text": "Cache warmer completed first pass — 4,212 keys primed.",
+      "tone": "realistic"
+    },
+    {
+      "level": "INFO",
+      "text": "Health check passing on 7/7 replicas.",
+      "tone": "realistic"
+    },
+    {
+      "level": "INFO",
+      "text": "Build artifact uploaded to object store on first attempt.",
+      "tone": "realistic"
+    },
+    {
+      "level": "INFO",
+      "text": "Garbage collector reclaimed 218 MB.",
+      "tone": "realistic"
+    },
+    {
+      "level": "INFO",
+      "text": "Index rebuild scheduled for off-peak window 02:00 UTC.",
+      "tone": "realistic"
+    },
+    {
+      "level": "SYS",
+      "text": "Rate limiter window reset — token bucket refilled.",
+      "tone": "realistic"
+    },
+    {
+      "level": "DBG",
+      "text": "Schema migration 0042 applied successfully.",
+      "tone": "realistic"
+    },
+    {
+      "level": "DBG",
+      "text": "Memo cache hit ratio: 94.2% over the last 1k requests.",
+      "tone": "realistic"
+    },
+    {
+      "level": "WARN",
+      "text": "Disk usage at 82% on /var/log — rotation triggers at 85%.",
+      "tone": "realistic"
+    },
+    {
+      "level": "ERR",
+      "text": "Connection refused: postgres://primary:5432 — failover initiated.",
+      "tone": "realistic"
     }
   ]
 }

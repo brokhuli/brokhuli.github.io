@@ -32,11 +32,8 @@ body {
   line-height: var(--text-base-line);
   color: var(--color-fg-default);
   background-color: var(--color-bg);
-  background-image: radial-gradient(
-    var(--grid-line-color) var(--grid-dot-size),
-    transparent var(--grid-dot-size)
-  );
-  background-size: var(--grid-dot-gap) var(--grid-dot-gap);
+  background-image: var(--blueprint-grid-image);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
