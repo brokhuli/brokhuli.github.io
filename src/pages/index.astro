@@ -17,6 +17,7 @@ import ArchitectureSection from "../components/sections/ArchitectureSection.astr
 import TechStackCard from "../components/sections/TechStackCard.astro";
 import ExperienceCard from "../components/sections/ExperienceCard.astro";
 import ContactCard from "../components/sections/ContactCard.astro";
+import DoNotPressButton from "../components/whimsy/DoNotPressButton.astro";
 
 const sketchModules = import.meta.glob<{ default: ImageMetadata }>(
   "../assets/img/sketches/*.png",
@@ -91,6 +92,9 @@ const poolPayload = pool.map((p) => ({
     <div class="bottom-grid__right">
       <TechStackCard />
       <ContactCard />
+      <div class="contact-action">
+        <DoNotPressButton />
+      </div>
       {
         pool.length > 0 && (
           <button
@@ -206,6 +210,11 @@ const poolPayload = pool.map((p) => ({
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+  }
+
+  .contact-action {
+    display: flex;
+    justify-content: flex-start;
   }
 
   .landing__sketch {

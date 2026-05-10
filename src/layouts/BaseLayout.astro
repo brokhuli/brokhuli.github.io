@@ -34,6 +34,7 @@ interface Props {
   canonicalUrl?: string;
   ogImage?: string;
   seoType?: "website" | "project";
+  showSidebar?: boolean;
   project?: {
     title: string;
     tagline: string;
@@ -50,6 +51,7 @@ const {
   canonicalUrl,
   ogImage,
   seoType = "website",
+  showSidebar = true,
   project,
 } = Astro.props;
 
@@ -182,14 +184,14 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
     <slot name="head" />
   </head>
   <body>
-    <Sidebar />
+    {showSidebar && <Sidebar />}
 
     <div class="page-header">
       <SystemStatus />
       <ThemeToggle />
     </div>
 
-    <main class="page-main">
+    <main class:list={["page-main", !showSidebar && "page-main--no-sidebar"]}>
       <slot />
     </main>
 
@@ -223,6 +225,11 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
     margin-left: calc(var(--space-4) + var(--layout-sidebar-width));
     padding: var(--space-8) var(--space-4);
     max-width: var(--layout-max-width);
+  }
+
+  .page-main--no-sidebar {
+    margin-left: 0;
+    margin-inline: auto;
   }
 
   .page-header {
