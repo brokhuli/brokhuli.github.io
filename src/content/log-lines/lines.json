@@ -112,7 +112,7 @@
     },
     {
       "level": "INFO",
-      "text": "Balloons popped, adding more to stack…",
+      "text": "Balloons popped, pushing more to stack…",
       "tone": "absurd"
     },
     {

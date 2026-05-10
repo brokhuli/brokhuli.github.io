@@ -1,5 +1,10 @@
 # Update v 0.3
 
+## Sidebar Nav visual update
+- Change sidebar nav from the vertical line on the left to a full rectangle with rounded edges.
+- The rectangle should be a solid color. Maybe same blue color as the vertical line is currently.
+- Make the Navigation text and icon a light color to contrast with the background rectangle color
+
 ## Sketch Measurements visual whimsy
 - I'm looking to add a fun effect.  When a card is hovered over for a bit, I'd like to have an animation that draws measurement lines for the left and top sides of the card.
 - They should look like a person is drawing them with a pencil.  Don't show the pencil, just the lines being drawn.
