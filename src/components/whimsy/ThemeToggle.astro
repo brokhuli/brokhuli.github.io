@@ -17,30 +17,35 @@ const themes = [
     value: "dark",
     label: "Dark",
     icon: "lucide:moon",
+    iconOnly: false,
     tip: "For late-night systems thinking",
   },
   {
     value: "theme-3",
     label: "Ultraviolet",
     icon: "lucide:moon-star",
+    iconOnly: true,
     tip: "Ultraviolet Night: dark aubergine with dark mint signal",
   },
   {
     value: "theme-5",
     label: "Rose",
     icon: "lucide:flower-2",
+    iconOnly: true,
     tip: "Rose: deep ink surfaces with raspberry accents",
   },
   {
     value: "theme-8",
     label: "Copper",
     icon: "lucide:cable",
+    iconOnly: true,
     tip: "Copperline: dark navy with copper signal",
   },
   {
     value: "light",
     label: "Eric",
     icon: "lucide:sun",
+    iconOnly: false,
     tip: "For daylight clarity, but mostly for Eric",
   },
 ];
@@ -60,9 +65,16 @@ const themes = [
           aria-label={`${theme.label} theme`}
           title={theme.tip}
         />
-        <span class="theme-toggle__chip">
+        <span
+          class:list={[
+            "theme-toggle__chip",
+            theme.iconOnly && "theme-toggle__chip--icon-only",
+          ]}
+        >
           <Icon name={theme.icon} size={14} />
-          <span class="theme-toggle__label">{theme.label}</span>
+          {!theme.iconOnly && (
+            <span class="theme-toggle__label">{theme.label}</span>
+          )}
         </span>
       </label>
     ))
@@ -183,6 +195,12 @@ const themes = [
     transition:
       background-color var(--motion-base) var(--ease-in-out-quad),
       color var(--motion-base) var(--ease-in-out-quad);
+  }
+
+  .theme-toggle__chip--icon-only {
+    width: 28px;
+    justify-content: center;
+    padding-inline: var(--space-2);
   }
 
   .theme-toggle__input:checked + .theme-toggle__chip {

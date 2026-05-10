@@ -14,7 +14,7 @@
 - The background should be the same blue as the sidebar's highlight rectangle
 - Update content within to show up well against bacground (text, icons, etc)
 
-## [ ] Color Schemes Tests
+## [x] More Color Themes
 - We currently have two color themes (Dark and Eric).
 - I want to test out a number of different themes in both dark and light categories.
 - Let's add a feature where we have 3 more color themes.
