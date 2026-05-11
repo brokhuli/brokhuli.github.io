@@ -12,7 +12,7 @@ import { Image } from "astro:assets";
 import Card from "../primitives/Card.astro";
 import SectionHeading from "../primitives/SectionHeading.astro";
 import Icon from "../primitives/Icon.astro";
-import headshot from "../../assets/img/head-shot-03.png";
+import headshot from "../../assets/img/head-shot-04.png";
 ---
 
 <Card id="contact" variant="filled">
@@ -24,6 +24,8 @@ import headshot from "../../assets/img/head-shot-03.png";
       alt="Stephen Ullom"
       width={96}
       height={96}
+      format="png"
+      densities={[1, 2, 3]}
       class="contact__headshot"
       loading="lazy"
     />
@@ -105,6 +107,7 @@ import headshot from "../../assets/img/head-shot-03.png";
     border-radius: var(--radius-pill);
     flex-shrink: 0;
     object-fit: cover;
+    background: var(--color-surface-1);
     border: var(--line-divider);
   }
 
