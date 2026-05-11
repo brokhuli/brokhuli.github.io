@@ -42,7 +42,7 @@ const groups = Object.entries(groupMeta)
           <ul class="tech-stack__pills" role="list">
             {g.items.map((i) => (
               <li>
-                <TechPill label={i.data.label} />
+                <TechPill label={i.data.label} level={i.data.level} />
               </li>
             ))}
           </ul>

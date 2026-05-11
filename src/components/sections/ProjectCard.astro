@@ -5,6 +5,7 @@
  * Interaction: interaction-spec.md §6 (entry animation, GIF reduced-motion)
  */
 
+import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import StatusDot from "../primitives/StatusDot.astro";
 import TechPill from "../primitives/TechPill.astro";
@@ -17,6 +18,12 @@ interface Props {
 const { project } = Astro.props;
 const { title, tagline, status, tech, media, slug: slugField } = project.data;
 const slug = slugField ?? project.id;
+
+// Inherit level from the tech-stack collection so a "core" tool reads as core
+// wherever it appears. Unknown labels fall back to "working".
+const techLevels = new Map(
+  (await getCollection("techStack")).map((t) => [t.data.label, t.data.level]),
+);
 
 const statusMap: Record<
   string,
@@ -41,7 +48,7 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
       {
         tech.map((t) => (
           <li>
-            <TechPill label={t} />
+            <TechPill label={t} level={techLevels.get(t) ?? "working"} />
           </li>
         ))
       }

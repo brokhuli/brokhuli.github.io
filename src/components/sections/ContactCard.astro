@@ -13,6 +13,9 @@ import Card from "../primitives/Card.astro";
 import SectionHeading from "../primitives/SectionHeading.astro";
 import Icon from "../primitives/Icon.astro";
 import headshot from "../../assets/img/head-shot-04.png";
+import availabilityContent from "../../content/contact/content.md?raw";
+
+const availabilityText = availabilityContent.trim();
 ---
 
 <Card id="contact" variant="filled">
@@ -31,11 +34,11 @@ import headshot from "../../assets/img/head-shot-04.png";
     />
 
     <div class="contact__body">
-      <p class="contact__availability">
-        Open to Principal / Staff / Architect roles in simulation, digital
-        engineering, transportation, energy, robotics, industrial automation, or
-        medtech.
-      </p>
+      {
+        availabilityText && (
+          <p class="contact__availability">{availabilityText}</p>
+        )
+      }
 
       <ul class="contact__list" role="list">
         <li class="contact__row">
@@ -117,11 +120,11 @@ import headshot from "../../assets/img/head-shot-04.png";
   }
 
   .contact__availability {
-    font-size: var(--text-sm);
-    line-height: var(--text-sm-line);
-    color: var(--color-fg-muted);
+    color: rgba(255, 255, 255, 0.8);
     margin: 0 0 var(--space-5);
     font-style: italic;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
   }
 
   .contact__list {

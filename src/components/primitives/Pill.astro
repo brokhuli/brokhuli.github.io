@@ -2,18 +2,28 @@
 /*
  * Pill — small rounded tag.
  * Spec: references/specs/component-spec.md §4 Pill / TechPill
+ *
+ * `level` signals depth/usage independent of `tone`:
+ *   - "working" (default): outlined chip — light to moderate use.
+ *   - "core": filled accent chip — deep expertise / heavy use.
  */
 
 interface Props {
   label?: string;
   tone?: "neutral" | "accent";
+  level?: "working" | "core";
   class?: string;
 }
 
-const { label, tone = "neutral", class: className = "" } = Astro.props;
+const {
+  label,
+  tone = "neutral",
+  level = "working",
+  class: className = "",
+} = Astro.props;
 ---
 
-<span class:list={["pill", `pill--${tone}`, className]}>
+<span class:list={["pill", `pill--${tone}`, `pill--${level}`, className]}>
   {label ?? <slot />}
 </span>
 
@@ -36,5 +46,13 @@ const { label, tone = "neutral", class: className = "" } = Astro.props;
     border-color: var(--color-accent);
     color: var(--color-accent);
     background: var(--color-accent-muted);
+  }
+
+  /* Core level: filled accent chip — signals deep expertise / heavy use. */
+  .pill--core {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-fg-on-accent);
+    font-weight: var(--font-weight-medium);
   }
 </style>
