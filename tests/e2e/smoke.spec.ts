@@ -16,7 +16,14 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 const DIST = join(process.cwd(), "dist");
-const THEMES = ["dark", "theme-3", "theme-5", "theme-8", "light"] as const;
+const THEMES = [
+  "dark",
+  "theme-3",
+  "theme-5",
+  "theme-8",
+  "theme-9",
+  "light",
+] as const;
 
 test("home page returns 200 and contains the author's name", async ({
   page,

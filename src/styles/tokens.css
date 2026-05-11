@@ -289,6 +289,41 @@
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
 }
 
+/* Theme 9: Ultraviolet Day - light lavender paper + mint signal */
+[data-theme="theme-9"] {
+  --color-bg: #fcf7e9;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f1e9fb;
+  --color-surface-3: #e3d4f4;
+
+  --color-fg-default: #181021;
+  --color-fg-muted: #4f435e;
+  --color-fg-subtle: #756684;
+  --color-fg-on-accent: #091612;
+
+  --color-accent: #50c2a1;
+  --color-accent-hover: #2f8f78;
+  --color-accent-muted: #d6f2eb;
+
+  --color-border: #c8b5d8;
+  --color-border-hover: #a88fbd;
+  --color-border-strong: #7e6698;
+
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #b4233a;
+  --color-info: #2563eb;
+  --color-debug: #6b6474;
+
+  --color-grid: rgba(80, 194, 161, 0.1);
+  --color-grid-major: rgba(99, 65, 153, 0.18);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(24, 16, 33, 0.06);
+  --shadow-md: 0 4px 14px rgba(24, 16, 33, 0.08);
+  --shadow-lg: 0 12px 32px rgba(24, 16, 33, 0.1);
+}
+
 /* Eric Mode (light): warm khaki paper + indigo accent */
 [data-theme="light"] {
   --color-bg: #fcf7e9;
