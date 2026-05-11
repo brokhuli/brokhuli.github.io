@@ -4,7 +4,7 @@
  *
  * Five gates that must hold before a deploy is considered safe:
  *   1. `/` loads with 200 and contains the author's name.
- *   2. Theme toggle flips `data-theme` and persists to localStorage.
+ *   2. Theme toggle updates `data-theme` and persists to localStorage.
  *   3. LogTicker mounts after `client:idle` (the [data-log-ticker] element
  *      exists and renders a non-empty line within 3 s).
  *   4. Every internal `<a>` resolves to a 200 across the whole site.
@@ -16,6 +16,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 const DIST = join(process.cwd(), "dist");
+const THEMES = ["dark", "theme-3", "theme-5", "theme-8", "light"] as const;
 
 test("home page returns 200 and contains the author's name", async ({
   page,
@@ -25,7 +26,7 @@ test("home page returns 200 and contains the author's name", async ({
   await expect(page.locator("body")).toContainText("Stephen Ullom");
 });
 
-test("theme toggle flips data-theme and persists to localStorage", async ({
+test("theme toggle updates data-theme and persists to localStorage", async ({
   page,
 }) => {
   await page.goto("/");
@@ -33,10 +34,10 @@ test("theme toggle flips data-theme and persists to localStorage", async ({
   const initial = await page.evaluate(
     () => document.documentElement.dataset.theme,
   );
-  expect(initial === "dark" || initial === "light").toBe(true);
+  expect(THEMES).toContain(initial as (typeof THEMES)[number]);
 
-  // Click the opposite radio.
-  const target = initial === "light" ? "dark" : "light";
+  // Click a new non-default radio so the expanded theme set is covered.
+  const target = "theme-5";
   await page.click(`.theme-toggle__input[value="${target}"]`);
 
   // data-theme + localStorage both updated.

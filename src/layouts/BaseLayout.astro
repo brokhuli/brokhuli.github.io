@@ -34,6 +34,7 @@ interface Props {
   canonicalUrl?: string;
   ogImage?: string;
   seoType?: "website" | "project";
+  showSidebar?: boolean;
   project?: {
     title: string;
     tagline: string;
@@ -50,6 +51,7 @@ const {
   canonicalUrl,
   ogImage,
   seoType = "website",
+  showSidebar = true,
   project,
 } = Astro.props;
 
@@ -88,11 +90,12 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
       (function () {
         try {
           var stored = localStorage.getItem("theme");
+          var themes = ["dark", "theme-3", "theme-5", "theme-8", "light"];
           var prefersLight =
             window.matchMedia &&
             window.matchMedia("(prefers-color-scheme: light)").matches;
           var theme =
-            stored === "light" || stored === "dark"
+            themes.indexOf(stored) >= 0
               ? stored
               : prefersLight
                 ? "light"
@@ -181,14 +184,14 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
     <slot name="head" />
   </head>
   <body>
-    <Sidebar />
+    {showSidebar && <Sidebar />}
 
     <div class="page-header">
       <SystemStatus />
       <ThemeToggle />
     </div>
 
-    <main class="page-main">
+    <main class:list={["page-main", !showSidebar && "page-main--no-sidebar"]}>
       <slot />
     </main>
 
@@ -224,14 +227,22 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
     max-width: var(--layout-max-width);
   }
 
+  .page-main--no-sidebar {
+    margin-left: 0;
+    margin-inline: auto;
+  }
+
   .page-header {
     position: fixed;
     top: var(--space-3);
     right: var(--space-3);
     z-index: var(--z-header);
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-end;
     gap: var(--space-3);
+    max-width: calc(100vw - var(--space-6));
   }
 
   @media (max-width: 768px) {
