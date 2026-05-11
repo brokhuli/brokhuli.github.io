@@ -9,10 +9,16 @@ import Pill from "./Pill.astro";
 interface Props {
   label: string;
   tone?: "neutral" | "accent";
+  level?: "working" | "core";
   class?: string;
 }
 
-const { label, tone = "neutral", class: className = "" } = Astro.props;
+const {
+  label,
+  tone = "neutral",
+  level = "working",
+  class: className = "",
+} = Astro.props;
 ---
 
-<Pill label={label} tone={tone} class={className} />
+<Pill label={label} tone={tone} level={level} class={className} />
