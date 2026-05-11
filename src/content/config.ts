@@ -17,6 +17,11 @@ const about = defineCollection({
     }),
 });
 
+const contact = defineCollection({
+  loader: glob({ pattern: "content.md", base: "./src/content/contact" }),
+  schema: z.object({}),
+});
+
 const skills = defineCollection({
   loader: glob({ pattern: "**/*.{md,json}", base: "./src/content/skills" }),
   schema: z.object({
@@ -154,6 +159,7 @@ const techStack = defineCollection({
     ]),
     order: z.number().int().nonnegative(),
     icon: iconName.optional(),
+    level: z.enum(["core", "working"]).default("working"),
   }),
 });
 
@@ -184,6 +190,7 @@ const logLines = defineCollection({
 
 export const collections = {
   about,
+  contact,
   skills,
   domains,
   projects,
