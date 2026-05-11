@@ -17,35 +17,42 @@ const themes = [
     value: "dark",
     label: "Dark",
     icon: "lucide:moon",
-    iconOnly: false,
+    showLabel: true,
     tip: "For late-night systems thinking",
   },
   {
     value: "theme-3",
     label: "Ultraviolet",
     icon: "lucide:moon-star",
-    iconOnly: true,
+    showLabel: false,
     tip: "Ultraviolet Night: dark aubergine with dark mint signal",
   },
   {
     value: "theme-5",
     label: "Rose",
     icon: "lucide:flower-2",
-    iconOnly: true,
+    showLabel: false,
     tip: "Rose: deep ink surfaces with raspberry accents",
   },
   {
     value: "theme-8",
     label: "Copper",
     icon: "lucide:cable",
-    iconOnly: true,
+    showLabel: false,
     tip: "Copperline: dark navy with copper signal",
+  },
+  {
+    value: "theme-9",
+    label: "Ultraviolet Light",
+    icon: "lucide:sun-medium",
+    showLabel: false,
+    tip: "Ultraviolet Day: pale lavender paper with mint signal",
   },
   {
     value: "light",
     label: "Eric",
     icon: "lucide:sun",
-    iconOnly: false,
+    showLabel: true,
     tip: "For daylight clarity, but mostly for Eric",
   },
 ];
@@ -68,11 +75,11 @@ const themes = [
         <span
           class:list={[
             "theme-toggle__chip",
-            theme.iconOnly && "theme-toggle__chip--icon-only",
+            !theme.showLabel && "theme-toggle__chip--icon-only",
           ]}
         >
           <Icon name={theme.icon} size={14} />
-          {!theme.iconOnly && (
+          {theme.showLabel && (
             <span class="theme-toggle__label">{theme.label}</span>
           )}
         </span>
@@ -88,7 +95,14 @@ const themes = [
   //   2. writes data-theme + localStorage.theme on user change.
   // Spec: interaction-spec.md section 7.
   (function () {
-    const themes = ["dark", "theme-3", "theme-5", "theme-8", "light"];
+    const themes = [
+      "dark",
+      "theme-3",
+      "theme-5",
+      "theme-8",
+      "theme-9",
+      "light",
+    ];
     const root = document.documentElement;
     const fieldsets = document.querySelectorAll<HTMLFieldSetElement>(
       "[data-theme-toggle]",
@@ -185,7 +199,7 @@ const themes = [
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
-    padding: var(--space-1) var(--space-3);
+    padding: var(--space-1) var(--space-2);
     border-radius: calc(var(--radius-md) - 2px);
     color: var(--color-fg-muted);
     font-family: var(--font-mono);
@@ -198,9 +212,8 @@ const themes = [
   }
 
   .theme-toggle__chip--icon-only {
-    width: 28px;
     justify-content: center;
-    padding-inline: var(--space-2);
+    width: 28px;
   }
 
   .theme-toggle__input:checked + .theme-toggle__chip {
