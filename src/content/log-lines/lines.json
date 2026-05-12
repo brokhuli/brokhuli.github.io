@@ -221,6 +221,11 @@
       "tone": "realistic"
     },
     {
+      "level": "WARN",
+      "text": "Expect superballs in overhead cabinet…",
+      "tone": "realistic"
+    },
+    {
       "level": "ERR",
       "text": "Connection refused: postgres://primary:5432 — failover initiated.",
       "tone": "realistic"
