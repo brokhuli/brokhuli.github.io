@@ -1,6 +1,7 @@
 ---
 label: "GraphQL"
 group: "distributed-systems"
-order: 30
+order: 20
 icon: "lucide:share-2"
+level: "core"
 ---

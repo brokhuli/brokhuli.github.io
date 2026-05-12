@@ -1,6 +1,6 @@
 ---
 label: "REST"
 group: "distributed-systems"
-order: 20
+order: 10
 icon: "lucide:globe"
 ---
