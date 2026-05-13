@@ -16,7 +16,12 @@ const projects = (await getCollection("projects", (e) => e.data.featured)).sort(
 ---
 
 <section id="projects" class="projects-section">
-  <SectionHeading as="h2">Featured Projects</SectionHeading>
+  <div class="projects-section__header">
+    <SectionHeading as="h2">Featured Projects</SectionHeading>
+    <a class="projects-section__all-link" href="/projects/">
+      View All Projects →
+    </a>
+  </div>
   <div class="projects-section__grid">
     {projects.map((p) => <ProjectCard project={p} />)}
     <article class="projects-section__coming-soon">
@@ -37,6 +42,27 @@ const projects = (await getCollection("projects", (e) => e.data.featured)).sort(
 <style>
   .projects-section {
     margin-bottom: var(--space-16);
+  }
+
+  .projects-section__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .projects-section__all-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    color: var(--color-accent);
+    text-decoration: none;
+    padding-top: var(--space-1);
+    white-space: nowrap;
+  }
+
+  .projects-section__all-link:hover {
+    color: var(--color-accent-hover);
   }
 
   .projects-section__grid {
@@ -83,6 +109,11 @@ const projects = (await getCollection("projects", (e) => e.data.featured)).sort(
   }
 
   @media (max-width: 640px) {
+    .projects-section__header {
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
     .projects-section__grid {
       grid-template-columns: 1fr;
     }

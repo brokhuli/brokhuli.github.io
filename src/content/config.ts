@@ -77,6 +77,7 @@ const projects = defineCollection({
       tagline: z.string().max(140),
       status,
       featured: z.boolean().default(false),
+      cataloged: z.boolean().default(false),
       order: z.number().int().nonnegative(),
 
       tech: z.array(z.string()).min(1).max(8),
