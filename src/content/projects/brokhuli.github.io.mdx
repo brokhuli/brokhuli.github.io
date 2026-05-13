@@ -37,78 +37,94 @@ publishedAt: "2026-05-12"
 Most portfolio sites flatten architectural work into screenshots, buzzwords,
 and role summaries. I wanted this site to do something more precise: make my
 systems thinking visible without asking the reader to infer it from a resume.
-The site needed to communicate positioning, projects, architecture principles,
-experience, and contact paths while also behaving like a small example of the
-engineering discipline it describes.
+The implementation itself had to carry the message.
 
-That meant the implementation itself had to carry the message. The portfolio
-could not be a loose collection of pages; it needed a documented purpose,
-curated content model, clear component boundaries, static delivery, lightweight
-interaction, and enough personality to feel human.
+The portfolio needed to communicate:
+
+- positioning, projects, architecture principles, experience, and contact paths
+- a documented purpose and curated content model
+- clear component boundaries with static delivery
+- lightweight interaction, and enough personality to feel human
 
 ## Complexity
 
-The hard part was balancing three different audiences at once. A recruiter or
-hiring manager needs a fast, scannable story. A technical reviewer needs
-evidence of architectural judgment. Future me needs a maintainable system where
-new case studies, resume changes, and visual updates can be made without
-rediscovering how the site works.
+### Three Audiences, One Surface
 
-The site also has unusually explicit constraints for something this small:
-static GitHub Pages hosting, content as the source of truth, no backend, no
-runtime data dependencies, minimal JavaScript, responsive layout, accessible
-navigation, validated frontmatter, curated project count, and a visual language
-that feels like an engineering notebook rather than a marketing template.
+The hard part was balancing three different readers at once.
+
+| Audience           | What they need                                                                               |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| Recruiter / hiring | A fast, scannable story.                                                                     |
+| Technical reviewer | Evidence of architectural judgment.                                                          |
+| Future me          | A maintainable system where case studies, resume changes, and visual updates stay tractable. |
+
+### Explicit Constraints
+
+The site has unusually explicit constraints for something this small:
+
+- static GitHub Pages hosting; no backend, database, or runtime data dependencies
+- content as the source of truth, with validated frontmatter and a curated project count
+- minimal JavaScript with responsive layout and accessible navigation
+- a visual language that feels like an engineering notebook rather than a marketing template
 
 ## Architectural Design
 
-I built the site as a static Astro application with content collections at the
-center. Prose lives in Markdown, MDX, and JSON under `src/content`; Zod schemas
-define the authoring contract; Astro pages and section components render that
-content into a single dashboard-style landing page plus individual project case
-study routes.
+### Content Collections at the Center
 
-The component model is deliberately layered. Pages compose sections, sections
-own collection access, primitives stay reusable and content-agnostic, and the
-persistent chrome and whimsical elements sit beside the main content rather
-than inside it. That keeps the import graph understandable and lets each file's
-location describe its role.
+The site is a static Astro application with content collections as the contract.
 
-The visual system is token-driven. `tokens.css` owns typography, spacing,
-color, borders, motion, charts, diagram strokes, and the blueprint grid. Theme
-switching is one `data-theme` attribute on the root element, so every component
-re-themes through CSS variables instead of carrying custom theme logic.
+- prose lives in Markdown, MDX, and JSON under `src/content`
+- Zod schemas define the authoring contract and validate on build
+- Astro pages and section components render that content into a dashboard-style
+  landing page plus individual project case-study routes
+
+### Layered Component Model
+
+Pages compose sections, sections own collection access, primitives stay reusable
+and content-agnostic, and persistent chrome and whimsical elements sit beside
+the main content rather than inside it. Each file's location describes its role.
+
+| Layer      | Responsibility                                            |
+| ---------- | --------------------------------------------------------- |
+| Pages      | Composition only — wire sections together; no data logic. |
+| Sections   | Domain-aware; read their own content collections.         |
+| Primitives | Reusable, content-agnostic building blocks.               |
+| Chrome     | Persistent shell — sidebar, footer, navigation.           |
+| Whimsy     | Optional, orthogonal interaction surfaces.                |
+
+### Token-Driven Visual System
+
+`tokens.css` owns typography, spacing, color, borders, motion, charts, diagram
+strokes, and the blueprint grid. Theme switching is a single `data-theme`
+attribute on the root element, so every component re-themes through CSS
+variables instead of carrying its own theme logic.
 
 ## Architectural Tradeoffs
 
-I chose Astro over a heavier application framework because the site is mostly
-content and should ship almost no JavaScript. Interactive pieces such as the
-theme toggle, sidebar scroll-spy, system-status popover, log ticker, and email
-assembly are small colocated scripts rather than hydrated framework islands.
-
-I chose a strict content schema over free-form Markdown because a portfolio can
-quietly decay when every page invents its own shape. The schema, validation
-script, and project cap make curation enforceable. The tradeoff is that adding
-content requires satisfying a contract, but that is exactly the point: the site
-should fail early when a project lacks a clear title, tagline, status, tech
-tags, media metadata, or valid asset references.
-
-I also kept the architecture intentionally static. There is no CMS, database,
-serverless function, authentication layer, or dynamic personalization. Those
-would add operational surface area without improving the reader's experience.
-The result is less flexible in the abstract, but much easier to reason about,
-deploy, test, and preserve.
+| Choice                     | Why it fit                                                                                                              | Tradeoff                                                                            |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Astro over a SPA framework | The site is mostly content and should ship almost no JavaScript. Interactive pieces are colocated scripts, not islands. | Less ergonomic for highly stateful UI, but stateful UI is not what this site needs. |
+| Strict content schema      | A portfolio decays when every page invents its own shape. Zod + a validation script make curation enforceable.          | Adding content requires satisfying a contract — which is exactly the point.         |
+| Fully static, no backend   | No CMS, database, serverless functions, or auth layer. Easier to reason about, deploy, test, and preserve.              | Less flexible in the abstract, with no dynamic personalization.                     |
+| Token-driven theming       | One `data-theme` swap re-themes the whole site through CSS variables.                                                   | Every new visual decision must be expressed as a token before it can be used.       |
 
 ## Outcome
 
 The finished site is a portfolio, a writing system, and a small architectural
-artifact in the same repo. It renders a curated landing page, detailed project
-case studies, a resume route, SEO metadata, a sitemap, an on-brand 404, and a
-few restrained interaction surfaces while staying static and fast.
+artifact in the same repo. It renders:
 
-The implementation now has the same qualities the site claims to value:
-documented decisions, build-time validation, typed content collections,
-component boundaries, performance discipline, accessible navigation, responsive
-layout, and a visual system that can evolve through tokens instead of scattered
-CSS edits. It gives a reviewer two ways to evaluate the work: read the content,
-then inspect the system that makes the content durable.
+- a curated, dashboard-style landing page
+- detailed project case studies under `/projects/...`
+- a resume route, SEO metadata, sitemap, and an on-brand 404
+- a few restrained interaction surfaces — all static, all fast
+
+The implementation has the same qualities the site claims to value:
+
+- documented decisions and build-time validation
+- typed content collections with enforced authoring contracts
+- clear component boundaries and performance discipline
+- accessible navigation and responsive layout
+- a visual system that evolves through tokens, not scattered CSS edits
+
+It gives a reviewer two ways to evaluate the work: read the content, then
+inspect the system that makes the content durable.

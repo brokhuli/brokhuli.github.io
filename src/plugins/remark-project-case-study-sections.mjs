@@ -1,7 +1,10 @@
 import path from "node:path";
 
-const COMPONENT_NAME = "CaseStudySection";
-const COMPONENT_PATH = "src/components/projects/CaseStudySection.astro";
+const CASE_STUDY_SECTION_NAME = "CaseStudySection";
+const CASE_STUDY_SECTION_PATH =
+  "src/components/projects/CaseStudySection.astro";
+const CASE_STUDY_IMAGE_NAME = "CaseStudyImage";
+const CASE_STUDY_IMAGE_PATH = "src/components/projects/CaseStudyImage.astro";
 
 function isProjectMdx(filePath) {
   if (!filePath || !filePath.endsWith(".mdx")) return false;
@@ -16,20 +19,25 @@ function textContent(node) {
   return node.children.map(textContent).join("");
 }
 
-function componentImportValue(filePath) {
+function componentImportValue(filePath, componentName, componentPath) {
   const fromDir = path.dirname(filePath);
-  const toFile = path.resolve(COMPONENT_PATH);
+  const toFile = path.resolve(componentPath);
   let relative = path.relative(fromDir, toFile).replaceAll("\\", "/");
   if (!relative.startsWith(".")) relative = `./${relative}`;
-  return `import ${COMPONENT_NAME} from "${relative}";`;
+  return `import ${componentName} from "${relative}";`;
 }
 
-function componentImportNode(filePath) {
-  const sourceValue = componentImportValue(filePath).match(/"([^"]+)"/)?.[1];
+function componentImportNode(filePath, componentName, componentPath) {
+  const importValue = componentImportValue(
+    filePath,
+    componentName,
+    componentPath,
+  );
+  const sourceValue = importValue.match(/"([^"]+)"/)?.[1];
 
   return {
     type: "mdxjsEsm",
-    value: componentImportValue(filePath),
+    value: importValue,
     data: {
       estree: {
         type: "Program",
@@ -40,7 +48,7 @@ function componentImportNode(filePath) {
             specifiers: [
               {
                 type: "ImportDefaultSpecifier",
-                local: { type: "Identifier", name: COMPONENT_NAME },
+                local: { type: "Identifier", name: componentName },
               },
             ],
             source: {
@@ -53,6 +61,15 @@ function componentImportNode(filePath) {
       },
     },
   };
+}
+
+function hasComponentImport(nodes, componentName) {
+  return nodes.some(
+    (node) =>
+      node.type === "mdxjsEsm" &&
+      typeof node.value === "string" &&
+      node.value.includes(`import ${componentName}`),
+  );
 }
 
 function caseStudySectionNode(title, children, isFirstSection) {
@@ -74,10 +91,54 @@ function caseStudySectionNode(title, children, isFirstSection) {
 
   return {
     type: "mdxJsxFlowElement",
-    name: COMPONENT_NAME,
+    name: CASE_STUDY_SECTION_NAME,
     attributes,
     children,
   };
+}
+
+function isStandaloneGifParagraph(node) {
+  if (!node || node.type !== "paragraph") return false;
+  if (!Array.isArray(node.children) || node.children.length !== 1) return false;
+  const image = node.children[0];
+  return (
+    image.type === "image" &&
+    typeof image.url === "string" &&
+    image.url.toLowerCase().endsWith(".gif")
+  );
+}
+
+function caseStudyImageNode(image) {
+  return {
+    type: "mdxJsxFlowElement",
+    name: CASE_STUDY_IMAGE_NAME,
+    attributes: [
+      {
+        type: "mdxJsxAttribute",
+        name: "src",
+        value: image.url,
+      },
+      {
+        type: "mdxJsxAttribute",
+        name: "alt",
+        value: image.alt ?? "",
+      },
+    ],
+    children: [],
+  };
+}
+
+function usesJsxComponent(node, componentName) {
+  if (!node || typeof node !== "object") return false;
+  if (
+    (node.type === "mdxJsxFlowElement" ||
+      node.type === "mdxJsxTextElement") &&
+    node.name === componentName
+  ) {
+    return true;
+  }
+  if (!Array.isArray(node.children)) return false;
+  return node.children.some((child) => usesJsxComponent(child, componentName));
 }
 
 export default function remarkProjectCaseStudySections() {
@@ -89,6 +150,17 @@ export default function remarkProjectCaseStudySections() {
     let pendingHeading = null;
     let pendingChildren = [];
     let sectionCount = 0;
+    let hasCaseStudyImage = false;
+
+    const prepareSectionChildren = (children) =>
+      children.map((node) => {
+        if (usesJsxComponent(node, CASE_STUDY_IMAGE_NAME)) {
+          hasCaseStudyImage = true;
+        }
+        if (!isStandaloneGifParagraph(node)) return node;
+        hasCaseStudyImage = true;
+        return caseStudyImageNode(node.children[0]);
+      });
 
     const flushSection = () => {
       if (!pendingHeading) {
@@ -100,7 +172,7 @@ export default function remarkProjectCaseStudySections() {
       output.push(
         caseStudySectionNode(
           textContent(pendingHeading).trim(),
-          pendingChildren,
+          prepareSectionChildren(pendingChildren),
           sectionCount === 0,
         ),
       );
@@ -127,7 +199,29 @@ export default function remarkProjectCaseStudySections() {
         (node) => node.type !== "mdxjsEsm",
       );
       const insertAt = firstNonImport === -1 ? output.length : firstNonImport;
-      output.splice(insertAt, 0, componentImportNode(filePath));
+      const imports = [];
+      if (!hasComponentImport(output, CASE_STUDY_SECTION_NAME)) {
+        imports.push(
+          componentImportNode(
+            filePath,
+            CASE_STUDY_SECTION_NAME,
+            CASE_STUDY_SECTION_PATH,
+          ),
+        );
+      }
+      if (
+        hasCaseStudyImage &&
+        !hasComponentImport(output, CASE_STUDY_IMAGE_NAME)
+      ) {
+        imports.push(
+          componentImportNode(
+            filePath,
+            CASE_STUDY_IMAGE_NAME,
+            CASE_STUDY_IMAGE_PATH,
+          ),
+        );
+      }
+      output.splice(insertAt, 0, ...imports);
     }
 
     tree.children = output;
