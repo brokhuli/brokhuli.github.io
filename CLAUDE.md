@@ -51,7 +51,7 @@ Honor these at every step — they shape every other decision:
 1. **Static-only output** (`output: "static"`, no SSR adapter) — ADR-001.
 2. **One-way component layering**: `pages → sections → primitives`. `chrome/` and `whimsy/` are orthogonal and may only consume primitives. **Sections read their own collections** — pages do NOT prop-drill data — ADR-004.
 3. **Zero-JS-by-default** with deliberate `client:*` directives. Hard ceiling: **≤50 KB JS gzipped, ≤30 KB CSS gzipped** per page — ADR-002 + [constraints.md](references/specs/constraints.md).
-4. **`references/` is never shipped.** Excluded from build inputs and verified by a `grep -rq "references/" dist/` guard in CI. If you add code that imports from `references/`, the build will fail.
+4. **`references/` is never shipped as a runtime dependency.** Excluded from build inputs and verified in CI: the deploy workflow greps `dist/` for relative `href`/`src` attributes or module imports pointing at `references/` and fails the build if any are found. Absolute GitHub-blob URLs into `references/` (e.g., a case study's "Code entry points") are allowed — they're outbound links to source-of-truth, not runtime dependencies.
 
 ### Component layer rules
 

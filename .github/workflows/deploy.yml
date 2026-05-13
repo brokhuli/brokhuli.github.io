@@ -58,11 +58,17 @@ jobs:
       - name: Build
         run: npx astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
 
-      - name: Verify references/ is not shipped
+      - name: Verify references/ is not shipped as runtime input
         run: |
-          if grep -rq "references/" dist/; then
-            echo "::error::dist/ contains references to references/ — that folder must never ship."
-            grep -rln "references/" dist/ || true
+          # Fails only on patterns that would actually depend on references/ at runtime:
+          #   - relative URLs:  href="references/..."  src="references/..."
+          #   - module imports: from "references/..."  import("references/...")
+          # Absolute GitHub blob URLs and plain display text are allowed — they're
+          # outbound links to source-of-truth, not runtime dependencies.
+          pattern='(href|src)="references/|(from|import)[[:space:]]*\(?[[:space:]]*["'\'']references/'
+          if grep -rEq "$pattern" dist/; then
+            echo "::error::dist/ depends on references/ at runtime — that folder must never ship."
+            grep -rEln "$pattern" dist/ || true
             exit 1
           fi
 
