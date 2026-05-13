@@ -16,14 +16,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 const DIST = join(process.cwd(), "dist");
-const THEMES = [
-  "dark",
-  "theme-3",
-  "theme-5",
-  "theme-8",
-  "theme-9",
-  "light",
-] as const;
+const THEMES = ["dark", "light"] as const;
 
 test("home page returns 200 and contains the author's name", async ({
   page,
@@ -43,8 +36,8 @@ test("theme toggle updates data-theme and persists to localStorage", async ({
   );
   expect(THEMES).toContain(initial as (typeof THEMES)[number]);
 
-  // Click a new non-default radio so the expanded theme set is covered.
-  const target = "theme-5";
+  // Click the opposite of whatever loaded so we verify a real switch.
+  const target = initial === "light" ? "dark" : "light";
   await page.click(`.theme-toggle__input[value="${target}"]`);
 
   // data-theme + localStorage both updated.
@@ -78,8 +71,10 @@ test("every internal link resolves to a 200 in dist/", async ({ page }) => {
   // network-fetching, since we already know the static set.
   const routes = [
     "/",
-    "/projects/medical-injector-simulator/",
-    "/projects/gpu-heat-diffusion/",
+    "/projects/",
+    "/projects/brokhuli-github-io/",
+    "/projects/markdown-style-sampler/",
+    "/projects/medical-injector/",
     "/resume/",
     "/system-fault/",
   ];
