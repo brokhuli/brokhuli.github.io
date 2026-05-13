@@ -1,0 +1,96 @@
+---
+title: "Markdown Style Sampler"
+slug: "markdown-style-sampler"
+tagline: "A non-featured project page for visually checking project Markdown styles."
+status: "archived"
+featured: false
+order: 999
+tech:
+  - "Astro"
+  - "HTML5/CSS"
+  - "Playwright"
+publishedAt: "2026-05-13"
+---
+
+## Typography and Callouts
+
+This page is a disposable visual sampler for project case-study Markdown. It
+includes **strong text**, _emphasized text_, ~~deleted text~~, a
+[regular link](/), and inline `code` inside a normal paragraph.
+
+Press <kbd>t</kbd> to cycle the theme. Press <kbd>Tab</kbd> to check focus
+states.
+
+### H3 Accent Label
+
+This heading level should feel like a compact technical label with a quiet
+accent rule.
+
+#### H4 Quiet Label
+
+This heading level should feel subordinate to the H3 treatment.
+
+##### H5 Small Note
+
+This heading level is for tiny labels and supporting notes.
+
+> A blockquote can carry a constraint, decision note, principle, or source
+> excerpt without turning into a loud callout.
+
+---
+
+## Lists
+
+Unordered lists should be easy to scan and use accent markers without becoming
+decorative.
+
+- First bullet with a short observation.
+- Second bullet with `inline code`.
+- Third bullet with nested detail:
+  - Nested bullet A.
+  - Nested bullet B.
+
+Ordered lists should keep the same rhythm.
+
+1. Frame the problem.
+2. Name the constraint.
+3. Make the tradeoff explicit.
+
+Task lists should be quiet and readable.
+
+- [x] Validate the content schema.
+- [x] Render the case-study cards.
+- [ ] Visually inspect the sampler page.
+
+## Tables and Code
+
+Tables should work for compact architecture comparisons.
+
+| Element      | Intended Use         | Visual Treatment                     |
+| ------------ | -------------------- | ------------------------------------ |
+| `###`        | Card subsection      | Accent rail and mono uppercase label |
+| `blockquote` | Constraints or notes | Muted surface with accent rail       |
+| `table`      | Comparisons          | Mono text, lined rows, quiet hover   |
+
+Fenced code blocks should stay readable and scroll safely on smaller screens.
+
+```ts
+type CaseStudySection = {
+  title: string;
+  variant?: "default" | "accent";
+  content: MarkdownBlock[];
+};
+```
+
+## Media and Figures
+
+Markdown images should inherit a quiet frame inside the card.
+
+![Small public favicon used as a markdown image example](/favicon.svg)
+
+<figure>
+  <img src="/favicon.svg" alt="Small public favicon used inside a figure." />
+  <figcaption>
+    Figure captions should read like metadata, not body copy.
+  </figcaption>
+</figure>
