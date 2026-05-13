@@ -96,8 +96,24 @@ const titleParts = status.title.split("Operational");
     );
     if (!trigger || !dialog) return;
 
+    const MOBILE_BREAKPOINT = 768;
+
+    const positionForMobile = () => {
+      // On mobile the trigger is not flush against the viewport's right edge
+      // (the theme toggle sits to its right), so the default `right: 0` anchor
+      // can run the popover off the left side of the screen. Pin to the
+      // viewport instead, with `top` derived from the trigger's actual rect.
+      if (window.innerWidth > MOBILE_BREAKPOINT) {
+        dialog.style.top = "";
+        return;
+      }
+      const rect = trigger.getBoundingClientRect();
+      dialog.style.top = `${Math.round(rect.bottom + 8)}px`;
+    };
+
     const open = () => {
       if (dialog.open) return;
+      positionForMobile();
       // Use show() (modeless) so the page underneath remains scrollable
       // and outside-click closes correctly. The popover anchors to the trigger.
       dialog.show();
@@ -263,6 +279,15 @@ const titleParts = status.title.split("Operational");
   .system-status__close:hover {
     border-color: var(--color-border-hover);
     background: var(--color-surface-3);
+  }
+
+  @media (max-width: 768px) {
+    .system-status__dialog {
+      position: fixed;
+      right: var(--space-3);
+      left: auto;
+      width: min(280px, calc(100vw - 2 * var(--space-3)));
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
