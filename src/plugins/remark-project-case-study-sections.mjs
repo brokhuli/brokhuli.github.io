@@ -131,8 +131,7 @@ function caseStudyImageNode(image) {
 function usesJsxComponent(node, componentName) {
   if (!node || typeof node !== "object") return false;
   if (
-    (node.type === "mdxJsxFlowElement" ||
-      node.type === "mdxJsxTextElement") &&
+    (node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement") &&
     node.name === componentName
   ) {
     return true;
