@@ -27,6 +27,7 @@ pnpm-debug.log*
 # browser-automation MCP outputs (Playwright + Glance)
 .playwright-mcp/
 .browser-sessions/
+.codex/
 
 # lighthouse-ci + playwright run artifacts
 .lighthouseci/
