@@ -22,6 +22,29 @@ const contact = defineCollection({
   schema: z.object({}),
 });
 
+const systemStatus = defineCollection({
+  loader: glob({
+    pattern: "content.json",
+    base: "./src/content/system-status",
+  }),
+  schema: z.object({
+    triggerLabel: z.string().max(40),
+    dotLabel: z.string().max(80),
+    title: z.string().max(80),
+    rows: z
+      .array(
+        z.object({
+          label: z.string().max(40),
+          value: z.string().max(80),
+        }),
+      )
+      .min(1)
+      .max(6),
+    note: z.string().max(120),
+    closeLabel: z.string().max(20).default("Close"),
+  }),
+});
+
 const skills = defineCollection({
   loader: glob({ pattern: "**/*.{md,json}", base: "./src/content/skills" }),
   schema: z.object({
@@ -74,12 +97,6 @@ const projects = defineCollection({
           alt: z.string().min(1),
         })
         .optional(),
-
-      problem: z.string().max(400),
-      complexity: z.string().max(400),
-      architecturalDesign: z.string().max(800),
-      architecturalTradeoffs: z.string().max(800),
-      outcome: z.string().max(400),
 
       repo: z
         .object({
@@ -136,12 +153,10 @@ const education = defineCollection({
     institution: z.string().max(80),
     degree: z.string().max(80),
     field: z.string().max(80).optional(),
-    location: z.string().max(60),
     years: yearRange,
     order: z.number().int().nonnegative(),
-    highlights: z.array(z.string().max(40)).max(6).optional(),
+    honors: z.string().max(60).optional(),
     institutionIcon: iconName.optional(),
-    summary: z.string().max(280).optional(),
   }),
 });
 
@@ -191,6 +206,7 @@ const logLines = defineCollection({
 export const collections = {
   about,
   contact,
+  systemStatus,
   skills,
   domains,
   projects,

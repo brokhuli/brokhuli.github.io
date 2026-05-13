@@ -9,13 +9,14 @@ order: 30
 companyIcon: "lucide:train"
 summary: "Senior engineer on transit signaling control systems."
 impacts:
-  - "Implemented onboard control software components for transit signaling."
-  - "Owned HIL-level integration and verification workflows for delivered subsystems."
-  - "Contributed to the design patterns later carried forward into the Alstom platform after acquisition."
+  - "Built real-time, deterministic train positioning and motor-response simulation systems"
+  - "Designed a hardware-in-the-loop API bridging digital simulation with physical control systems"
+  - "Led architectural design and served as scrum master for simulation/test products"
+  - "Delivered technical guidance and training to engineering teams and key users"
 highlights:
-  - "HIL"
-  - "Signaling"
-  - "C++"
+  - "Simulation"
+  - "CBTC"
+  - "HIL APIs"
+  - "Scrum master"
+  - "Mentorship"
 ---
-
-Placeholder body — TBD.

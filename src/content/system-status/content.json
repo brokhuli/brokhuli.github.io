@@ -1,0 +1,29 @@
+{
+  "triggerLabel": "System Status",
+  "dotLabel": "System status: operational",
+  "title": "System Status |  Operational",
+  "rows": [
+    {
+      "label": "Uptime",
+      "value": "20+ years"
+    },
+    {
+      "label": "Primary Functions",
+      "value": "Architecture, Delivery, Health"
+    },
+    {
+      "label": "Throughput",
+      "value": "Consistent"
+    },
+    {
+      "label": "Latency",
+      "value": "Low (after coffee)"
+    },
+    {
+      "label": "Sleep Mode",
+      "value": "Experimental"
+    }
+  ],
+  "note": "All systems nominal. No intervention required.",
+  "closeLabel": "Close"
+}

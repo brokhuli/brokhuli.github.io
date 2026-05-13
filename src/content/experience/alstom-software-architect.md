@@ -9,13 +9,15 @@ order: 20
 companyIcon: "lucide:train-front"
 summary: "Architecture role on rail signaling and control platforms before the lead promotion."
 impacts:
-  - "Designed deterministic, modular subsystems for safety-critical onboard rail signaling."
-  - "Established reference architectures and review patterns adopted by sister programs."
-  - "Drove integration patterns between simulation rigs and production firmware."
+  - "Architected a deterministic digital-twin simulator for real-time control and testing"
+  - "Designed a common software framework reducing development/maintenance effort by 30%"
+  - "Established architecture standards adopted across the simulation product line"
+  - "Evaluated and guided architectural tradeoffs (modular monolith vs. services)"
+  - "Instituted architectural governance for stakeholder alignment (RFCs / ADRs)"
 highlights:
+  - "Digital twins"
+  - "Real-time"
   - "Determinism"
-  - "Architecture"
-  - "Simulation"
+  - "Tradeoff analysis"
+  - "Architectural governance"
 ---
-
-Placeholder body — TBD.

@@ -1,0 +1,73 @@
+---
+title: "Medical Injector v2"
+tagline: "A deterministic software twin for real-time contrast-injection control, safety monitoring, and clinical workflow."
+status: "shipped"
+featured: true
+order: 20
+tech:
+  - "C++"
+  - "Qt/QML"
+  - "gRPC"
+  - "HIL interfaces"
+  - "unit testing"
+media:
+  src: "../../assets/img/medical-injector-injection.gif"
+  alt: >-
+    Animated UI showing a real-time injection sequence with pressure and flow
+    telemetry.
+  kind: "gif"
+  caption: >-
+    Live injection sequence with pressure, flow, volume, valve state, and
+    control-loop health rendered in real time.
+  aspect: "16:9"
+publishedAt: "2024-01-01"
+---
+
+## Problem
+
+Medical contrast injectors are safety-critical systems whose control logic,
+fault handling, and operator workflows are usually locked inside proprietary
+hardware. I built a software-only simulator that makes those behaviors visible:
+users can configure multi-phase contrast/saline protocols, run them through a
+real control loop, observe live telemetry, and trigger faults without physical
+injector hardware or clinical risk.
+
+## Complexity
+
+The project had to feel like a real device without being connected to one. A
+2 ms C++ PID control loop drives simulated motor, valve, syringe, pressure, and
+air-detection models while an independent 1 ms safety monitor watches for
+overpressure, air, motor divergence, and timing faults.
+
+The Qt/QML frontend streams backend-owned state over gRPC, so gauges, charts,
+event logs, and fault reports reflect the actual simulation rather than a scripted UI.
+
+## Architectural Design
+
+I split the system into a C++17 backend and a Qt6/QML frontend connected by a
+protobuf-defined gRPC contract. The backend is organized into clear layers:
+hardware abstraction, deterministic physics models, configuration, PID control,
+non-blocking telemetry logging, state-machine orchestration, independent safety
+monitoring, and command/event streaming. The process boundary keeps the UI out
+of the real-time path while still giving operators a live, inspectable view of
+the system.
+
+## Architectural Tradeoffs
+
+I favored deterministic, explainable physics over maximum biomedical fidelity
+so the same protocol produces the same pressure/flow trace every time. I chose
+gRPC and a process boundary over a simpler in-process UI because it mirrors
+production control architectures and makes failure isolation more explicit. I
+used bounded queues, telemetry coalescing, and ring-buffer logging so charts,
+exports, or slow clients cannot block the timing-sensitive control loop.
+
+## Outcome
+
+The finished simulator runs complete multi-phase injections, streams live
+pressure/flow/volume/timing telemetry, supports pause/resume/reset and
+emergency-stop workflows, injects realistic faults, exports run data, and
+includes tests across hardware models, state transitions, timing behavior,
+safety paths, and gRPC integration. It turns a closed medical-device domain into
+an inspectable systems case study where a reviewer can trace a command from UI
+action to backend state transition, control-loop response, simulated hardware
+behavior, safety intervention, and live dashboard feedback.

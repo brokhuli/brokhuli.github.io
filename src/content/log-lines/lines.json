@@ -121,6 +121,11 @@
       "tone": "absurd"
     },
     {
+      "level": "INFO",
+      "text": "Evaluating Product Taste… Delicious.",
+      "tone": "absurd"
+    },
+    {
       "level": "WARN",
       "text": "Telemetry stream lag exceeds 50ms — investigating.",
       "tone": "realistic"
@@ -132,7 +137,7 @@
     },
     {
       "level": "ERR",
-      "text": "Fault detected in subsystem: deterministic guarantees violated.",
+      "text": "Fault detected: deterministic guarantees violated.",
       "tone": "realistic"
     },
     {
@@ -142,7 +147,7 @@
     },
     {
       "level": "WARN",
-      "text": "Garbage collection day is on Tuesday… or is it Wednesday?",
+      "text": "Garbage collection day is on Tuesday… don't forget.",
       "tone": "absurd"
     },
     {
@@ -177,7 +182,7 @@
     },
     {
       "level": "INFO",
-      "text": "Cache warmer completed first pass — 4,212 keys primed.",
+      "text": "Cache warmer completed first pass. 4,212 keys primed.",
       "tone": "realistic"
     },
     {
@@ -187,7 +192,7 @@
     },
     {
       "level": "INFO",
-      "text": "Build artifact uploaded to object store on first attempt.",
+      "text": "Build artifact uploaded to store on first attempt.",
       "tone": "realistic"
     },
     {
@@ -197,7 +202,7 @@
     },
     {
       "level": "INFO",
-      "text": "Index rebuild scheduled for off-peak window 02:00 UTC.",
+      "text": "Index rebuild scheduled for off-peak time 02:00 UTC.",
       "tone": "realistic"
     },
     {
@@ -212,17 +217,22 @@
     },
     {
       "level": "DBG",
-      "text": "Memo cache hit ratio: 94.2% over the last 1k requests.",
+      "text": "Memo cache hit ratio: 94.2% for last 1k requests.",
       "tone": "realistic"
     },
     {
       "level": "WARN",
-      "text": "Disk usage at 82% on /var/log — rotation triggers at 85%.",
+      "text": "Disk usage at 82% — rotation triggers at 85%.",
+      "tone": "realistic"
+    },
+    {
+      "level": "WARN",
+      "text": "Expect superballs in overhead cabinet…",
       "tone": "realistic"
     },
     {
       "level": "ERR",
-      "text": "Connection refused: postgres://primary:5432 — failover initiated.",
+      "text": "Connection refused: postgres://primary:5432.",
       "tone": "realistic"
     }
   ]

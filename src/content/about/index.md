@@ -7,6 +7,6 @@ resumeHref: "/resume"
 
 I'm Stephen Ullom, a software architect who has spent the last twenty years pulling order out of complex, physical systems. The kind of software where determinism, observability, and the gap between simulation and reality are not abstract concerns.
 
-I work at the seam between business visionaries, domain experts, and software execution. I lead architecture, mentor engineers, align stakeholders, and ship software products built to evolve. I also heavily leverage AI-augmented workflows, from human-in-the-loop collaboration to fully automated agentic execution loops.
+I work at the seam between business visionaries, domain experts, and software execution. I lead architecture, mentor engineers, align stakeholders, and ship software products built to evolve. I also heavily leverage AI-native workflows, from human-in-the-loop collaboration to fully automated agentic execution loops.
 
 This site is itself a small showcase: spec-driven, statically rendered, and intentionally crafted, with a few easter eggs that hint at the kind of systems I love to build.

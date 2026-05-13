@@ -54,14 +54,13 @@ const poolPayload = pool.map((p) => ({
 >
   <HeaderCard />
 
-  <div class="landing__hero-grid">
-    <HeroCard />
-    <SkillsCard />
-  </div>
-
-  <div class="landing__top-grid">
-    <AboutCard />
-    <div class="top-grid__right">
+  <div class="landing__intro-grid">
+    <div class="landing__intro-left">
+      <HeroCard />
+      <AboutCard />
+    </div>
+    <div class="landing__intro-right">
+      <SkillsCard />
       <DomainsCard />
       {
         pool.length > 0 && (
@@ -189,13 +188,18 @@ const poolPayload = pool.map((p) => ({
 </script>
 
 <style>
-  .landing__hero-grid,
-  .landing__top-grid {
+  .landing__intro-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: var(--space-4);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-16);
     align-items: start;
+  }
+
+  .landing__intro-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-18);
   }
 
   .landing__bottom-grid {
@@ -205,7 +209,7 @@ const poolPayload = pool.map((p) => ({
     margin-bottom: var(--space-4);
     align-items: start;
   }
-  .top-grid__right,
+  .landing__intro-right,
   .bottom-grid__right {
     display: flex;
     flex-direction: column;
@@ -247,8 +251,7 @@ const poolPayload = pool.map((p) => ({
   }
 
   @media (max-width: 900px) {
-    .landing__hero-grid,
-    .landing__top-grid,
+    .landing__intro-grid,
     .landing__bottom-grid {
       grid-template-columns: 1fr;
     }

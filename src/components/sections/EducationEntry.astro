@@ -1,31 +1,23 @@
 ---
 /*
- * EducationEntry — single school row inside the Education card on /resume.
+ * EducationEntry - single school row inside the Education card on /resume.
  * Modeled on ExperienceEntry; visual rhythm intentionally matches.
  */
 
 import type { CollectionEntry } from "astro:content";
 import Icon from "../primitives/Icon.astro";
-import Pill from "../primitives/Pill.astro";
 
 interface Props {
   entry: CollectionEntry<"education">;
 }
 
 const { entry } = Astro.props;
-const {
-  institution,
-  degree,
-  field,
-  years,
-  highlights,
-  institutionIcon,
-  summary,
-} = entry.data;
+const { institution, degree, field, years, honors, institutionIcon } =
+  entry.data;
 const yearStr = years.end
-  ? `${years.start} – ${years.end}`
-  : `${years.start} – Present`;
-const credential = field ? `${degree}, ${field}` : degree;
+  ? `${years.start} - ${years.end}`
+  : `${years.start} - Present`;
+const credential = field ? `${degree} | ${field}` : degree;
 ---
 
 <article class="edu-entry">
@@ -41,22 +33,11 @@ const credential = field ? `${degree}, ${field}` : degree;
       <div class="edu-entry__titles">
         <span class="edu-entry__degree">{credential}</span>
         <span class="edu-entry__institution">{institution}</span>
+        {honors && <span class="edu-entry__honors">{honors}</span>}
       </div>
     </div>
     <span class="edu-entry__years">{yearStr}</span>
   </div>
-  {summary && <p class="edu-entry__summary">{summary}</p>}
-  {
-    highlights && highlights.length > 0 && (
-      <ul class="edu-entry__highlights" role="list" aria-label="Highlights">
-        {highlights.map((h) => (
-          <li>
-            <Pill label={h} tone="neutral" />
-          </li>
-        ))}
-      </ul>
-    )
-  }
 </article>
 
 <style>
@@ -75,7 +56,6 @@ const credential = field ? `${degree}, ${field}` : degree;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-4);
-    margin-bottom: var(--space-3);
   }
 
   .edu-entry__left {
@@ -109,27 +89,17 @@ const credential = field ? `${degree}, ${field}` : degree;
     color: var(--color-fg-muted);
   }
 
+  .edu-entry__honors {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+
   .edu-entry__years {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-fg-subtle);
     white-space: nowrap;
     flex-shrink: 0;
-  }
-
-  .edu-entry__summary {
-    font-size: var(--text-sm);
-    line-height: var(--text-sm-line);
-    color: var(--color-fg-muted);
-    margin: 0 0 var(--space-3);
-  }
-
-  .edu-entry__highlights {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
   }
 </style>

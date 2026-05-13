@@ -21,7 +21,7 @@ Leads system‑level architecture and modernization efforts using domain‑drive
 
 ---
 
-## Core Competencies
+## Skills
 
 - **Software Architecture:** System Design & Tradeoffs, Architectural Governance, Domain-Driven Design (DDD), Specification-Driven Design (SDD), Test-Driven Design (TDD), Event-Driven Architecture, Modular Monoliths, SOLID Principles, Loose-Coupling, Clean Boundaries, API Design (GraphQL, REST).
 

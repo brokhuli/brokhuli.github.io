@@ -8,9 +8,8 @@
  * Metrics / Code-entry-points sections beneath it.
  */
 
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection, render, type CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import Card from "../../components/primitives/Card.astro";
 import SectionHeading from "../../components/primitives/SectionHeading.astro";
 import StatusDot from "../../components/primitives/StatusDot.astro";
 import TechPill from "../../components/primitives/TechPill.astro";
@@ -37,16 +36,12 @@ const {
   tech,
   media,
   cover,
-  problem,
-  complexity,
-  architecturalDesign,
-  architecturalTradeoffs,
-  outcome,
   repo,
   metrics,
   publishedAt,
   updatedAt,
 } = entry.data;
+const { Content } = await render(entry);
 
 const statusMap: Record<
   string,
@@ -101,30 +96,9 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
       )
     }
 
-    <Card class="case-study__problem" variant="accent">
-      <SectionHeading slot="header" as="h2">Problem</SectionHeading>
-      <p>{problem}</p>
-    </Card>
-
-    <section class="case-study__section">
-      <SectionHeading as="h2">Complexity</SectionHeading>
-      <p>{complexity}</p>
-    </section>
-
-    <section class="case-study__section">
-      <SectionHeading as="h2">Architectural Design</SectionHeading>
-      <p>{architecturalDesign}</p>
-    </section>
-
-    <section class="case-study__section">
-      <SectionHeading as="h2">Architectural Tradeoffs</SectionHeading>
-      <p>{architecturalTradeoffs}</p>
-    </section>
-
-    <section class="case-study__section">
-      <SectionHeading as="h2">Outcome</SectionHeading>
-      <p>{outcome}</p>
-    </section>
+    <div class="case-study__body">
+      <Content />
+    </div>
 
     {
       metrics && metrics.length > 0 && (
@@ -244,7 +218,6 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
     margin: 0;
   }
 
-  .case-study__problem p,
   .case-study__section p {
     font-size: var(--text-base);
     line-height: var(--text-base-line);
@@ -258,9 +231,57 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
     gap: var(--space-3);
   }
 
-  .case-study__body :global(p) {
+  .case-study__body :global(> p) {
     margin: 0 0 var(--space-3);
+    font-size: var(--text-base);
+    line-height: var(--text-base-line);
+    color: var(--color-fg-muted);
+  }
+
+  .case-study__body :global(.case-study-section + .case-study-section) {
+    margin-top: var(--space-5);
+  }
+
+  .case-study__body :global(> h2:not(.heading)) {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    line-height: var(--text-xl-line);
+    font-weight: var(--font-weight-semibold);
     color: var(--color-fg-default);
+    letter-spacing: var(--tracking-wide);
+    margin: var(--space-8) 0 var(--space-3);
+    text-transform: uppercase;
+  }
+
+  .case-study__body :global(> h2:first-child) {
+    margin-top: 0;
+  }
+
+  .case-study__body :global(> h3) {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    line-height: var(--text-lg-line);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-fg-default);
+    margin: var(--space-5) 0 var(--space-2);
+  }
+
+  .case-study__body :global(> ul),
+  .case-study__body :global(> ol) {
+    margin: 0 0 var(--space-4);
+    padding-left: var(--space-5);
+    color: var(--color-fg-muted);
+  }
+
+  .case-study__body :global(> ul li + li),
+  .case-study__body :global(> ol li + li) {
+    margin-top: var(--space-2);
+  }
+
+  .case-study__body :global(> p a),
+  .case-study__body :global(> ul a),
+  .case-study__body :global(> ol a) {
+    color: var(--color-accent);
   }
 
   .case-study__metrics {

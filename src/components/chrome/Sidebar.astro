@@ -6,7 +6,7 @@
  *   references/specs/component-spec.md §1 Sidebar
  *   references/specs/interaction-spec.md §3
  *
- * Strategy: pure .astro with one colocated <script> (no client:* needed)
+ * Strategy: pure .astro with one colocated script tag (no client:* needed)
  * driving an IntersectionObserver for the active-section highlight.
  */
 
@@ -170,6 +170,7 @@ const versionLabel = `v${pkg.version}`;
     flex-direction: column;
     align-items: center;
     gap: var(--space-1);
+    margin-inline: calc(var(--space-1) * -1);
     padding: var(--space-2) var(--space-1);
     border-radius: var(--radius-md);
     color: var(--color-fg-muted);
@@ -245,6 +246,7 @@ const versionLabel = `v${pkg.version}`;
     .sidebar__link {
       flex-direction: row;
       gap: var(--space-2);
+      margin-inline: 0;
       padding: var(--space-2);
     }
     .sidebar__label {
