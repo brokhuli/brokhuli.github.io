@@ -1,0 +1,44 @@
+---
+/*
+ * CaseStudyImage - plain image renderer for Markdown case-study bodies.
+ *
+ * Animated GIFs bypass astro:assets so Sharp does not try to optimize them.
+ */
+
+interface Props {
+  src: string;
+  alt: string;
+  maxWidth?: string;
+}
+
+const { src, alt, maxWidth = "100%" } = Astro.props;
+
+const gifModules = import.meta.glob<string>("/src/**/*.gif", {
+  query: "?url",
+  import: "default",
+});
+
+const normaliseSuffix = (value: string) => value.replace(/^(?:\.\.\/)+/, "");
+const suffix = normaliseSuffix(src);
+const matchKey = Object.keys(gifModules).find((key) => key.endsWith(suffix));
+const resolvedSrc = matchKey ? await gifModules[matchKey]() : src;
+---
+
+<img
+  class="case-study-image"
+  style={`width: min(100%, ${maxWidth}); max-width: ${maxWidth};`}
+  src={resolvedSrc}
+  alt={alt}
+  loading="lazy"
+  decoding="async"
+/>
+
+<style>
+  .case-study-image {
+    display: block;
+    height: auto;
+    margin-inline: 0 auto;
+    border: var(--border-width-thin) solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+</style>

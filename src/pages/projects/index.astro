@@ -1,0 +1,89 @@
+---
+/*
+ * /projects - catalog of public project case studies.
+ * Shows featured projects plus entries explicitly marked `cataloged: true`.
+ */
+
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeading from "../../components/primitives/SectionHeading.astro";
+import ProjectCard from "../../components/sections/ProjectCard.astro";
+
+const projects = (
+  await getCollection(
+    "projects",
+    (entry) => entry.data.featured || entry.data.cataloged,
+  )
+).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Projects — Stephen Ullom"
+  description="Catalog of project case studies by Stephen Ullom, including real-time simulation, software architecture, digital twins, and portfolio systems work."
+>
+  <article class="projects-catalog">
+    <header class="projects-catalog__header">
+      <a class="projects-catalog__back" href="/">← Back home</a>
+      <SectionHeading as="h1">Projects</SectionHeading>
+      <p class="projects-catalog__intro">
+        A curated selection of work across systems, simulations, and
+        architectural design. Each project is carefully crafted and delibritely
+        engineered.
+      </p>
+    </header>
+
+    <div class="projects-catalog__grid">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .projects-catalog {
+    max-width: var(--layout-max-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .projects-catalog__header {
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .projects-catalog__back {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-muted);
+    text-decoration: none;
+    align-self: flex-start;
+  }
+
+  .projects-catalog__back:hover {
+    color: var(--color-accent);
+  }
+
+  .projects-catalog__intro {
+    max-width: 68ch;
+    font-size: var(--text-md);
+    line-height: var(--text-md-line);
+    color: var(--color-fg-muted);
+    margin: 0;
+  }
+
+  .projects-catalog__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 640px) {
+    .projects-catalog__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

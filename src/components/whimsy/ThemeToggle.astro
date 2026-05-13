@@ -12,20 +12,22 @@
 
 import Icon from "../primitives/Icon.astro";
 
-const themes = [
+const themeOptions = [
   {
     value: "dark",
     label: "Dark",
     icon: "lucide:moon",
     showLabel: true,
     tip: "For late-night systems thinking",
+    selectable: true,
   },
   {
     value: "theme-3",
     label: "Ultraviolet",
     icon: "lucide:moon-star",
     showLabel: false,
-    tip: "Ultraviolet Night: dark aubergine with dark mint signal",
+    tip: "Indigo Night: true black with indigo signal",
+    selectable: false,
   },
   {
     value: "theme-5",
@@ -33,6 +35,7 @@ const themes = [
     icon: "lucide:flower-2",
     showLabel: false,
     tip: "Rose: deep ink surfaces with raspberry accents",
+    selectable: false,
   },
   {
     value: "theme-8",
@@ -40,13 +43,15 @@ const themes = [
     icon: "lucide:cable",
     showLabel: false,
     tip: "Copperline: dark navy with copper signal",
+    selectable: false,
   },
   {
     value: "theme-9",
     label: "Ultraviolet Light",
     icon: "lucide:sun-medium",
     showLabel: false,
-    tip: "Ultraviolet Day: pale lavender paper with mint signal",
+    tip: "Khaki Day: warm khaki paper with indigo signal",
+    selectable: false,
   },
   {
     value: "light",
@@ -54,8 +59,11 @@ const themes = [
     icon: "lucide:sun",
     showLabel: true,
     tip: "For daylight clarity, but mostly for Eric",
+    selectable: true,
   },
 ];
+
+const themes = themeOptions.filter((theme) => theme.selectable);
 ---
 
 <fieldset class="theme-toggle" data-theme-toggle>
@@ -95,14 +103,7 @@ const themes = [
   //   2. writes data-theme + localStorage.theme on user change.
   // Spec: interaction-spec.md section 7.
   (function () {
-    const themes = [
-      "dark",
-      "theme-3",
-      "theme-5",
-      "theme-8",
-      "theme-9",
-      "light",
-    ];
+    const themes = ["dark", "light"];
     const root = document.documentElement;
     const fieldsets = document.querySelectorAll<HTMLFieldSetElement>(
       "[data-theme-toggle]",
