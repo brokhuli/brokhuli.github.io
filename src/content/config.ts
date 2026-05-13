@@ -109,7 +109,7 @@ const projects = defineCollection({
                 path: z.string(),
               }),
             )
-            .max(6)
+            .max(7)
             .optional(),
         })
         .optional(),

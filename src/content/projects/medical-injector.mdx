@@ -4,13 +4,30 @@ tagline: "A deterministic, real-time contrast-injection controller with safety m
 status: "shipped"
 featured: true
 cataloged: true
-order: 20
+order: 10
 tech:
   - "C++"
   - "Qt/QML"
   - "gRPC"
   - "HIL interfaces"
   - "unit testing"
+repo:
+  url: "https://github.com/brokhuli/medical-injector"
+  entryPoints:
+    - label: "System architecture"
+      path: "readme/architecture-summary.md"
+    - label: "Architectural decisions"
+      path: "readme/architecture-decision-record.md"
+    - label: "gRPC command, telemetry, and event contract"
+      path: "proto/injector.proto"
+    - label: "Real-time PID control loop"
+      path: "backend/src/control/ControlLoop.cpp"
+    - label: "Independent safety monitor"
+      path: "backend/src/safety/SafetyMonitor.cpp"
+    - label: "Injection state machine and protocol progression"
+      path: "backend/src/state/StateMachine.cpp"
+    - label: "Simulated hardware devices and physics models"
+      path: "backend/src/hal/SimulatedHal.cpp"
 media:
   src: "../../assets/img/projects/medical-injector/medical-injector-injection.gif"
   alt: >-
