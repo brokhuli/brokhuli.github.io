@@ -9,6 +9,23 @@
  */
 
 import StatusDot from "../primitives/StatusDot.astro";
+import { getCollection } from "astro:content";
+
+const entries = await getCollection("systemStatus");
+const status = entries[0]?.data ?? {
+  triggerLabel: "System Status",
+  dotLabel: "System status: operational",
+  title: "System Status: Operational",
+  rows: [
+    { label: "Uptime", value: "20+ years" },
+    { label: "Primary Functions", value: "Architecture, Simulation, Scale" },
+    { label: "Latency", value: "Low (after coffee)" },
+    { label: "Last Deployment", value: "Recently" },
+  ],
+  note: "All systems nominal. Carry building.",
+  closeLabel: "Close",
+};
+const titleParts = status.title.split("Operational");
 ---
 
 <div class="system-status" data-system-status>
@@ -20,8 +37,8 @@ import StatusDot from "../primitives/StatusDot.astro";
     aria-haspopup="dialog"
     data-system-status-trigger
   >
-    <StatusDot state="ok" label="System status: operational" />
-    <span class="system-status__label">System Status</span>
+    <StatusDot state="ok" label={status.dotLabel} />
+    <span class="system-status__label">{status.triggerLabel}</span>
   </button>
 
   <dialog
@@ -31,25 +48,33 @@ import StatusDot from "../primitives/StatusDot.astro";
     data-system-status-dialog
   >
     <h2 id="system-status-title" class="system-status__title">
-      System Status: Operational
+      {
+        titleParts.length > 1 ? (
+          <>
+            {titleParts[0]}
+            <span class="system-status__title-accent">Operational</span>
+            {titleParts.slice(1).join("Operational")}
+          </>
+        ) : (
+          status.title
+        )
+      }
     </h2>
     <dl class="system-status__list">
-      <div class="system-status__row">
-        <dt>Uptime</dt><dd>20+ years</dd>
-      </div>
-      <div class="system-status__row">
-        <dt>Primary Functions</dt><dd>Architecture, Simulation, Scale</dd>
-      </div>
-      <div class="system-status__row">
-        <dt>Latency</dt><dd>Low (after coffee)</dd>
-      </div>
-      <div class="system-status__row">
-        <dt>Last Deployment</dt><dd>Recently</dd>
-      </div>
+      {
+        status.rows.map((row) => (
+          <div class="system-status__row">
+            <>
+              <dt>{row.label}</dt>
+              <dd>{row.value}</dd>
+            </>
+          </div>
+        ))
+      }
     </dl>
-    <p class="system-status__note">All systems nominal. Carry building.</p>
+    <p class="system-status__note">{status.note}</p>
     <button type="button" class="system-status__close" data-system-status-close>
-      Close
+      {status.closeLabel}
     </button>
   </dialog>
 </div>
@@ -135,6 +160,11 @@ import StatusDot from "../primitives/StatusDot.astro";
     cursor: pointer;
   }
 
+  .system-status__label {
+    color: inherit;
+    font: inherit;
+  }
+
   .system-status__trigger:hover {
     color: var(--color-fg-default);
     border-color: var(--color-border-hover);
@@ -175,6 +205,11 @@ import StatusDot from "../primitives/StatusDot.astro";
     color: var(--color-fg-default);
   }
 
+  .system-status__title-accent {
+    color: var(--color-accent);
+    font-weight: var(--font-weight-bold);
+  }
+
   .system-status__list {
     margin: 0;
     display: flex;
@@ -192,10 +227,16 @@ import StatusDot from "../primitives/StatusDot.astro";
   }
 
   .system-status__row dt {
+    font: inherit;
+    font-size: inherit;
+    line-height: inherit;
     color: var(--color-fg-subtle);
   }
   .system-status__row dd {
     margin: 0;
+    font: inherit;
+    font-size: inherit;
+    line-height: inherit;
     color: var(--color-fg-default);
     text-align: right;
   }

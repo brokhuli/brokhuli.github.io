@@ -13,11 +13,14 @@ import Button from "../components/primitives/Button.astro";
 import SectionHeading from "../components/primitives/SectionHeading.astro";
 import BarChart from "../components/primitives/BarChart.astro";
 
+const randInt = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
 const probeChart = [
-  { label: "DNS", value: 23, tone: "low" as const },
-  { label: "TLS", value: 41, tone: "low" as const },
-  { label: "GET", value: 100, tone: "high" as const },
-  { label: "404", value: 100, tone: "high" as const },
+  { label: "DNS", value: randInt(18, 36), tone: "low" as const },
+  { label: "TLS", value: randInt(28, 54), tone: "low" as const },
+  { label: "GET", value: randInt(62, 88), tone: "med" as const },
+  { label: "404", value: randInt(88, 100), tone: "high" as const },
 ];
 ---
 
@@ -29,7 +32,7 @@ const probeChart = [
     <Card class="notfound__banner" variant="accent">
       <h1 class="notfound__title">
         <span class="notfound__tag">404</span>
-        Page not found in the simulation.
+        Page not found.
       </h1>
       <p class="notfound__sub">
         The route you tried doesn't exist on this build. The system attempted to
@@ -37,9 +40,15 @@ const probeChart = [
       </p>
     </Card>
 
-    <Card>
+    <Card class="notfound__probe">
       <SectionHeading slot="header" as="h2">Probe trace</SectionHeading>
-      <BarChart data={probeChart} axisLabel="request lifecycle" />
+      <BarChart
+        data={probeChart}
+        axisLabel="request lifecycle"
+        height={44}
+        headroom={4}
+        showLabels
+      />
     </Card>
 
     <div class="notfound__actions">
@@ -62,6 +71,17 @@ const probeChart = [
 
   .notfound__banner {
     border-color: var(--color-warning);
+  }
+
+  :global(.notfound__probe) {
+    width: min(100%, 520px);
+    margin-inline: auto;
+    padding-block: var(--space-4);
+    padding-inline: var(--space-5);
+  }
+
+  :global(.notfound__probe .card__header) {
+    margin-bottom: var(--space-1);
   }
 
   .notfound__title {

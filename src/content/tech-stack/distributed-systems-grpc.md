@@ -1,7 +1,7 @@
 ---
 label: "gRPC"
 group: "distributed-systems"
-order: 30
+order: 10
 icon: "lucide:network"
 level: "core"
 ---

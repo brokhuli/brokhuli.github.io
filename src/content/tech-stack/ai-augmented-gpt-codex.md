@@ -1,5 +1,5 @@
 ---
-label: "GPT-5.X Codex"
+label: "GPT Codex"
 group: "ai-augmented"
 order: 30
 icon: "lucide:terminal"

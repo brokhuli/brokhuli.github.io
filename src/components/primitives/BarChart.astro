@@ -16,6 +16,8 @@ interface Props {
   axisLabel?: string;
   caption?: string;
   height?: number;
+  headroom?: number;
+  showLabels?: boolean;
   class?: string;
 }
 
@@ -24,6 +26,8 @@ const {
   axisLabel,
   caption,
   height = 120,
+  headroom = 16,
+  showLabels = false,
   class: className = "",
 } = Astro.props;
 
@@ -43,7 +47,7 @@ const innerWidth = barWidth - gap;
     {
       data.map((d, i) => {
         const tone = d.tone ?? "low";
-        const barHeight = (d.value / max) * (height - 16);
+        const barHeight = (d.value / max) * (height - headroom);
         const x = i * barWidth + gap / 2;
         const y = height - barHeight;
         return (
@@ -59,6 +63,19 @@ const innerWidth = barWidth - gap;
       })
     }
   </svg>
+  {
+    showLabels && (
+      <div
+        class="chart__labels"
+        aria-hidden="true"
+        style={`grid-template-columns: repeat(${data.length}, 1fr);`}
+      >
+        {data.map((d) => (
+          <span class="chart__label">{d.label}</span>
+        ))}
+      </div>
+    )
+  }
   {axisLabel && <figcaption class="chart__axis">{axisLabel}</figcaption>}
   {caption && <figcaption class="chart__caption">{caption}</figcaption>}
 </figure>
@@ -86,6 +103,21 @@ const innerWidth = barWidth - gap;
   }
   .chart__bar--high {
     fill: var(--chart-bar-high);
+  }
+  .chart__labels {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    color: var(--color-fg-default);
+  }
+  .chart__label {
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .chart__axis,
   .chart__caption {
