@@ -1,7 +1,7 @@
 {
   "name": "brokhuli.github.io",
   "type": "module",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "scripts": {
     "dev": "astro dev",
@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:lighthouse": "npm run build && lhci autorun",
     "validate:content": "tsx src/scripts/validate-content.ts",
     "prepare": "husky"
   },

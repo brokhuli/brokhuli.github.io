@@ -7,6 +7,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", ".astro/**/*"],
+  "include": ["src/**/*", ".astro/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist", "references"]
 }
