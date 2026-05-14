@@ -4,8 +4,8 @@
  * The suite runs against `npm run preview` (the static `dist/` build) so it
  * exercises exactly what gets deployed. Spec: ADR-010, tech-stack.md.
  *
- * One project (Chromium desktop) is enough for the smoke suite; cross-browser
- * coverage is folded into Phase 8's manual + MCP-driven matrix.
+ * Runs across Chromium, Firefox, and WebKit so the smoke suite catches
+ * engine-specific regressions before deploy.
  */
 
 import { defineConfig, devices } from "@playwright/test";
@@ -28,6 +28,14 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
+    },
+    {
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
     },
   ],
   webServer: {
