@@ -169,9 +169,21 @@ button {
     color: var(--color-accent);
   }
   .card--mobile-plain[data-variant="filled"] .skills__label,
-  .card--mobile-plain[data-variant="filled"] .contact__label,
-  .card--mobile-plain[data-variant="filled"] .contact__link {
+  .card--mobile-plain[data-variant="filled"] .contact__label {
+    color: var(--color-fg-muted);
+  }
+  .card--mobile-plain[data-variant="filled"] .contact__link,
+  .card--mobile-plain[data-variant="filled"] .contact__value {
     color: var(--color-fg-default);
+  }
+  .card--mobile-plain[data-variant="filled"] .contact__link:hover {
+    color: var(--color-accent);
+  }
+  .card--mobile-plain[data-variant="filled"] .contact__availability {
+    color: var(--color-fg-muted);
+  }
+  .card--mobile-plain[data-variant="filled"] .contact__headshot {
+    border-color: var(--color-border);
   }
 }
 

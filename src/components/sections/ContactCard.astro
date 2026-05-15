@@ -191,36 +191,4 @@ const availabilityText = availabilityContent.trim();
       text-align: left;
     }
   }
-
-  /* Mobile: collapse to DomainsCard-style icon+label grid. Headshot,
-   * availability copy, and URL values are hidden so each row reads as a
-   * compact icon + label pair. The whole row stays clickable. */
-  @media (max-width: 640px) {
-    .contact__headshot,
-    .contact__availability,
-    .contact__value {
-      display: none;
-    }
-    .contact__lockup {
-      gap: 0;
-    }
-    .contact__list {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-3);
-    }
-    .contact__link {
-      gap: var(--space-2);
-      padding: 0;
-      margin: 0;
-    }
-    .contact__label {
-      font-family: inherit;
-      font-size: var(--text-sm);
-      line-height: var(--text-sm-line);
-      color: var(--color-fg-default);
-      letter-spacing: normal;
-      width: auto;
-    }
-  }
 </style>

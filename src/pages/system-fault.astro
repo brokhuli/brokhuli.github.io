@@ -19,7 +19,6 @@ import Card from "../components/primitives/Card.astro";
 import SectionHeading from "../components/primitives/SectionHeading.astro";
 import BarChart from "../components/primitives/BarChart.astro";
 import LineChart from "../components/primitives/LineChart.astro";
-import Icon from "../components/primitives/Icon.astro";
 
 const lineEntries = await getCollection("logLines");
 const allLogPool = lineEntries.flatMap((e) => e.data.lines);
@@ -154,14 +153,6 @@ const dataPayload = {
   <div class="fault">
     <div class="fault__topbar">
       <a class="fault__return" href="/">← Return to safety</a>
-      <button
-        type="button"
-        class="btn btn--outline fault__download"
-        id="fault-download"
-      >
-        <Icon name="lucide:download" size={16} />
-        <span>Download fault report (.json)</span>
-      </button>
     </div>
 
     <Card class="fault__banner" variant="accent">
@@ -349,17 +340,11 @@ const dataPayload = {
     }
 
     // 2) Charts: regenerate values; rewrite SVG <rect> heights, y, and tone.
-    const chartsState: Record<
-      string,
-      Array<{ label: string; value: number; tone: Tone }>
-    > = {};
-
     for (const cfg of payload.chartConfigs) {
       const data = cfg.labels.map((label) => {
         const value = randInt(2, 99);
         return { label, value, tone: toneFor(value) };
       });
-      chartsState[cfg.id] = data;
 
       const wrap = document.querySelector<HTMLElement>(
         `[data-fault-chart="${cfg.id}"]`,
@@ -430,30 +415,6 @@ const dataPayload = {
         .join("");
     }
 
-    // 4) Download handler
-    const button = document.getElementById("fault-download");
-    if (button) {
-      button.addEventListener("click", () => {
-        const report = {
-          generatedAt: new Date().toISOString(),
-          metrics: chosenMetrics,
-          charts: chartsState,
-          logs: chosenLogs,
-        };
-        const blob = new Blob([JSON.stringify(report, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `fault-report-${Date.now()}.json`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      });
-    }
-
     function escapeHtml(s: string): string {
       return s
         .replace(/&/g, "&amp;")
@@ -500,29 +461,6 @@ const dataPayload = {
   }
   .fault__return--bottom {
     margin-top: var(--space-6);
-  }
-
-  .fault__download {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-md);
-    font-family: var(--font-sans);
-    font-size: var(--text-sm);
-    font-weight: var(--font-weight-medium);
-    line-height: 1;
-    cursor: pointer;
-    background: transparent;
-    color: var(--color-fg-default);
-    border: var(--border-width-strong) solid var(--color-border-strong);
-    transition:
-      border-color var(--motion-quick) var(--ease-out-quart),
-      color var(--motion-quick) var(--ease-out-quart);
-  }
-  .fault__download:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
   }
 
   .fault__banner {

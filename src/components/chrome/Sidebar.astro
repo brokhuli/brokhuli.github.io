@@ -65,6 +65,7 @@ const activeId = path.startsWith("/projects")
             class:list={[
               "sidebar__item",
               item.id === "architecture" && "hide-on-mobile",
+              item.mobileHref && "sidebar__item--mobile-tail",
             ]}
           >
             <a
@@ -138,9 +139,9 @@ const activeId = path.startsWith("/projects")
     };
 
     // When the user clicks a sidebar link, lock the highlight to that target
-    // until the smooth-scroll settles — short sections (Experience, Contact)
-    // never reach the observer's central band, so without this lock the
-    // highlight snaps back to whichever taller section dominates the viewport.
+    // until the smooth-scroll settles — short sections near the bottom of
+    // the page can never reach the activation line, so without this lock
+    // the highlight would snap back to whichever earlier section sits above it.
     let lockedId: string | null = null;
     let unlockTimer: number | null = null;
     const unlockSoon = () => {
@@ -151,22 +152,41 @@ const activeId = path.startsWith("/projects")
       }, 120);
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (lockedId) return;
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) =>
-              Math.abs(a.boundingClientRect.top) -
-              Math.abs(b.boundingClientRect.top),
-          );
-        if (visible[0]) setActive(visible[0].target.id);
-      },
-      { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
-    );
+    // Scroll-spy: a section becomes active once its top crosses an
+    // activation line ~15% from the viewport top. We pick the *last* section
+    // in DOM order whose top is at or above that line, which collapses cleanly
+    // to "home" at the top of the page and progresses through the sections
+    // as the user scrolls down — and also handles scrolling back up, which
+    // the previous IntersectionObserver couldn't (no event fires once every
+    // section has left the central band).
+    const computeActive = () => {
+      if (lockedId) return;
+      const line = window.innerHeight * 0.15;
+      let nextId: string | null = null;
+      for (const t of targets) {
+        const rect = t.getBoundingClientRect();
+        // Skip sections hidden on this viewport (display:none collapses the
+        // bounding rect to 0×0, which would otherwise satisfy the line check
+        // and steal the highlight from real content).
+        if (rect.width === 0 && rect.height === 0) continue;
+        if (rect.top <= line) {
+          nextId = t.id;
+        }
+      }
+      if (nextId) setActive(nextId);
+    };
 
-    for (const t of targets) observer.observe(t);
+    let rafId: number | null = null;
+    const schedule = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        computeActive();
+      });
+    };
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    computeActive();
 
     for (const link of links) {
       link.addEventListener("click", () => {
@@ -295,6 +315,11 @@ const activeId = path.startsWith("/projects")
     }
     .sidebar__list::-webkit-scrollbar {
       display: none;
+    }
+    /* Projects + Experience pivot to dedicated pages on mobile; push their
+     * nav buttons to the right of the in-page anchor links. */
+    .sidebar__item--mobile-tail {
+      order: 1;
     }
     .sidebar__link {
       flex-direction: row;
