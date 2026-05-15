@@ -148,6 +148,34 @@ button {
 }
 
 /*
+ * `.card--mobile-plain` neutralizes the filled accent variant at narrow
+ * widths so SkillsCard and ContactCard match DomainsCard's lighter look
+ * on mobile. `!important` is needed to win against Card.astro's scoped
+ * `.card[data-variant="filled"]` rule (scoped selectors carry an extra
+ * data-astro-cid attribute that out-specifies global rules).
+ */
+@media (max-width: 640px) {
+  .card--mobile-plain[data-variant="filled"] {
+    background: var(--color-surface-1) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-fg-default) !important;
+  }
+  .card--mobile-plain[data-variant="filled"] .heading {
+    color: var(--color-fg-muted);
+    border-bottom-color: var(--color-accent);
+  }
+  .card--mobile-plain[data-variant="filled"] .skills__icon,
+  .card--mobile-plain[data-variant="filled"] .contact__icon {
+    color: var(--color-accent);
+  }
+  .card--mobile-plain[data-variant="filled"] .skills__label,
+  .card--mobile-plain[data-variant="filled"] .contact__label,
+  .card--mobile-plain[data-variant="filled"] .contact__link {
+    color: var(--color-fg-default);
+  }
+}
+
+/*
  * Mobile sidebar overlay clearance: when the sidebar is the floating top
  * bar (≤768px), section anchors need a scroll-margin so their headings
  * aren't hidden beneath it after a click-to-section navigation.

@@ -18,7 +18,7 @@ import availabilityContent from "../../content/contact/content.md?raw";
 const availabilityText = availabilityContent.trim();
 ---
 
-<Card id="contact" variant="filled">
+<Card id="contact" variant="filled" class="card--mobile-plain">
   <SectionHeading slot="header" as="h2">Let's Connect</SectionHeading>
 
   <div class="contact__lockup">
@@ -189,6 +189,38 @@ const availabilityText = availabilityContent.trim();
     }
     .contact__availability {
       text-align: left;
+    }
+  }
+
+  /* Mobile: collapse to DomainsCard-style icon+label grid. Headshot,
+   * availability copy, and URL values are hidden so each row reads as a
+   * compact icon + label pair. The whole row stays clickable. */
+  @media (max-width: 640px) {
+    .contact__headshot,
+    .contact__availability,
+    .contact__value {
+      display: none;
+    }
+    .contact__lockup {
+      gap: 0;
+    }
+    .contact__list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+    .contact__link {
+      gap: var(--space-2);
+      padding: 0;
+      margin: 0;
+    }
+    .contact__label {
+      font-family: inherit;
+      font-size: var(--text-sm);
+      line-height: var(--text-sm-line);
+      color: var(--color-fg-default);
+      letter-spacing: normal;
+      width: auto;
     }
   }
 </style>
