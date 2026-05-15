@@ -147,7 +147,7 @@
   --tick-length: 6px;
   --tick-color: var(--color-fg-subtle);
 
-  --log-ticker-opacity: 0.85;
+  --log-ticker-opacity: 1;
 }
 
 /* Dark Mode (default): dark aubergine + dark mint signal */

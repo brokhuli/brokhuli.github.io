@@ -133,6 +133,21 @@ button {
 }
 
 /*
+ * Mobile hide/show utilities. The 640px breakpoint mirrors LogTicker's
+ * own hide cutoff so the "mobile" layout is consistent across the site.
+ */
+@media (max-width: 640px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+@media (min-width: 641px) {
+  .show-on-mobile {
+    display: none !important;
+  }
+}
+
+/*
  * Mobile sidebar overlay clearance: when the sidebar is the floating top
  * bar (≤768px), section anchors need a scroll-margin so their headings
  * aren't hidden beneath it after a click-to-section navigation.

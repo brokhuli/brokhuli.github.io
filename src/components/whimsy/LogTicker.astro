@@ -23,9 +23,9 @@ const calm = allLines.filter(
 );
 const alert = allLines.filter((l) => l.level === "WARN" || l.level === "ERR");
 
-// Pre-render 3 static lines so SSR + <noscript> visitors see something.
-const initial = calm.slice(0, 3);
-while (initial.length < 3 && calm.length > 0) initial.push(calm[0]);
+// Pre-render 2 static lines so SSR + <noscript> visitors see something.
+const initial = calm.slice(0, 2);
+while (initial.length < 2 && calm.length > 0) initial.push(calm[0]);
 
 // Build-time timestamps; the client script refreshes them on hydration.
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -33,7 +33,6 @@ const fmtTime = (d: Date) =>
   `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 const buildNow = new Date();
 const initialTimes = [
-  fmtTime(new Date(buildNow.getTime() - 4000)),
   fmtTime(new Date(buildNow.getTime() - 2000)),
   fmtTime(buildNow),
 ];
@@ -83,7 +82,7 @@ const dataId = "log-ticker-data";
       class="log-ticker__count sr-only"
       data-log-ticker-count
       aria-live="polite"
-      aria-atomic="true">3 log lines visible</span
+      aria-atomic="true">2 log lines visible</span
     >
   </div>
 
@@ -134,7 +133,7 @@ const dataId = "log-ticker-data";
 
     const MIN_COUNT = 0;
     const MAX_COUNT = 4;
-    const DEFAULT_COUNT = 3;
+    const DEFAULT_COUNT = 2;
     const STORAGE_KEY = "logTickerLines";
 
     const clampCount = (n: number) =>
@@ -220,7 +219,7 @@ const dataId = "log-ticker-data";
     // original 3 lines. document.createElement nodes lack that cid and would
     // render unstyled.
     const ensureSlotCount = (n: number) => {
-      const needed = Math.max(3, n);
+      const needed = Math.max(2, n);
       while (slots.length < needed && slots.length > 0) {
         const fresh = slots[0].cloneNode(true) as HTMLElement;
         setSlotText(fresh, pick());

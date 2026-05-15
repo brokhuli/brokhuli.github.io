@@ -160,6 +160,12 @@ const titleParts = status.title.split("Operational");
     display: inline-block;
   }
 
+  @media (max-width: 640px) {
+    .system-status {
+      display: none;
+    }
+  }
+
   .system-status__trigger {
     display: inline-flex;
     align-items: center;

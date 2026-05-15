@@ -32,15 +32,15 @@ import DoNotPressButton from "../components/whimsy/DoNotPressButton.astro";
     </div>
     <div class="landing__intro-right">
       <SkillsCard />
-      <DomainsCard />
+      <div class="hide-on-mobile"><DomainsCard /></div>
     </div>
   </div>
 
-  <ProjectsSection />
-  <ArchitectureSection />
+  <div class="hide-on-mobile"><ProjectsSection /></div>
+  <div class="hide-on-mobile"><ArchitectureSection /></div>
 
   <div class="landing__bottom-grid">
-    <div class="bottom-grid__experience"><ExperienceCard /></div>
+    <div class="bottom-grid__experience hide-on-mobile"><ExperienceCard /></div>
     <div class="bottom-grid__right">
       <TechStackCard />
       <ContactCard />

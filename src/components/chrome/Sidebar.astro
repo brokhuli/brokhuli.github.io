@@ -12,38 +12,91 @@
 
 import Icon from "../primitives/Icon.astro";
 
-const items = [
+// `mobileHref` overrides the in-page anchor on narrow viewports — Projects
+// and Experience sections are hidden on mobile, so the sidebar routes those
+// clicks to their dedicated pages instead.
+const items: {
+  id: string;
+  label: string;
+  icon: string;
+  mobileHref?: string;
+}[] = [
   { id: "home", label: "Home", icon: "lucide:home" },
   { id: "about", label: "About", icon: "lucide:user" },
-  { id: "projects", label: "Projects", icon: "lucide:layout-grid" },
+  {
+    id: "projects",
+    label: "Projects",
+    icon: "lucide:layout-grid",
+    mobileHref: "/projects/",
+  },
   { id: "architecture", label: "Architecture", icon: "lucide:cuboid" },
-  { id: "experience", label: "Experience", icon: "lucide:briefcase" },
+  {
+    id: "experience",
+    label: "Experience",
+    icon: "lucide:briefcase",
+    mobileHref: "/resume",
+  },
   { id: "tech-stack", label: "Tech Stack", icon: "lucide:square-stack" },
   { id: "contact", label: "Contact", icon: "lucide:mail" },
 ];
 
 import pkg from "../../../package.json";
 const versionLabel = `v${pkg.version}`;
+
+// Pathname-based active item so dedicated pages (/projects/, /resume) keep
+// the matching sidebar entry highlighted. On the index page we fall back to
+// the scroll-spy script, which takes over from the SSR'd "home" default.
+const path = Astro.url.pathname;
+const activeId = path.startsWith("/projects")
+  ? "projects"
+  : path.startsWith("/resume")
+    ? "experience"
+    : "home";
 ---
 
 <nav class="sidebar" aria-label="Primary">
   <ul class="sidebar__list" role="list">
     {
-      items.map((item, idx) => (
-        <li class="sidebar__item">
-          <a
-            class="sidebar__link"
-            href={item.id === "home" ? "/" : `/#${item.id}`}
-            data-section={item.id}
-            aria-current={idx === 0 ? "location" : undefined}
+      items.map((item) => {
+        const anchorHref = item.id === "home" ? "/" : `/#${item.id}`;
+        const ariaCurrent = item.id === activeId ? "location" : undefined;
+        return (
+          <li
+            class:list={[
+              "sidebar__item",
+              item.id === "architecture" && "hide-on-mobile",
+            ]}
           >
-            <span class="sidebar__icon" aria-hidden="true">
-              <Icon name={item.icon} size={20} />
-            </span>
-            <span class="sidebar__label">{item.label}</span>
-          </a>
-        </li>
-      ))
+            <a
+              class:list={[
+                "sidebar__link",
+                item.mobileHref && "hide-on-mobile",
+              ]}
+              href={anchorHref}
+              data-section={item.id}
+              aria-current={ariaCurrent}
+            >
+              <span class="sidebar__icon" aria-hidden="true">
+                <Icon name={item.icon} size={20} />
+              </span>
+              <span class="sidebar__label">{item.label}</span>
+            </a>
+            {item.mobileHref && (
+              <a
+                class="sidebar__link show-on-mobile"
+                href={item.mobileHref}
+                data-section={item.id}
+                aria-current={ariaCurrent}
+              >
+                <span class="sidebar__icon" aria-hidden="true">
+                  <Icon name={item.icon} size={20} />
+                </span>
+                <span class="sidebar__label">{item.label}</span>
+              </a>
+            )}
+          </li>
+        );
+      })
     }
   </ul>
   <div class="sidebar__chip" aria-hidden="true">{versionLabel}</div>
