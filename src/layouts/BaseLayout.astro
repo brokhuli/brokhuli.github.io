@@ -27,6 +27,9 @@ import Footer from "../components/chrome/Footer.astro";
 import ThemeToggle from "../components/whimsy/ThemeToggle.astro";
 import SystemStatus from "../components/whimsy/SystemStatus.astro";
 import LogTicker from "../components/whimsy/LogTicker.astro";
+import businessCard from "../assets/img/about/business-card.png";
+
+const SITE = Astro.site?.toString() ?? "https://brokhuli.github.io/";
 
 interface Props {
   title?: string;
@@ -49,7 +52,7 @@ const {
   title = "Stephen Ullom — brokhuli.github.io",
   description = "Personal portfolio for Stephen Ullom.",
   canonicalUrl,
-  ogImage,
+  ogImage = new URL(businessCard.src, SITE).href,
   seoType = "website",
   showSidebar = true,
   project,

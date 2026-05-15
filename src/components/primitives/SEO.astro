@@ -42,8 +42,8 @@ const canonical = canonicalUrl
   : new URL(Astro.url.pathname, SITE).href;
 
 // OG image fallback chain (ADR-011 §5)
-const resolvedOg =
-  ogImage ?? project?.coverSrc ?? new URL("/og/default.png", SITE).href;
+const rawOg = ogImage ?? project?.coverSrc ?? "/og/default.png";
+const resolvedOg = rawOg.startsWith("http") ? rawOg : new URL(rawOg, SITE).href;
 
 const ogType = type === "project" ? "article" : "website";
 
