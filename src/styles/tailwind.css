@@ -19,6 +19,10 @@
   --color-surface-3: var(--color-surface-3);
 
   --color-fg-default: var(--color-fg-default);
+  --color-fg-heading: var(--color-fg-heading);
+  --color-fg-body: var(--color-fg-body);
+  --color-fg-secondary: var(--color-fg-secondary);
+  --color-fg-ui: var(--color-fg-ui);
   --color-fg-muted: var(--color-fg-muted);
   --color-fg-subtle: var(--color-fg-subtle);
   --color-fg-on-accent: var(--color-fg-on-accent);

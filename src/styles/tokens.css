@@ -122,6 +122,9 @@
   --bp-lg: 1024px;
   --bp-xl: 1280px;
 
+  /* fg-muted backward-compat alias — resolves to fg-secondary per theme */
+  --color-fg-muted: var(--color-fg-secondary);
+
   /* Chart tokens — consumed by BarChart, LineChart */
   --chart-bar-low: var(--color-info);
   --chart-bar-med: var(--color-warning);
@@ -129,11 +132,11 @@
   --chart-line-low: var(--color-info);
   --chart-line-med: var(--color-warning);
   --chart-line-high: var(--color-success);
-  --chart-axis: var(--color-fg-muted);
+  --chart-axis: var(--color-fg-secondary);
   --chart-grid-line: var(--color-border);
 
   /* Diagram tokens — consumed by ArchitectureDiagram */
-  --diagram-stroke: var(--color-fg-muted);
+  --diagram-stroke: var(--color-fg-secondary);
   --diagram-stroke-strong: var(--color-fg-default);
   --diagram-fill: var(--color-surface-2);
   --diagram-edge: var(--color-border-strong);
@@ -158,7 +161,10 @@
   --color-surface-3: #37224a;
 
   --color-fg-default: #f1edf7;
-  --color-fg-muted: #beb4cc;
+  --color-fg-heading: #c0aede;
+  --color-fg-body: #cec8d8;
+  --color-fg-secondary: #b0a4be;
+  --color-fg-ui: #9a8eaa;
   --color-fg-subtle: #82738f;
   --color-fg-on-accent: #101406;
 
@@ -193,7 +199,10 @@
   --color-surface-3: #e3d4f4;
 
   --color-fg-default: #181021;
-  --color-fg-muted: #4f435e;
+  --color-fg-heading: #5038a8;
+  --color-fg-body: #3c3050;
+  --color-fg-secondary: #5e5278;
+  --color-fg-ui: #6a5e8a;
   --color-fg-subtle: #756684;
   --color-fg-on-accent: #091612;
 
@@ -228,7 +237,10 @@
   --color-surface-3: #1a2244;
 
   --color-fg-default: #e6e8ee;
-  --color-fg-muted: #a3a9b8;
+  --color-fg-heading: #9aaed0;
+  --color-fg-body: #bcc4d8;
+  --color-fg-secondary: #8e98ae;
+  --color-fg-ui: #7e8898;
   --color-fg-subtle: #6b7184;
   --color-fg-on-accent: #ffffff;
 
@@ -263,7 +275,10 @@
   --color-surface-3: #e8dec4;
 
   --color-fg-default: #15181f;
-  --color-fg-muted: #4b5160;
+  --color-fg-heading: #384eaa;
+  --color-fg-body: #30364a;
+  --color-fg-secondary: #525a76;
+  --color-fg-ui: #636a8c;
   --color-fg-subtle: #767c8c;
   --color-fg-on-accent: #ffffff;
 
@@ -298,7 +313,10 @@
   --color-surface-3: #2b3445;
 
   --color-fg-default: #eef3f8;
-  --color-fg-muted: #aeb9c6;
+  --color-fg-heading: #98b4cc;
+  --color-fg-body: #bcc8d8;
+  --color-fg-secondary: #9aaab8;
+  --color-fg-ui: #8898a8;
   --color-fg-subtle: #748092;
   --color-fg-on-accent: #ffffff;
 
@@ -333,7 +351,10 @@
   --color-surface-3: #ebd4c0;
 
   --color-fg-default: #0f1c28;
-  --color-fg-muted: #3d5468;
+  --color-fg-heading: #2e4c62;
+  --color-fg-body: #243040;
+  --color-fg-secondary: #4a5e6e;
+  --color-fg-ui: #5c7080;
   --color-fg-subtle: #6a8296;
   --color-fg-on-accent: #ffffff;
 
@@ -368,7 +389,10 @@
   --color-surface-3: #402c10;
 
   --color-fg-default: #faf7f4;
-  --color-fg-muted: #c8a888;
+  --color-fg-heading: #b4c890;
+  --color-fg-body: #d4c0a0;
+  --color-fg-secondary: #b89878;
+  --color-fg-ui: #a08860;
   --color-fg-subtle: #8a6848;
   --color-fg-on-accent: #060400;
 
@@ -403,7 +427,10 @@
   --color-surface-3: #ead8c8;
 
   --color-fg-default: #1c1008;
-  --color-fg-muted: #4e3020;
+  --color-fg-heading: #385848;
+  --color-fg-body: #2c1e12;
+  --color-fg-secondary: #5a4232;
+  --color-fg-ui: #6c5840;
   --color-fg-subtle: #7a5838;
   --color-fg-on-accent: #ffffff;
 
@@ -438,7 +465,10 @@
   --color-surface-3: #3c1c22;
 
   --color-fg-default: #f4eeef;
-  --color-fg-muted: #c89098;
+  --color-fg-heading: #c090a8;
+  --color-fg-body: #d0a8b4;
+  --color-fg-secondary: #b87888;
+  --color-fg-ui: #a06878;
   --color-fg-subtle: #8a6068;
   --color-fg-on-accent: #020c16;
 
@@ -473,7 +503,10 @@
   --color-surface-3: #f8d0d4;
 
   --color-fg-default: #200808;
-  --color-fg-muted: #5c2028;
+  --color-fg-heading: #283898;
+  --color-fg-body: #3a1428;
+  --color-fg-secondary: #663040;
+  --color-fg-ui: #7a4452;
   --color-fg-subtle: #8c5058;
   --color-fg-on-accent: #ffffff;
 
@@ -508,7 +541,10 @@
   --color-surface-3: #2d2d2d;
 
   --color-fg-default: #eaeaea;
-  --color-fg-muted: #a0a0a0;
+  --color-fg-heading: #b0b0cc;
+  --color-fg-body: #c8c8c8;
+  --color-fg-secondary: #909090;
+  --color-fg-ui: #7c7c7c;
   --color-fg-subtle: #686868;
   --color-fg-on-accent: #080808;
 
@@ -543,7 +579,10 @@
   --color-surface-3: #d8d8d8;
 
   --color-fg-default: #141414;
-  --color-fg-muted: #484848;
+  --color-fg-heading: #363688;
+  --color-fg-body: #363636;
+  --color-fg-secondary: #585858;
+  --color-fg-ui: #6c6c80;
   --color-fg-subtle: #787878;
   --color-fg-on-accent: #ffffff;
 
