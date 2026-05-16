@@ -110,7 +110,7 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
         try {
           var storedLines = localStorage.getItem("logTickerLines");
           var n = parseInt(storedLines || "", 10);
-          if (!(n >= 0 && n <= 4)) n = 3;
+          if (!(n >= 0 && n <= 4)) n = 1;
           document.documentElement.dataset.logLines = String(n);
         } catch {
           document.documentElement.dataset.logLines = "3";
