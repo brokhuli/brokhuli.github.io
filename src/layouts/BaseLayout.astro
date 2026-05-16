@@ -93,7 +93,20 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
       (function () {
         try {
           var stored = localStorage.getItem("theme");
-          var themes = ["dark", "light"];
+          var themes = [
+            "dark",
+            "light",
+            "theme-3",
+            "theme-9",
+            "theme-8",
+            "theme-8l",
+            "theme-12",
+            "theme-12l",
+            "theme-29",
+            "theme-29l",
+            "theme-30",
+            "theme-30l",
+          ];
           var prefersLight =
             window.matchMedia &&
             window.matchMedia("(prefers-color-scheme: light)").matches;

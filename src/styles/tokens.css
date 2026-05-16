@@ -185,6 +185,41 @@
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.52);
 }
 
+/* Eric Mode (light): light lavender paper + mint signal */
+[data-theme="light"] {
+  --color-bg: #fefbf4;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f1e9fb;
+  --color-surface-3: #e3d4f4;
+
+  --color-fg-default: #181021;
+  --color-fg-muted: #4f435e;
+  --color-fg-subtle: #756684;
+  --color-fg-on-accent: #091612;
+
+  --color-accent: #50c2a1;
+  --color-accent-hover: #2f8f78;
+  --color-accent-muted: #d6f2eb;
+
+  --color-border: #c8b5d8;
+  --color-border-hover: #a88fbd;
+  --color-border-strong: #7e6698;
+
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #b4233a;
+  --color-info: #2563eb;
+  --color-debug: #6b6474;
+
+  --color-grid: rgba(80, 194, 161, 0.1);
+  --color-grid-major: rgba(99, 65, 153, 0.18);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(24, 16, 33, 0.06);
+  --shadow-md: 0 4px 14px rgba(24, 16, 33, 0.08);
+  --shadow-lg: 0 12px 32px rgba(24, 16, 33, 0.1);
+}
+
 /* Theme 3: true black + indigo accent */
 [data-theme="theme-3"] {
   --color-bg: #020308;
@@ -213,76 +248,6 @@
 
   --color-grid: rgba(180, 225, 240, 0.1);
   --color-grid-major: rgba(180, 225, 240, 0.18);
-  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
-}
-
-/* Theme 5: Rose - deep ink surfaces + raspberry accents */
-[data-theme="theme-5"] {
-  --color-bg: #12080f;
-  --color-surface-1: #1d1018;
-  --color-surface-2: #2b1824;
-  --color-surface-3: #412233;
-
-  --color-fg-default: #f5edf1;
-  --color-fg-muted: #c4aeb8;
-  --color-fg-subtle: #8b6f7b;
-  --color-fg-on-accent: #ffffff;
-
-  --color-accent: #d44c80;
-  --color-accent-hover: #ec6a9b;
-  --color-accent-muted: #442033;
-
-  --color-border: #3a2330;
-  --color-border-hover: #573348;
-  --color-border-strong: #7f5068;
-
-  --color-success: #74e5a2;
-  --color-warning: #f2c66d;
-  --color-danger: #fb7185;
-  --color-info: #8bd5ff;
-  --color-debug: #a9a0b3;
-
-  --color-grid: rgba(212, 76, 128, 0.08);
-  --color-grid-major: rgba(139, 213, 255, 0.13);
-  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
-}
-
-/* Theme 8: Copperline - dark navy + copper signal */
-[data-theme="theme-8"] {
-  --color-bg: #06101c;
-  --color-surface-1: #0d1b2a;
-  --color-surface-2: #15263a;
-  --color-surface-3: #2b3445;
-
-  --color-fg-default: #eef3f8;
-  --color-fg-muted: #aeb9c6;
-  --color-fg-subtle: #748092;
-  --color-fg-on-accent: #ffffff;
-
-  --color-accent: #b85c38;
-  --color-accent-hover: #d1784f;
-  --color-accent-muted: #3a241d;
-
-  --color-border: #24364b;
-  --color-border-hover: #38516c;
-  --color-border-strong: #58708f;
-
-  --color-success: #5ee092;
-  --color-warning: #f4b860;
-  --color-danger: #fb7185;
-  --color-info: #7dd3fc;
-  --color-debug: #94a3b8;
-
-  --color-grid: rgba(184, 92, 56, 0.08);
-  --color-grid-major: rgba(125, 211, 252, 0.14);
   --blueprint-grid-image: url("/blueprint-grid-dark.svg");
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -325,37 +290,282 @@
   --shadow-lg: 0 12px 32px rgba(20, 24, 32, 0.1);
 }
 
-/* Eric Mode (light): light lavender paper + mint signal */
-[data-theme="light"] {
-  --color-bg: #fefbf4;
+/* Theme 8: Copperline - dark navy + copper signal */
+[data-theme="theme-8"] {
+  --color-bg: #06101c;
+  --color-surface-1: #0d1b2a;
+  --color-surface-2: #15263a;
+  --color-surface-3: #2b3445;
+
+  --color-fg-default: #eef3f8;
+  --color-fg-muted: #aeb9c6;
+  --color-fg-subtle: #748092;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #b85c38;
+  --color-accent-hover: #d1784f;
+  --color-accent-muted: #3a241d;
+
+  --color-border: #24364b;
+  --color-border-hover: #38516c;
+  --color-border-strong: #58708f;
+
+  --color-success: #5ee092;
+  --color-warning: #f4b860;
+  --color-danger: #fb7185;
+  --color-info: #7dd3fc;
+  --color-debug: #94a3b8;
+
+  --color-grid: rgba(184, 92, 56, 0.08);
+  --color-grid-major: rgba(125, 211, 252, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Theme 8 Light: Copperline - warm cream linen + copper accent */
+[data-theme="theme-8l"] {
+  --color-bg: #fdf6f0;
   --color-surface-1: #ffffff;
-  --color-surface-2: #f1e9fb;
-  --color-surface-3: #e3d4f4;
+  --color-surface-2: #f5e8da;
+  --color-surface-3: #ebd4c0;
 
-  --color-fg-default: #181021;
-  --color-fg-muted: #4f435e;
-  --color-fg-subtle: #756684;
-  --color-fg-on-accent: #091612;
+  --color-fg-default: #0f1c28;
+  --color-fg-muted: #3d5468;
+  --color-fg-subtle: #6a8296;
+  --color-fg-on-accent: #ffffff;
 
-  --color-accent: #50c2a1;
-  --color-accent-hover: #2f8f78;
-  --color-accent-muted: #d6f2eb;
+  --color-accent: #b85c38;
+  --color-accent-hover: #963d1e;
+  --color-accent-muted: #fde8dc;
 
-  --color-border: #c8b5d8;
-  --color-border-hover: #a88fbd;
-  --color-border-strong: #7e6698;
+  --color-border: #d4b89a;
+  --color-border-hover: #bc9878;
+  --color-border-strong: #8c6848;
 
   --color-success: #15803d;
   --color-warning: #a86d0f;
   --color-danger: #b4233a;
   --color-info: #2563eb;
-  --color-debug: #6b6474;
+  --color-debug: #6b7c8c;
 
-  --color-grid: rgba(80, 194, 161, 0.1);
-  --color-grid-major: rgba(99, 65, 153, 0.18);
+  --color-grid: rgba(184, 92, 56, 0.08);
+  --color-grid-major: rgba(184, 92, 56, 0.14);
   --blueprint-grid-image: url("/blueprint-grid-light.svg");
 
-  --shadow-sm: 0 1px 2px rgba(24, 16, 33, 0.06);
-  --shadow-md: 0 4px 14px rgba(24, 16, 33, 0.08);
-  --shadow-lg: 0 12px 32px rgba(24, 16, 33, 0.1);
+  --shadow-sm: 0 1px 2px rgba(15, 28, 40, 0.06);
+  --shadow-md: 0 4px 14px rgba(15, 28, 40, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 28, 40, 0.1);
+}
+
+/* Theme 12: Espresso - espresso brown-black + sage green accent */
+[data-theme="theme-12"] {
+  --color-bg: #140c06;
+  --color-surface-1: #201408;
+  --color-surface-2: #2e1e0c;
+  --color-surface-3: #402c10;
+
+  --color-fg-default: #faf7f4;
+  --color-fg-muted: #c8a888;
+  --color-fg-subtle: #8a6848;
+  --color-fg-on-accent: #060400;
+
+  --color-accent: #8ec4a0;
+  --color-accent-hover: #a8d8b8;
+  --color-accent-muted: #0c2018;
+
+  --color-border: #3a2410;
+  --color-border-hover: #563818;
+  --color-border-strong: #785020;
+
+  --color-success: #4ade80;
+  --color-warning: #f5b454;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+  --color-debug: #a09080;
+
+  --color-grid: rgba(142, 196, 160, 0.08);
+  --color-grid-major: rgba(142, 196, 160, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Theme 12 Light: Espresso - latte cream paper + espresso green accent */
+[data-theme="theme-12l"] {
+  --color-bg: #fdf8f4;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f5ece4;
+  --color-surface-3: #ead8c8;
+
+  --color-fg-default: #1c1008;
+  --color-fg-muted: #4e3020;
+  --color-fg-subtle: #7a5838;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #4a8060;
+  --color-accent-hover: #386850;
+  --color-accent-muted: #d8ede4;
+
+  --color-border: #d8c0a8;
+  --color-border-hover: #c0a080;
+  --color-border-strong: #907050;
+
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #b4233a;
+  --color-info: #2563eb;
+  --color-debug: #7a6858;
+
+  --color-grid: rgba(74, 128, 96, 0.08);
+  --color-grid-major: rgba(74, 128, 96, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(28, 16, 8, 0.06);
+  --shadow-md: 0 4px 14px rgba(28, 16, 8, 0.08);
+  --shadow-lg: 0 12px 32px rgba(28, 16, 8, 0.1);
+}
+
+/* Theme 29: Maroon - deep blood-red black + sky blue accent */
+[data-theme="theme-29"] {
+  --color-bg: #100608;
+  --color-surface-1: #1c0e10;
+  --color-surface-2: #281418;
+  --color-surface-3: #3c1c22;
+
+  --color-fg-default: #f4eeef;
+  --color-fg-muted: #c89098;
+  --color-fg-subtle: #8a6068;
+  --color-fg-on-accent: #020c16;
+
+  --color-accent: #6ab8e0;
+  --color-accent-hover: #84d0f8;
+  --color-accent-muted: #060c18;
+
+  --color-border: #3c1820;
+  --color-border-hover: #58242e;
+  --color-border-strong: #7a3840;
+
+  --color-success: #4ade80;
+  --color-warning: #f5b454;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+  --color-debug: #a08888;
+
+  --color-grid: rgba(106, 184, 224, 0.08);
+  --color-grid-major: rgba(106, 184, 224, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Theme 29 Light: Maroon - faint blush paper + deep sky blue accent */
+[data-theme="theme-29l"] {
+  --color-bg: #fff4f5;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #fde4e6;
+  --color-surface-3: #f8d0d4;
+
+  --color-fg-default: #200808;
+  --color-fg-muted: #5c2028;
+  --color-fg-subtle: #8c5058;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #1878b8;
+  --color-accent-hover: #0d60a0;
+  --color-accent-muted: #d0e8f8;
+
+  --color-border: #e8c0c4;
+  --color-border-hover: #d0a0a8;
+  --color-border-strong: #a87080;
+
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #b4233a;
+  --color-info: #2563eb;
+  --color-debug: #8a6068;
+
+  --color-grid: rgba(24, 120, 184, 0.08);
+  --color-grid-major: rgba(24, 120, 184, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(32, 8, 8, 0.06);
+  --shadow-md: 0 4px 14px rgba(32, 8, 8, 0.08);
+  --shadow-lg: 0 12px 32px rgba(32, 8, 8, 0.1);
+}
+
+/* Theme 30: Gray - dark gray with silvery accent */
+[data-theme="theme-30"] {
+  --color-bg: #0c0c0c;
+  --color-surface-1: #171717;
+  --color-surface-2: #222222;
+  --color-surface-3: #2d2d2d;
+
+  --color-fg-default: #eaeaea;
+  --color-fg-muted: #a0a0a0;
+  --color-fg-subtle: #686868;
+  --color-fg-on-accent: #080808;
+
+  --color-accent: #b8b8b8;
+  --color-accent-hover: #d0d0d0;
+  --color-accent-muted: #202020;
+
+  --color-border: #2a2a2a;
+  --color-border-hover: #404040;
+  --color-border-strong: #585858;
+
+  --color-success: #4ade80;
+  --color-warning: #f5b454;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+  --color-debug: #909090;
+
+  --color-grid: rgba(184, 184, 184, 0.08);
+  --color-grid-major: rgba(184, 184, 184, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* Theme 30 Light: Gray - light gray paper with charcoal accent */
+[data-theme="theme-30l"] {
+  --color-bg: #f2f2f2;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #e8e8e8;
+  --color-surface-3: #d8d8d8;
+
+  --color-fg-default: #141414;
+  --color-fg-muted: #484848;
+  --color-fg-subtle: #787878;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #484848;
+  --color-accent-hover: #303030;
+  --color-accent-muted: #e0e0e0;
+
+  --color-border: #c4c4c4;
+  --color-border-hover: #a8a8a8;
+  --color-border-strong: #808080;
+
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #b4233a;
+  --color-info: #2563eb;
+  --color-debug: #888888;
+
+  --color-grid: rgba(72, 72, 72, 0.08);
+  --color-grid-major: rgba(72, 72, 72, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(20, 20, 20, 0.06);
+  --shadow-md: 0 4px 14px rgba(20, 20, 20, 0.08);
+  --shadow-lg: 0 12px 32px rgba(20, 20, 20, 0.1);
 }
