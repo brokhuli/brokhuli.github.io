@@ -30,8 +30,8 @@ import { THEME_PAIRS } from "../../scripts/themes";
             name="theme-pair"
             value={pair.id}
             class="theme-pair__input"
-            aria-label={`${pair.label} theme`}
-            title={`${pair.label} theme`}
+            aria-label={`${pair.label} theme — ${pair.tip}`}
+            title={pair.tip}
           />
           <span class="theme-pair__chip">
             <Icon name={pair.icon} size={14} />

@@ -18,6 +18,8 @@ export interface ThemePair {
   id: string;
   label: string;
   icon: string;
+  /** Hover/focus blurb shown on the selector pill. */
+  tip: string;
   dark: string;
   eric: string;
 }
@@ -27,6 +29,7 @@ export const THEME_PAIRS: ThemePair[] = [
     id: "volt",
     label: "Volt",
     icon: "lucide:zap",
+    tip: "Volt: true-black void charged with an electric teal signal",
     dark: "dark",
     eric: "light",
   },
@@ -34,6 +37,7 @@ export const THEME_PAIRS: ThemePair[] = [
     id: "newspaper",
     label: "Newspaper",
     icon: "lucide:newspaper",
+    tip: "Newspaper: neutral grayscale newsprint with a silvery accent",
     dark: "theme-30",
     eric: "theme-30l",
   },
@@ -41,6 +45,7 @@ export const THEME_PAIRS: ThemePair[] = [
     id: "copperline",
     label: "Copperline",
     icon: "lucide:cable",
+    tip: "Copperline: deep navy patinated with warm copper",
     dark: "theme-8",
     eric: "theme-8l",
   },
@@ -48,6 +53,7 @@ export const THEME_PAIRS: ThemePair[] = [
     id: "night-owl",
     label: "Night Owl",
     icon: "lucide:eye",
+    tip: "Night Owl: midnight navy lit by signature teal (Sarah Drasner)",
     dark: "night-owl",
     eric: "night-owl-l",
   },
@@ -55,6 +61,7 @@ export const THEME_PAIRS: ThemePair[] = [
     id: "dracula",
     label: "Dracula",
     icon: "lucide:droplet",
+    tip: "Dracula: the iconic dark purple with a vivid pink fang (Zeno Rocha)",
     dark: "dracula",
     eric: "dracula-l",
   },
@@ -62,13 +69,15 @@ export const THEME_PAIRS: ThemePair[] = [
     id: "japandi",
     label: "Japandi",
     icon: "lucide:leaf",
+    tip: "Japandi: sumi-ink calm warmed by wabi-sabi terracotta",
     dark: "japandi",
     eric: "japandi-l",
   },
   {
-    id: "monokai",
-    label: "Monokai",
+    id: "amber-slate",
+    label: "Amber Slate",
     icon: "lucide:braces",
+    tip: "Amber Slate: cool slate warmed by a golden-amber glow",
     dark: "one-mk",
     eric: "one-mk-l",
   },
@@ -76,6 +85,7 @@ export const THEME_PAIRS: ThemePair[] = [
     id: "bohemian",
     label: "Bohemian",
     icon: "lucide:flower",
+    tip: "Bohemian: rich plum dusk with a burnt-orange ember",
     dark: "boho",
     eric: "boho-l",
   },

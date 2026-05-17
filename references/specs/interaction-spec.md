@@ -189,7 +189,7 @@ All `Card.astro` instances share these rules.
 ## 7. Theme controls (mode toggle + pair selector)
 
 The palette is modeled as 8 named **pairs** (Volt, Copperline, Newspaper,
-Japandi, Bohemian, Night Owl, Monokai, Dracula), each with a `dark` and an
+Japandi, Bohemian, Night Owl, Amber Slate, Dracula), each with a `dark` and an
 "Eric" (light) variant. Two controls drive selection:
 
 - **ThemeToggle** (top-right header) — picks the **mode** (`Dark` / `Eric`)
