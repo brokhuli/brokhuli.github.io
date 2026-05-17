@@ -69,6 +69,8 @@ export default [
         document: "readonly",
         window: "readonly",
         navigator: "readonly",
+        localStorage: "readonly",
+        CustomEvent: "readonly",
         setTimeout: "readonly",
         clearTimeout: "readonly",
         HTMLAnchorElement: "readonly",

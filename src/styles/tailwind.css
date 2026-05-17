@@ -28,6 +28,7 @@
   --color-fg-on-accent: var(--color-fg-on-accent);
 
   --color-accent: var(--color-accent);
+  --color-accent-fill: var(--color-accent-fill);
   --color-accent-hover: var(--color-accent-hover);
   --color-accent-muted: var(--color-accent-muted);
 

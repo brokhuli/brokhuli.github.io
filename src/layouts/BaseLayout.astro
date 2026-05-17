@@ -93,19 +93,25 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
       (function () {
         try {
           var stored = localStorage.getItem("theme");
+          // Keep in sync with src/scripts/themes.ts ALL_THEME_VALUES
+          // (this is:inline script can't import the module).
           var themes = [
             "dark",
             "light",
-            "theme-3",
-            "theme-9",
             "theme-8",
             "theme-8l",
-            "theme-12",
-            "theme-12l",
-            "theme-29",
-            "theme-29l",
             "theme-30",
             "theme-30l",
+            "japandi",
+            "japandi-l",
+            "boho",
+            "boho-l",
+            "night-owl",
+            "night-owl-l",
+            "one-mk",
+            "one-mk-l",
+            "dracula",
+            "dracula-l",
           ];
           var prefersLight =
             window.matchMedia &&
@@ -138,7 +144,7 @@ const goatCounterCode = import.meta.env.PUBLIC_GOATCOUNTER_CODE as
       /*
       Keyboard shortcuts (interaction-spec.md §2):
         g h | g p | g a | g e | g c → scroll to anchor
-        t → toggle theme (handled inside ThemeToggle script)
+        t → cycle theme pair (handled inside ThemePairSelector script)
         ? → reuse system-status as a shortcuts cheatsheet (deferred)
       One-second window between leader (`g`) and the second key.
       Disabled while inputs are focused.
