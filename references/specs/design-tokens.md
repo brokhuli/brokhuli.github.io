@@ -6,7 +6,7 @@ Tokens are grounded in the mockups in [references/mockups/](../mockups/) (retro-
 
 All tokens emit as CSS custom properties under `:root` (theme-agnostic) or under `[data-theme="..."]` (theme-specific). Tailwind v4's CSS-first config reads them so utilities like `bg-surface-1` and `text-fg-default` resolve to the right value automatically.
 
-> **Palette set.** Dark + Eric Mode (`[data-theme="dark"]` / `[data-theme="light"]`) are the canonical pair documented in detail below. They are the **Volt** pair in a set of 8 named pairs (Volt, Copperline, Newspaper, Japandi, Bohemian, Night Owl, Monokai, Dracula), each a `dark` + Eric (light) variant — 16 `[data-theme]` blocks total in `tokens.css`. The pair table lives in `src/scripts/themes.ts`; the footer `ThemePairSelector` picks the pair and the header `ThemeToggle` picks the mode (see interaction-spec §7). Every pair defines the same token contract — only values differ.
+> **Palette set.** Dark + Eric Mode (`[data-theme="dark"]` / `[data-theme="light"]`) are the canonical pair documented in detail below. They are the **Volt** pair in a set of 8 named pairs (Volt, Copperline, Newspaper, Japandi, Bohemian, Night Owl, Amber Slate, Dracula), each a `dark` + Eric (light) variant — 16 `[data-theme]` blocks total in `tokens.css`. The pair table lives in `src/scripts/themes.ts`; the footer `ThemePairSelector` picks the pair and the header `ThemeToggle` picks the mode (see interaction-spec §7). Every pair defines the same token contract — only values differ.
 
 ---
 

@@ -276,8 +276,8 @@ Each item in `whimsical-elements.md` maps to one component below. All are visual
 
 ### `ThemePairSelector.astro` (palette pair, footer)
 
-- **Purpose:** Picks one of the 8 named palette pairs (Volt, Copperline, Newspaper, Japandi, Bohemian, Night Owl, Monokai, Dracula). Lives in the footer above the copyright — not floating; the user scrolls to it.
-- **Content:** An icon-only segmented control (matching `ThemeToggle`'s visual style), one radio per pair with a lucide icon + `title`/`aria-label` tooltip. Selecting a pair preserves the current Dark/Eric mode. Owns the `t` keyboard shortcut (cycle to next pair).
+- **Purpose:** Picks one of the 8 named palette pairs (Volt, Copperline, Newspaper, Japandi, Bohemian, Night Owl, Amber Slate, Dracula). Lives in the footer above the copyright — not floating; the user scrolls to it.
+- **Content:** An icon-only segmented control (matching `ThemeToggle`'s visual style), one radio per pair with a lucide icon. Each pair carries a `tip` blurb in the `THEME_PAIRS` table (e.g. *"Copperline: deep navy patinated with warm copper"*); the blurb is the native hover `title` and is folded into the `aria-label` (`"{label} theme — {tip}"`) so pointer and screen-reader users get the same description. Selecting a pair preserves the current Dark/Eric mode. Owns the `t` keyboard shortcut (cycle to next pair).
 - **Strategy:** Pure `.astro` in `chrome/` with a colocated client `<script>`; imports the static pair table from `src/scripts/themes.ts` (no domain knowledge, ADR-004 compliant). On change, resolves pair + active mode → theme value, then `applyTheme()`. Re-syncs on `themechange`.
 - **a11y:** `<fieldset>` + `<legend>` "Color theme" + `<input type="radio">` per pair styled as pills; accessible name from `aria-label`.
 
