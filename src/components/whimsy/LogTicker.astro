@@ -323,4 +323,13 @@ const dataId = "log-ticker-data";
   .log-ticker__level[data-level="ERR"] {
     color: var(--color-danger);
   }
+
+  /* On narrow screens drop the timestamp/level prefixes so the message
+   * text isn't truncated to a few words. */
+  @media (max-width: 640px) {
+    .log-ticker__time,
+    .log-ticker__level {
+      display: none;
+    }
+  }
 </style>
