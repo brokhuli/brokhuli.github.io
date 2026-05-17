@@ -27,9 +27,9 @@ Each entry covers: **purpose**, **content/props**, **interaction** (if any), **r
 
 ### `Footer.astro`
 
-- **Purpose:** Closing line of every page.
-- **Content:** `© {year} Stephen Ullom · Built with ♥ using GitHub Pages`. Centered, low-contrast.
-- **Strategy:** Pure `.astro`.
+- **Purpose:** Closing line of every page; also hosts the theme-pair selector.
+- **Content:** `<ThemePairSelector />` (left-aligned, above), then the copyright + license line. Low-contrast, column layout.
+- **Strategy:** Pure `.astro`; renders `ThemePairSelector` (which carries its own client script).
 
 ---
 
@@ -266,13 +266,20 @@ Hover behavior in [interaction-spec.md §11](interaction-spec.md) requires that 
 
 Each item in `whimsical-elements.md` maps to one component below. All are visually subtle and **all respect `prefers-reduced-motion`**.
 
-### `ThemeToggle.astro` ("Dark Mode" / "Eric Mode")
+### `ThemeToggle.astro` (mode: "Dark" / "Eric")
 
-- **Purpose:** Theme switcher visible top-right in mockup-02. Light mode is labeled *Eric Mode* per whimsy idea 3.
-- **Content:** Segmented control (`◐ Dark Mode` / `☀ Eric Mode`), persists choice in `localStorage`, falls back to `prefers-color-scheme`.
-- **Tooltip:** *"Eric Mode: For daylight clarity"* / *"Dark Mode: For late-night systems thinking."*
-- **Strategy:** Tiny island, hydrated `client:load` (must run before paint to avoid flash). Underlying mechanism is the inline theme-init script in `BaseLayout`; this component only updates `localStorage` and the `data-theme` attribute on click.
+- **Purpose:** Mode switcher visible top-right in mockup-02. Picks dark vs. light (*Eric Mode*, per whimsy idea 3) **within the active palette pair** — the pair is chosen by `ThemePairSelector`.
+- **Content:** Segmented control (`◐ Dark` / `☀ Eric`). Reads/writes the resolved `data-theme` value via `describeTheme()`/`applyTheme()` in `src/scripts/themes.ts`; persistence + `prefers-color-scheme` fallback handled by the inline theme-init script in `BaseLayout`.
+- **Tooltip:** *"Eric: For daylight clarity"* / *"Dark: For late-night systems thinking."*
+- **Strategy:** Tiny island, hydrated `client:load` (must run before paint to avoid flash). On change, resolves mode + active pair → theme value, then `applyTheme()`. Re-syncs on the `themechange` event.
 - **a11y:** `<fieldset>` + two `<input type="radio">` styled as a segmented control; tooltips via `aria-describedby`.
+
+### `ThemePairSelector.astro` (palette pair, footer)
+
+- **Purpose:** Picks one of the 8 named palette pairs (Volt, Copperline, Newspaper, Japandi, Bohemian, Night Owl, Monokai, Dracula). Lives in the footer above the copyright — not floating; the user scrolls to it.
+- **Content:** An icon-only segmented control (matching `ThemeToggle`'s visual style), one radio per pair with a lucide icon + `title`/`aria-label` tooltip. Selecting a pair preserves the current Dark/Eric mode. Owns the `t` keyboard shortcut (cycle to next pair).
+- **Strategy:** Pure `.astro` in `chrome/` with a colocated client `<script>`; imports the static pair table from `src/scripts/themes.ts` (no domain knowledge, ADR-004 compliant). On change, resolves pair + active mode → theme value, then `applyTheme()`. Re-syncs on `themechange`.
+- **a11y:** `<fieldset>` + `<legend>` "Color theme" + `<input type="radio">` per pair styled as pills; accessible name from `aria-label`.
 
 ### `SystemStatus.astro` (status indicator + popover)
 
@@ -320,7 +327,7 @@ Each item in `whimsical-elements.md` maps to one component below. All are visual
 | `#tech-stack` | `TechStackCard` → grouped `TechPill` lists |
 | `#experience` | `ExperienceCard` → `ExperienceEntry` × 4 |
 | `#contact` | `ContactCard` |
-| Persistent (chrome) | `BaseLayout`, `Sidebar`, `Footer`, `ThemeToggle`, `SystemStatus`, `LogTicker` |
+| Persistent (chrome) | `BaseLayout`, `Sidebar`, `Footer`, `ThemePairSelector`, `ThemeToggle`, `SystemStatus`, `LogTicker` |
 
 ---
 
@@ -331,6 +338,7 @@ Per the NFRs, every `client:*` directive is a deliberate choice. The full invent
 | Component | Directive | Why |
 |---|---|---|
 | `ThemeToggle` | `client:load` | Must run before paint to avoid theme flash |
+| `ThemePairSelector` | none (colocated `<script>`) | Footer control; theme value already set by inline init |
 | `LogTicker` | `client:idle` | Decorative, can wait until the browser is idle |
 | `SystemStatus` | none (inline `<script>`) | Native `<dialog>` + tiny script — no framework |
 | `Sidebar` (active-section observer) | none (inline `<script>`) | One IntersectionObserver, no state library |

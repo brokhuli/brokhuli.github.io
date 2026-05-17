@@ -1,0 +1,186 @@
+---
+/*
+ * ThemePairSelector - footer control for the active palette pair.
+ *
+ * Picks one of the 8 named pairs; the dark/Eric mode (ThemeToggle, top) is
+ * preserved across the swap. Not a floating card - lives in the Footer above
+ * the copyright line.
+ *
+ * Specs:
+ *   references/specs/component-spec.md ThemePairSelector
+ *   references/specs/interaction-spec.md §7
+ *
+ * Layer: chrome/ - no domain knowledge, consumes only the static theme table.
+ */
+
+import Icon from "../primitives/Icon.astro";
+import { THEME_PAIRS } from "../../scripts/themes";
+---
+
+<div class="theme-pair-field">
+  <span class="theme-pair__caption" aria-hidden="true">Color theme</span>
+  <fieldset class="theme-pair" data-theme-pair>
+    <legend class="sr-only">Color theme</legend>
+
+    {
+      THEME_PAIRS.map((pair) => (
+        <label class="theme-pair__option">
+          <input
+            type="radio"
+            name="theme-pair"
+            value={pair.id}
+            class="theme-pair__input"
+            aria-label={`${pair.label} theme`}
+            title={`${pair.label} theme`}
+          />
+          <span class="theme-pair__chip">
+            <Icon name={pair.icon} size={14} />
+          </span>
+        </label>
+      ))
+    }
+  </fieldset>
+</div>
+
+<script>
+  // The active theme value is set by the inline theme-init script in
+  // BaseLayout. This script:
+  //   1. syncs the checked pill from data-theme on mount + `themechange`,
+  //   2. swaps the pair on user change (preserving dark/Eric mode),
+  //   3. owns the `t` shortcut: cycle to the next pair, mode preserved.
+  // Spec: interaction-spec.md §7.
+  import { THEME_PAIRS, describeTheme, applyTheme } from "../../scripts/themes";
+
+  (function () {
+    const root = document.documentElement;
+    const fieldsets =
+      document.querySelectorAll<HTMLFieldSetElement>("[data-theme-pair]");
+    if (fieldsets.length === 0) return;
+
+    const sync = () => {
+      const { pair } = describeTheme(root.dataset.theme);
+      for (const fs of fieldsets) {
+        const inputs =
+          fs.querySelectorAll<HTMLInputElement>(".theme-pair__input");
+        for (const input of inputs) input.checked = input.value === pair.id;
+      }
+    };
+
+    const selectPair = (id: string) => {
+      const next = THEME_PAIRS.find((p) => p.id === id);
+      if (!next) return;
+      const { mode } = describeTheme(root.dataset.theme);
+      applyTheme(mode === "eric" ? next.eric : next.dark);
+    };
+
+    sync();
+
+    for (const fs of fieldsets) {
+      fs.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement | null;
+        if (!target || target.name !== "theme-pair") return;
+        selectPair(target.value);
+      });
+    }
+
+    document.addEventListener("themechange", sync);
+
+    // `t` cycles to the next pair, keeping the current dark/Eric mode.
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "t" || e.metaKey || e.ctrlKey || e.altKey) return;
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      const { pair } = describeTheme(root.dataset.theme);
+      const idx = THEME_PAIRS.findIndex((p) => p.id === pair.id);
+      const next = THEME_PAIRS[(idx + 1) % THEME_PAIRS.length];
+      selectPair(next.id);
+    });
+  })();
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .theme-pair-field {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .theme-pair__caption {
+    color: var(--color-fg-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--text-xs-line);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .theme-pair {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 2px;
+    margin: 0;
+    border: var(--border-width-strong) solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+    max-width: min(100%, calc(100vw - var(--space-6)));
+  }
+
+  .theme-pair__option {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .theme-pair__input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .theme-pair__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    padding: var(--space-1) var(--space-2);
+    border-radius: calc(var(--radius-md) - 2px);
+    color: var(--color-fg-ui);
+    transition:
+      background-color var(--motion-base) var(--ease-in-out-quad),
+      color var(--motion-base) var(--ease-in-out-quad);
+  }
+
+  .theme-pair__option:hover .theme-pair__chip {
+    color: var(--color-fg-default);
+  }
+
+  .theme-pair__input:checked + .theme-pair__chip {
+    background: var(--color-accent-fill);
+    color: var(--color-fg-on-accent);
+  }
+
+  .theme-pair__input:focus-visible + .theme-pair__chip {
+    outline: var(--border-width-strong) solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-pair__chip {
+      transition-duration: var(--motion-instant);
+    }
+  }
+</style>

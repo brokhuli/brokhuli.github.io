@@ -246,7 +246,7 @@ const activeId = path.startsWith("/projects")
     margin-inline: calc(var(--space-1) * -1);
     padding: var(--space-2) var(--space-1);
     border-radius: var(--radius-md);
-    color: var(--color-fg-muted);
+    color: var(--color-fg-ui);
     text-decoration: none;
     position: relative;
     transition: color var(--motion-quick) var(--ease-out-quart);
@@ -258,7 +258,7 @@ const activeId = path.startsWith("/projects")
 
   .sidebar__link[aria-current="location"] {
     color: var(--color-fg-on-accent);
-    background: var(--color-accent);
+    background: var(--color-accent-fill);
   }
 
   .sidebar__link[aria-current="location"]:hover {

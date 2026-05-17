@@ -1,16 +1,19 @@
 ---
 /*
- * Footer - closing line and license note.
+ * Footer - palette pair selector, closing line, and license note.
  *
  * Specs:
  *   references/specs/component-spec.md §1 Footer
  *   references/specs/open-items.md (footer copy decision)
  */
 
+import ThemePairSelector from "./ThemePairSelector.astro";
+
 const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
+  <ThemePairSelector />
   <p class="footer__line">
     © {year} Stephen Ullom · code <a
       href="https://github.com/brokhuli/brokhuli.github.io/blob/main/LICENSE"
@@ -27,15 +30,22 @@ const year = new Date().getFullYear();
 <style>
   .footer {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
     gap: var(--space-4);
+    /* Clear the fixed sidebar, matching .page-main's content column. */
+    margin-left: calc(var(--space-4) + var(--layout-sidebar-width));
     padding: var(--space-8) var(--layout-gutter-desktop);
     margin-top: var(--space-16);
     color: var(--color-fg-subtle);
     font-size: var(--text-sm);
     line-height: var(--text-sm-line);
-    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .footer {
+      margin-left: 0;
+    }
   }
 
   .footer__line {
@@ -57,8 +67,6 @@ const year = new Date().getFullYear();
   @media (max-width: 640px) {
     .footer {
       padding: var(--space-6) var(--layout-gutter-mobile);
-      justify-content: center;
-      text-align: center;
     }
   }
 </style>

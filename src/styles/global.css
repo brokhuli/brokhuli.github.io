@@ -161,7 +161,7 @@ button {
     color: var(--color-fg-default) !important;
   }
   .card--mobile-plain[data-variant="filled"] .heading {
-    color: var(--color-fg-muted);
+    color: var(--color-fg-heading);
     border-bottom-color: var(--color-accent);
   }
   .card--mobile-plain[data-variant="filled"] .skills__icon,
@@ -170,7 +170,7 @@ button {
   }
   .card--mobile-plain[data-variant="filled"] .skills__label,
   .card--mobile-plain[data-variant="filled"] .contact__label {
-    color: var(--color-fg-muted);
+    color: var(--color-fg-secondary);
   }
   .card--mobile-plain[data-variant="filled"] .contact__link,
   .card--mobile-plain[data-variant="filled"] .contact__value {
@@ -180,7 +180,7 @@ button {
     color: var(--color-accent);
   }
   .card--mobile-plain[data-variant="filled"] .contact__availability {
-    color: var(--color-fg-muted);
+    color: var(--color-fg-secondary);
   }
   .card--mobile-plain[data-variant="filled"] .contact__headshot {
     border-color: var(--color-border);

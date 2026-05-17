@@ -57,7 +57,7 @@ Minimal — keyboard users get full functionality without any. Optional power-us
 | `g a` | Scroll to `#architecture` |
 | `g e` | Scroll to `#experience` |
 | `g c` | Scroll to `#contact` |
-| `t` | Toggle theme |
+| `t` | Cycle to the next theme pair (mode preserved) |
 | `?` | Open a tiny "shortcuts" popover (reuses `SystemStatus` chrome) |
 
 Implemented as one inline `<script>` listening on `document` with a 1 s timeout between the leader and the second key. Disabled while any input is focused.
@@ -186,11 +186,25 @@ All `Card.astro` instances share these rules.
 
 ---
 
-## 7. Theme Toggle ("Dark Mode" / "Eric Mode")
+## 7. Theme controls (mode toggle + pair selector)
+
+The palette is modeled as 8 named **pairs** (Volt, Copperline, Newspaper,
+Japandi, Bohemian, Night Owl, Monokai, Dracula), each with a `dark` and an
+"Eric" (light) variant. Two controls drive selection:
+
+- **ThemeToggle** (top-right header) — picks the **mode** (`Dark` / `Eric`)
+  within the active pair.
+- **ThemePairSelector** (footer, above the copyright; not floating) — picks the
+  **pair**, preserving the active mode.
+
+The resolved variant is the single source of truth: `localStorage.theme` stores
+one of the 16 `data-theme` values (e.g. `theme-8l`); each control derives its UI
+state from `data-theme` via `describeTheme()` in `src/scripts/themes.ts`. Either
+control writing a theme dispatches a `themechange` event so the other re-syncs.
 
 ### Click
 
-- Updates `document.documentElement.dataset.theme`, persists `localStorage.theme = "dark" | "light"`, and updates the radio control's checked state.
+- Updates `document.documentElement.dataset.theme`, persists `localStorage.theme` (the resolved value), and updates the radio control's checked state.
 - Theme color variables transition over `--motion-base` with `--ease-in-out-quad` — applied to `color`, `background-color`, `border-color`, `fill`, `stroke`. Layout properties never transition.
 - The toggle's own thumb slides between the two segments over `--motion-base` with `--ease-in-out-quad`.
 

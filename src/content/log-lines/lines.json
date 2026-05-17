@@ -17,11 +17,6 @@
     },
     {
       "level": "SYS",
-      "text": "Checking dependency graph integrity…",
-      "tone": "realistic"
-    },
-    {
-      "level": "SYS",
       "text": "Synchronizing clocks across virtual nodes…",
       "tone": "realistic"
     },
@@ -38,11 +33,6 @@
     {
       "level": "SYS",
       "text": "Checking moon base status… all quiet, yet cheesy.",
-      "tone": "absurd"
-    },
-    {
-      "level": "DBG",
-      "text": "Recalibrating coffee-to-productivity ratio…",
       "tone": "absurd"
     },
     {
@@ -239,6 +229,11 @@
       "level": "ERR",
       "text": "Connection refused: postgres://primary:5432.",
       "tone": "realistic"
+    },
+    {
+      "level": "INFO",
+      "text": "Purchased 13 shares of quantum computing stocks.",
+      "tone": "absurd"
     }
   ]
 }

@@ -12,58 +12,26 @@
 
 import Icon from "../primitives/Icon.astro";
 
-const themeOptions = [
+/*
+ * Mode toggle: picks dark vs. "Eric" (light) within the active palette pair.
+ * The pair itself is chosen by ThemePairSelector in the footer.
+ */
+const themes = [
   {
     value: "dark",
     label: "Dark",
     icon: "lucide:moon",
     showLabel: true,
     tip: "For late-night systems thinking",
-    selectable: true,
   },
   {
-    value: "theme-3",
-    label: "Ultraviolet",
-    icon: "lucide:moon-star",
-    showLabel: false,
-    tip: "Indigo Night: true black with indigo signal",
-    selectable: false,
-  },
-  {
-    value: "theme-5",
-    label: "Rose",
-    icon: "lucide:flower-2",
-    showLabel: false,
-    tip: "Rose: deep ink surfaces with raspberry accents",
-    selectable: false,
-  },
-  {
-    value: "theme-8",
-    label: "Copper",
-    icon: "lucide:cable",
-    showLabel: false,
-    tip: "Copperline: dark navy with copper signal",
-    selectable: false,
-  },
-  {
-    value: "theme-9",
-    label: "Ultraviolet Light",
-    icon: "lucide:sun-medium",
-    showLabel: false,
-    tip: "Khaki Day: warm khaki paper with indigo signal",
-    selectable: false,
-  },
-  {
-    value: "light",
+    value: "eric",
     label: "Eric",
     icon: "lucide:sun",
     showLabel: true,
     tip: "For daylight clarity, but mostly for Eric",
-    selectable: true,
   },
 ];
-
-const themes = themeOptions.filter((theme) => theme.selectable);
 ---
 
 <fieldset class="theme-toggle" data-theme-toggle>
@@ -97,63 +65,44 @@ const themes = themeOptions.filter((theme) => theme.selectable);
 </fieldset>
 
 <script>
-  // Theme toggle behavior. The initial theme is set by the inline
+  // Mode toggle (dark / Eric). The initial theme is set by the inline
   // theme-init script in BaseLayout; this script only:
-  //   1. syncs the radio's checked state from data-theme on mount, and
-  //   2. writes data-theme + localStorage.theme on user change.
+  //   1. syncs the radio's checked state from data-theme on mount + on the
+  //      `themechange` event (fired when the pair selector changes things),
+  //   2. resolves mode + active pair into a theme value on user change.
+  // The `t` keyboard shortcut lives in ThemePairSelector.
   // Spec: interaction-spec.md section 7.
+  import { describeTheme, applyTheme } from "../../scripts/themes";
+
   (function () {
-    const themes = ["dark", "light"];
     const root = document.documentElement;
     const fieldsets = document.querySelectorAll<HTMLFieldSetElement>(
       "[data-theme-toggle]",
     );
     if (fieldsets.length === 0) return;
 
-    const sync = (theme: string) => {
+    const sync = () => {
+      const { mode } = describeTheme(root.dataset.theme);
       for (const fs of fieldsets) {
         const inputs = fs.querySelectorAll<HTMLInputElement>(
           ".theme-toggle__input",
         );
-        for (const input of inputs) input.checked = input.value === theme;
+        for (const input of inputs) input.checked = input.value === mode;
       }
     };
 
-    const current = themes.includes(root.dataset.theme || "")
-      ? root.dataset.theme || "dark"
-      : "dark";
-    sync(current);
+    sync();
 
     for (const fs of fieldsets) {
       fs.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement | null;
         if (!target || target.name !== "theme") return;
-        const next = themes.includes(target.value) ? target.value : "dark";
-        root.dataset.theme = next;
-        try {
-          localStorage.setItem("theme", next);
-        } catch {
-          // Storage unavailable (Safari private mode, etc.) - DOM update is enough.
-        }
-        sync(next);
+        const { pair } = describeTheme(root.dataset.theme);
+        applyTheme(target.value === "eric" ? pair.eric : pair.dark);
       });
     }
 
-    // `t` keyboard shortcut cycles the theme list.
-    document.addEventListener("keydown", (e) => {
-      if (e.key !== "t" || e.metaKey || e.ctrlKey || e.altKey) return;
-      const tag = (e.target as HTMLElement | null)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA") return;
-      const currentIndex = themes.indexOf(root.dataset.theme || "");
-      const next = themes[(currentIndex + 1) % themes.length] || "dark";
-      root.dataset.theme = next;
-      try {
-        localStorage.setItem("theme", next);
-      } catch {
-        // ignore
-      }
-      sync(next);
-    });
+    document.addEventListener("themechange", sync);
   })();
 </script>
 
@@ -202,7 +151,7 @@ const themes = themeOptions.filter((theme) => theme.selectable);
     gap: var(--space-1);
     padding: var(--space-1) var(--space-2);
     border-radius: calc(var(--radius-md) - 2px);
-    color: var(--color-fg-muted);
+    color: var(--color-fg-ui);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     line-height: var(--text-xs-line);
@@ -218,7 +167,7 @@ const themes = themeOptions.filter((theme) => theme.selectable);
   }
 
   .theme-toggle__input:checked + .theme-toggle__chip {
-    background: var(--color-accent);
+    background: var(--color-accent-fill);
     color: var(--color-fg-on-accent);
   }
 

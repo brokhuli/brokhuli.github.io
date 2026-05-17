@@ -122,6 +122,9 @@
   --bp-lg: 1024px;
   --bp-xl: 1280px;
 
+  /* fg-muted backward-compat alias — resolves to fg-secondary per theme */
+  --color-fg-muted: var(--color-fg-secondary);
+
   /* Chart tokens — consumed by BarChart, LineChart */
   --chart-bar-low: var(--color-info);
   --chart-bar-med: var(--color-warning);
@@ -129,11 +132,11 @@
   --chart-line-low: var(--color-info);
   --chart-line-med: var(--color-warning);
   --chart-line-high: var(--color-success);
-  --chart-axis: var(--color-fg-muted);
+  --chart-axis: var(--color-fg-secondary);
   --chart-grid-line: var(--color-border);
 
   /* Diagram tokens — consumed by ArchitectureDiagram */
-  --diagram-stroke: var(--color-fg-muted);
+  --diagram-stroke: var(--color-fg-secondary);
   --diagram-stroke-strong: var(--color-fg-default);
   --diagram-fill: var(--color-surface-2);
   --diagram-edge: var(--color-border-strong);
@@ -158,11 +161,15 @@
   --color-surface-3: #37224a;
 
   --color-fg-default: #f1edf7;
-  --color-fg-muted: #beb4cc;
+  --color-fg-heading: #c0aede;
+  --color-fg-body: #cec8d8;
+  --color-fg-secondary: #b0a4be;
+  --color-fg-ui: #9a8eaa;
   --color-fg-subtle: #82738f;
   --color-fg-on-accent: #101406;
 
   --color-accent: #2f8f78;
+  --color-accent-fill: #2f8f78;
   --color-accent-hover: #3aa68c;
   --color-accent-muted: #142c27;
 
@@ -185,74 +192,43 @@
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.52);
 }
 
-/* Theme 3: true black + indigo accent */
-[data-theme="theme-3"] {
-  --color-bg: #020308;
-  --color-surface-1: #0a0d14;
-  --color-surface-2: #11151f;
-  --color-surface-3: #1a2244;
+/* Eric Mode (light): light lavender paper + mint signal */
+[data-theme="light"] {
+  --color-bg: #fefbf4;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f1e9fb;
+  --color-surface-3: #e3d4f4;
 
-  --color-fg-default: #e6e8ee;
-  --color-fg-muted: #a3a9b8;
-  --color-fg-subtle: #6b7184;
-  --color-fg-on-accent: #ffffff;
+  --color-fg-default: #181021;
+  --color-fg-heading: #5038a8;
+  --color-fg-body: #3c3050;
+  --color-fg-secondary: #5e5278;
+  --color-fg-ui: #6a5e8a;
+  --color-fg-subtle: #756684;
+  --color-fg-on-accent: #091612;
 
-  --color-accent: #2c508e;
-  --color-accent-hover: #3a63aa;
-  --color-accent-muted: #1a2244;
+  --color-accent: #50c2a1;
+  --color-accent-fill: #50c2a1;
+  --color-accent-hover: #2f8f78;
+  --color-accent-muted: #d6f2eb;
 
-  --color-border: #1f2535;
-  --color-border-hover: #2c3447;
-  --color-border-strong: #3a4358;
+  --color-border: #c8b5d8;
+  --color-border-hover: #a88fbd;
+  --color-border-strong: #7e6698;
 
-  --color-success: #4ade80;
-  --color-warning: #f5b454;
-  --color-danger: #f87171;
-  --color-info: #60a5fa;
-  --color-debug: #94a3b8;
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #b4233a;
+  --color-info: #2563eb;
+  --color-debug: #6b6474;
 
-  --color-grid: rgba(180, 225, 240, 0.1);
-  --color-grid-major: rgba(180, 225, 240, 0.18);
-  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+  --color-grid: rgba(80, 194, 161, 0.1);
+  --color-grid-major: rgba(99, 65, 153, 0.18);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
-}
-
-/* Theme 5: Rose - deep ink surfaces + raspberry accents */
-[data-theme="theme-5"] {
-  --color-bg: #12080f;
-  --color-surface-1: #1d1018;
-  --color-surface-2: #2b1824;
-  --color-surface-3: #412233;
-
-  --color-fg-default: #f5edf1;
-  --color-fg-muted: #c4aeb8;
-  --color-fg-subtle: #8b6f7b;
-  --color-fg-on-accent: #ffffff;
-
-  --color-accent: #d44c80;
-  --color-accent-hover: #ec6a9b;
-  --color-accent-muted: #442033;
-
-  --color-border: #3a2330;
-  --color-border-hover: #573348;
-  --color-border-strong: #7f5068;
-
-  --color-success: #74e5a2;
-  --color-warning: #f2c66d;
-  --color-danger: #fb7185;
-  --color-info: #8bd5ff;
-  --color-debug: #a9a0b3;
-
-  --color-grid: rgba(212, 76, 128, 0.08);
-  --color-grid-major: rgba(139, 213, 255, 0.13);
-  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --shadow-sm: 0 1px 2px rgba(24, 16, 33, 0.06);
+  --shadow-md: 0 4px 14px rgba(24, 16, 33, 0.08);
+  --shadow-lg: 0 12px 32px rgba(24, 16, 33, 0.1);
 }
 
 /* Theme 8: Copperline - dark navy + copper signal */
@@ -263,11 +239,15 @@
   --color-surface-3: #2b3445;
 
   --color-fg-default: #eef3f8;
-  --color-fg-muted: #aeb9c6;
+  --color-fg-heading: #98b4cc;
+  --color-fg-body: #bcc8d8;
+  --color-fg-secondary: #9aaab8;
+  --color-fg-ui: #8898a8;
   --color-fg-subtle: #748092;
   --color-fg-on-accent: #ffffff;
 
   --color-accent: #b85c38;
+  --color-accent-fill: #b85c38;
   --color-accent-hover: #d1784f;
   --color-accent-muted: #3a241d;
 
@@ -290,72 +270,513 @@
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
 }
 
-/* Theme 9: warm khaki paper + indigo accent */
-[data-theme="theme-9"] {
-  --color-bg: #fcf7e9;
+/* Theme 8 Light: Copperline - warm cream linen + copper accent */
+[data-theme="theme-8l"] {
+  --color-bg: #fdf6f0;
   --color-surface-1: #ffffff;
-  --color-surface-2: #f3ecd9;
-  --color-surface-3: #e8dec4;
+  --color-surface-2: #f5e8da;
+  --color-surface-3: #ebd4c0;
 
-  --color-fg-default: #15181f;
-  --color-fg-muted: #4b5160;
-  --color-fg-subtle: #767c8c;
+  --color-fg-default: #0f1c28;
+  --color-fg-heading: #2e4c62;
+  --color-fg-body: #243040;
+  --color-fg-secondary: #4a5e6e;
+  --color-fg-ui: #5c7080;
+  --color-fg-subtle: #6a8296;
   --color-fg-on-accent: #ffffff;
 
-  --color-accent: #3a63aa;
-  --color-accent-hover: #2c508e;
-  --color-accent-muted: #dde1f5;
+  --color-accent: #b85c38;
+  --color-accent-fill: #b85c38;
+  --color-accent-hover: #963d1e;
+  --color-accent-muted: #fde8dc;
 
-  --color-border: #b8a980;
-  --color-border-hover: #9c8d65;
-  --color-border-strong: #786b48;
-
-  --color-success: #16a34a;
-  --color-warning: #c4881a;
-  --color-danger: #c0392b;
-  --color-info: #2563eb;
-  --color-debug: #6b7280;
-
-  --color-grid: rgba(40, 90, 150, 0.1);
-  --color-grid-major: rgba(40, 90, 150, 0.18);
-  --blueprint-grid-image: url("/blueprint-grid-light.svg");
-
-  --shadow-sm: 0 1px 2px rgba(20, 24, 32, 0.06);
-  --shadow-md: 0 4px 14px rgba(20, 24, 32, 0.08);
-  --shadow-lg: 0 12px 32px rgba(20, 24, 32, 0.1);
-}
-
-/* Eric Mode (light): light lavender paper + mint signal */
-[data-theme="light"] {
-  --color-bg: #fefbf4;
-  --color-surface-1: #ffffff;
-  --color-surface-2: #f1e9fb;
-  --color-surface-3: #e3d4f4;
-
-  --color-fg-default: #181021;
-  --color-fg-muted: #4f435e;
-  --color-fg-subtle: #756684;
-  --color-fg-on-accent: #091612;
-
-  --color-accent: #50c2a1;
-  --color-accent-hover: #2f8f78;
-  --color-accent-muted: #d6f2eb;
-
-  --color-border: #c8b5d8;
-  --color-border-hover: #a88fbd;
-  --color-border-strong: #7e6698;
+  --color-border: #d4b89a;
+  --color-border-hover: #bc9878;
+  --color-border-strong: #8c6848;
 
   --color-success: #15803d;
   --color-warning: #a86d0f;
   --color-danger: #b4233a;
   --color-info: #2563eb;
-  --color-debug: #6b6474;
+  --color-debug: #6b7c8c;
 
-  --color-grid: rgba(80, 194, 161, 0.1);
-  --color-grid-major: rgba(99, 65, 153, 0.18);
+  --color-grid: rgba(184, 92, 56, 0.08);
+  --color-grid-major: rgba(184, 92, 56, 0.14);
   --blueprint-grid-image: url("/blueprint-grid-light.svg");
 
-  --shadow-sm: 0 1px 2px rgba(24, 16, 33, 0.06);
-  --shadow-md: 0 4px 14px rgba(24, 16, 33, 0.08);
-  --shadow-lg: 0 12px 32px rgba(24, 16, 33, 0.1);
+  --shadow-sm: 0 1px 2px rgba(15, 28, 40, 0.06);
+  --shadow-md: 0 4px 14px rgba(15, 28, 40, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 28, 40, 0.1);
+}
+
+/* Theme 30: Gray - dark gray with silvery accent */
+[data-theme="theme-30"] {
+  --color-bg: #0c0c0c;
+  --color-surface-1: #171717;
+  --color-surface-2: #222222;
+  --color-surface-3: #2d2d2d;
+
+  --color-fg-default: #eaeaea;
+  --color-fg-heading: #b0b0cc;
+  --color-fg-body: #c8c8c8;
+  --color-fg-secondary: #909090;
+  --color-fg-ui: #7c7c7c;
+  --color-fg-subtle: #686868;
+  --color-fg-on-accent: #080808;
+
+  --color-accent: #b8b8b8;
+  --color-accent-fill: #b8b8b8;
+  --color-accent-hover: #d0d0d0;
+  --color-accent-muted: #202020;
+
+  --color-border: #2a2a2a;
+  --color-border-hover: #404040;
+  --color-border-strong: #585858;
+
+  --color-success: #4ade80;
+  --color-warning: #f5b454;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+  --color-debug: #909090;
+
+  --color-grid: rgba(184, 184, 184, 0.08);
+  --color-grid-major: rgba(184, 184, 184, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── NEW AESTHETIC THEMES ─────────────────────────────────────────────── */
+
+/* Japandi Dark: sumi ink black + terracotta wabi-sabi */
+[data-theme="japandi"] {
+  --color-bg: #0f0e0c;
+  --color-surface-1: #1a1918;
+  --color-surface-2: #252320;
+  --color-surface-3: #32302c;
+
+  --color-fg-default: #f0ebe4;
+  --color-fg-heading: #d4b896;
+  --color-fg-body: #e4ddd4;
+  --color-fg-secondary: #a89880;
+  --color-fg-ui: #9a8870;
+  --color-fg-subtle: #7a6a58;
+  --color-fg-on-accent: #0f0e0c;
+
+  --color-accent: #c8784a;
+  --color-accent-fill: #c8784a;
+  --color-accent-hover: #e09060;
+  --color-accent-muted: #201410;
+
+  --color-border: #2e2c28;
+  --color-border-hover: #403e38;
+  --color-border-strong: #5c5848;
+
+  --color-success: #7ab88a;
+  --color-warning: #d4a840;
+  --color-danger: #c07060;
+  --color-info: #7898b8;
+  --color-debug: #9a8878;
+
+  --color-grid: rgba(200, 120, 74, 0.07);
+  --color-grid-major: rgba(200, 120, 74, 0.13);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Japandi Light: warm rice paper + burnt terracotta */
+[data-theme="japandi-l"] {
+  --color-bg: #f5f0e8;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #eee8dc;
+  --color-surface-3: #e4dccb;
+
+  --color-fg-default: #1a1410;
+  --color-fg-heading: #2c4838;
+  --color-fg-body: #2a2218;
+  --color-fg-secondary: #5a4e3c;
+  --color-fg-ui: #6a5c48;
+  --color-fg-subtle: #7a6c58;
+  --color-fg-on-accent: #f5f0e8;
+
+  --color-accent: #8c4a28;
+  --color-accent-fill: #8c4a28;
+  --color-accent-hover: #7a3a1c;
+  --color-accent-muted: #f5e4d8;
+
+  --color-border: #d4c4a8;
+  --color-border-hover: #b8a488;
+  --color-border-strong: #8a7458;
+
+  --color-success: #3a7840;
+  --color-warning: #8a5c10;
+  --color-danger: #9a2818;
+  --color-info: #3050a0;
+  --color-debug: #6a5c48;
+
+  --color-grid: rgba(140, 74, 40, 0.07);
+  --color-grid-major: rgba(140, 74, 40, 0.13);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(26, 20, 16, 0.06);
+  --shadow-md: 0 4px 14px rgba(26, 20, 16, 0.08);
+  --shadow-lg: 0 12px 32px rgba(26, 20, 16, 0.1);
+}
+
+/* Bohemian Dark: deep warm plum + burnt orange */
+[data-theme="boho"] {
+  --color-bg: #180e1c;
+  --color-surface-1: #221630;
+  --color-surface-2: #2e1e3e;
+  --color-surface-3: #3c2850;
+
+  --color-fg-default: #f4e8d0;
+  --color-fg-heading: #e0904a;
+  --color-fg-body: #ead8b8;
+  --color-fg-secondary: #c0987a;
+  --color-fg-ui: #b08060;
+  --color-fg-subtle: #8a5e44;
+  --color-fg-on-accent: #180e1c;
+
+  --color-accent: #e86820;
+  --color-accent-fill: #e86820;
+  --color-accent-hover: #f08038;
+  --color-accent-muted: #201008;
+
+  --color-border: #3c2448;
+  --color-border-hover: #523060;
+  --color-border-strong: #704080;
+
+  --color-success: #78c888;
+  --color-warning: #e8a830;
+  --color-danger: #d04848;
+  --color-info: #7888d0;
+  --color-debug: #a08880;
+
+  --color-grid: rgba(232, 104, 32, 0.07);
+  --color-grid-major: rgba(232, 104, 32, 0.13);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Bohemian Light: warm cream linen + terracotta */
+[data-theme="boho-l"] {
+  --color-bg: #f8f0e0;
+  --color-surface-1: #fff8ec;
+  --color-surface-2: #f0e4cc;
+  --color-surface-3: #e8d4b0;
+
+  --color-fg-default: #2a1810;
+  --color-fg-heading: #703010;
+  --color-fg-body: #3c2418;
+  --color-fg-secondary: #7a4a2a;
+  --color-fg-ui: #8a5a38;
+  --color-fg-subtle: #9a6a48;
+  --color-fg-on-accent: #f8f0e0;
+
+  --color-accent: #b84810;
+  --color-accent-fill: #b84810;
+  --color-accent-hover: #983808;
+  --color-accent-muted: #fce8d8;
+
+  --color-border: #d8b88a;
+  --color-border-hover: #c0986a;
+  --color-border-strong: #9a7040;
+
+  --color-success: #3a7838;
+  --color-warning: #8a5c08;
+  --color-danger: #983020;
+  --color-info: #385898;
+  --color-debug: #7a5838;
+
+  --color-grid: rgba(184, 72, 16, 0.07);
+  --color-grid-major: rgba(184, 72, 16, 0.13);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(42, 24, 16, 0.06);
+  --shadow-md: 0 4px 14px rgba(42, 24, 16, 0.08);
+  --shadow-lg: 0 12px 32px rgba(42, 24, 16, 0.1);
+}
+
+/* ─── VS CODE INSPIRED THEMES ──────────────────────────────────────────── */
+
+/* Night Owl Dark: deep navy + signature teal accent (Sarah Drasner) */
+[data-theme="night-owl"] {
+  --color-bg: #011627;
+  --color-surface-1: #01223d;
+  --color-surface-2: #012a4a;
+  --color-surface-3: #01375e;
+
+  --color-fg-default: #d6deeb;
+  --color-fg-heading: #82aaff;
+  --color-fg-body: #c5d1eb;
+  --color-fg-secondary: #7b8cbc;
+  --color-fg-ui: #637099;
+  --color-fg-subtle: #4d5b7d;
+  --color-fg-on-accent: #003548;
+
+  --color-accent: #21c7a8;
+  --color-accent-fill: #21c7a8;
+  --color-accent-hover: #2de0bf;
+  --color-accent-muted: #012520;
+
+  --color-border: #01365a;
+  --color-border-hover: #024c7c;
+  --color-border-strong: #0566a4;
+
+  --color-success: #22da6e;
+  --color-warning: #ffcb8b;
+  --color-danger: #ff5874;
+  --color-info: #82aaff;
+  --color-debug: #637099;
+
+  --color-grid: rgba(33, 199, 168, 0.08);
+  --color-grid-major: rgba(130, 170, 255, 0.12);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.65);
+}
+
+/* Night Owl Light (Light Owl): airy white + teal accent */
+[data-theme="night-owl-l"] {
+  --color-bg: #fafafa;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f0f4f8;
+  --color-surface-3: #e4edf8;
+
+  --color-fg-default: #403f53;
+  --color-fg-heading: #2c6f98;
+  --color-fg-body: #4a5075;
+  --color-fg-secondary: #6b7098;
+  --color-fg-ui: #7880a0;
+  --color-fg-subtle: #888eb8;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #2aa298;
+  --color-accent-fill: #2aa298;
+  --color-accent-hover: #228a82;
+  --color-accent-muted: #d4f0ee;
+
+  --color-border: #c0cce0;
+  --color-border-hover: #98aac8;
+  --color-border-strong: #6888b0;
+
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #d4214e;
+  --color-info: #4678d6;
+  --color-debug: #7880a0;
+
+  --color-grid: rgba(42, 162, 152, 0.08);
+  --color-grid-major: rgba(42, 162, 152, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(64, 63, 83, 0.06);
+  --shadow-md: 0 4px 14px rgba(64, 63, 83, 0.08);
+  --shadow-lg: 0 12px 32px rgba(64, 63, 83, 0.1);
+}
+
+/* One Monokai Dark: One Dark slate + warm Monokai golden accent */
+[data-theme="one-mk"] {
+  --color-bg: #282c34;
+  --color-surface-1: #21252b;
+  --color-surface-2: #2c313c;
+  --color-surface-3: #353b46;
+
+  --color-fg-default: #abb2bf;
+  --color-fg-heading: #e5c07b;
+  --color-fg-body: #c5c9d4;
+  --color-fg-secondary: #9098a8;
+  --color-fg-ui: #5c6370;
+  --color-fg-subtle: #4a5066;
+  --color-fg-on-accent: #282c34;
+
+  --color-accent: #61afef;
+  --color-accent-fill: #61afef;
+  --color-accent-hover: #7dc0f5;
+  --color-accent-muted: #1e2838;
+
+  --color-border: #3a3f4b;
+  --color-border-hover: #4e5564;
+  --color-border-strong: #636d84;
+
+  --color-success: #98c379;
+  --color-warning: #e5c07b;
+  --color-danger: #e06c75;
+  --color-info: #56b6c2;
+  --color-debug: #9098a8;
+
+  --color-grid: rgba(97, 175, 239, 0.07);
+  --color-grid-major: rgba(229, 192, 123, 0.1);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* One Monokai Light: One Light parchment + amber + blue */
+[data-theme="one-mk-l"] {
+  --color-bg: #fafafa;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f0f0f0;
+  --color-surface-3: #e5e5e6;
+
+  --color-fg-default: #383a42;
+  --color-fg-heading: #c18401;
+  --color-fg-body: #4a4f5e;
+  --color-fg-secondary: #696c78;
+  --color-fg-ui: #828997;
+  --color-fg-subtle: #9a9dac;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #4078f2;
+  --color-accent-fill: #4078f2;
+  --color-accent-hover: #2a65e8;
+  --color-accent-muted: #e8eeff;
+
+  --color-border: #d0d0d0;
+  --color-border-hover: #bcbcbc;
+  --color-border-strong: #9898a0;
+
+  --color-success: #50a14f;
+  --color-warning: #c18401;
+  --color-danger: #e45649;
+  --color-info: #0184bc;
+  --color-debug: #828997;
+
+  --color-grid: rgba(64, 120, 242, 0.06);
+  --color-grid-major: rgba(193, 132, 1, 0.1);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(56, 58, 66, 0.06);
+  --shadow-md: 0 4px 14px rgba(56, 58, 66, 0.08);
+  --shadow-lg: 0 12px 32px rgba(56, 58, 66, 0.1);
+}
+
+/* Dracula Dark: near-black purple + iconic pink + Dracula purple heading */
+[data-theme="dracula"] {
+  --color-bg: #282a36;
+  --color-surface-1: #21222c;
+  --color-surface-2: #191a21;
+  --color-surface-3: #44475a;
+
+  --color-fg-default: #f8f8f2;
+  --color-fg-heading: #bd93f9;
+  --color-fg-body: #eaeaea;
+  --color-fg-secondary: #c4c4d0;
+  --color-fg-ui: #6272a4;
+  --color-fg-subtle: #4d5b7a;
+  --color-fg-on-accent: #282a36;
+
+  --color-accent: #ff79c6;
+  --color-accent-fill: #ff79c6;
+  --color-accent-hover: #ff92d0;
+  --color-accent-muted: #3a1a2c;
+
+  --color-border: #343746;
+  --color-border-hover: #44475a;
+  --color-border-strong: #6272a4;
+
+  --color-success: #50fa7b;
+  --color-warning: #ffb86c;
+  --color-danger: #ff5555;
+  --color-info: #8be9fd;
+  --color-debug: #6272a4;
+
+  --color-grid: rgba(255, 121, 198, 0.07);
+  --color-grid-major: rgba(189, 147, 249, 0.1);
+  --blueprint-grid-image: url("/blueprint-grid-dark.svg");
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Dracula Light: inverted pale lavender + deep purple + rich pink */
+[data-theme="dracula-l"] {
+  --color-bg: #f8f8f2;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f0eef8;
+  --color-surface-3: #e4e0f5;
+
+  --color-fg-default: #282a36;
+  --color-fg-heading: #6d3eb0;
+  --color-fg-body: #383a48;
+  --color-fg-secondary: #6272a4;
+  --color-fg-ui: #7a8ab8;
+  --color-fg-subtle: #8a98c0;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #c248a0;
+  --color-accent-fill: #c248a0;
+  --color-accent-hover: #a83888;
+  --color-accent-muted: #ffe0f4;
+
+  --color-border: #d0c8e8;
+  --color-border-hover: #b8a8d8;
+  --color-border-strong: #9080c0;
+
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #d42020;
+  --color-info: #1060b8;
+  --color-debug: #7a8ab8;
+
+  --color-grid: rgba(194, 72, 160, 0.06);
+  --color-grid-major: rgba(109, 62, 176, 0.1);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(40, 42, 54, 0.06);
+  --shadow-md: 0 4px 14px rgba(40, 42, 54, 0.08);
+  --shadow-lg: 0 12px 32px rgba(40, 42, 54, 0.1);
+}
+
+/* Theme 30 Light: Gray - light gray paper with charcoal accent */
+[data-theme="theme-30l"] {
+  --color-bg: #f2f2f2;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #e8e8e8;
+  --color-surface-3: #d8d8d8;
+
+  --color-fg-default: #141414;
+  --color-fg-heading: #363688;
+  --color-fg-body: #363636;
+  --color-fg-secondary: #585858;
+  --color-fg-ui: #6c6c80;
+  --color-fg-subtle: #787878;
+  --color-fg-on-accent: #ffffff;
+
+  --color-accent: #484848;
+  --color-accent-fill: #484848;
+  --color-accent-hover: #303030;
+  --color-accent-muted: #e0e0e0;
+
+  --color-border: #c4c4c4;
+  --color-border-hover: #a8a8a8;
+  --color-border-strong: #808080;
+
+  --color-success: #15803d;
+  --color-warning: #a86d0f;
+  --color-danger: #b4233a;
+  --color-info: #2563eb;
+  --color-debug: #888888;
+
+  --color-grid: rgba(72, 72, 72, 0.08);
+  --color-grid-major: rgba(72, 72, 72, 0.14);
+  --blueprint-grid-image: url("/blueprint-grid-light.svg");
+
+  --shadow-sm: 0 1px 2px rgba(20, 20, 20, 0.06);
+  --shadow-md: 0 4px 14px rgba(20, 20, 20, 0.08);
+  --shadow-lg: 0 12px 32px rgba(20, 20, 20, 0.1);
 }
