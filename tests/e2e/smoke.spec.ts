@@ -14,9 +14,9 @@
 import { test, expect } from "@playwright/test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { ALL_THEME_VALUES, describeTheme } from "../../src/scripts/themes";
 
 const DIST = join(process.cwd(), "dist");
-const THEMES = ["dark", "light"] as const;
 
 test("home page returns 200 and contains the author's name", async ({
   page,
@@ -34,19 +34,21 @@ test("theme toggle updates data-theme and persists to localStorage", async ({
   const initial = await page.evaluate(
     () => document.documentElement.dataset.theme,
   );
-  expect(THEMES).toContain(initial as (typeof THEMES)[number]);
+  expect(ALL_THEME_VALUES).toContain(initial);
 
-  // Click the opposite of whatever loaded so we verify a real switch.
-  const target = initial === "light" ? "dark" : "light";
-  await page.click(`.theme-toggle__input[value="${target}"]`);
+  // Determine the current mode and click the opposite mode button.
+  const { mode, pair } = describeTheme(initial);
+  const targetMode = mode === "dark" ? "eric" : "dark";
+  const expectedTheme = targetMode === "dark" ? pair.dark : pair.eric;
+  await page.click(`.theme-toggle__input[value="${targetMode}"]`);
 
-  // data-theme + localStorage both updated.
+  // data-theme + localStorage both updated to the correct pair variant.
   const after = await page.evaluate(() => ({
     theme: document.documentElement.dataset.theme,
     stored: localStorage.getItem("theme"),
   }));
-  expect(after.theme).toBe(target);
-  expect(after.stored).toBe(target);
+  expect(after.theme).toBe(expectedTheme);
+  expect(after.stored).toBe(expectedTheme);
 });
 
 test("LogTicker mounts and renders a non-empty line", async ({ page }) => {
