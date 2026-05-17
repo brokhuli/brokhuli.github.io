@@ -26,6 +26,14 @@ export interface ThemePair {
 
 export const THEME_PAIRS: ThemePair[] = [
   {
+    id: "amber-slate",
+    label: "Amber Slate",
+    icon: "lucide:braces",
+    tip: "Amber Slate: cool slate warmed by a golden-amber glow",
+    dark: "one-mk",
+    eric: "one-mk-l",
+  },
+  {
     id: "volt",
     label: "Volt",
     icon: "lucide:zap",
@@ -74,14 +82,6 @@ export const THEME_PAIRS: ThemePair[] = [
     eric: "japandi-l",
   },
   {
-    id: "amber-slate",
-    label: "Amber Slate",
-    icon: "lucide:braces",
-    tip: "Amber Slate: cool slate warmed by a golden-amber glow",
-    dark: "one-mk",
-    eric: "one-mk-l",
-  },
-  {
     id: "bohemian",
     label: "Bohemian",
     icon: "lucide:flower",
@@ -101,7 +101,7 @@ export interface ThemeDescription {
   mode: ThemeMode;
 }
 
-/** Resolve a `data-theme` value to its pair + mode. Falls back to Volt/Dark. */
+/** Resolve a `data-theme` value to its pair + mode. Falls back to Amber Slate/Dark. */
 export function describeTheme(value: string | undefined): ThemeDescription {
   for (const pair of THEME_PAIRS) {
     if (pair.dark === value) return { pair, mode: "dark" };
