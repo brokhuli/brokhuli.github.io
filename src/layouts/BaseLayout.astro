@@ -26,7 +26,6 @@ import Sidebar from "../components/chrome/Sidebar.astro";
 import Footer from "../components/chrome/Footer.astro";
 import ThemeToggle from "../components/whimsy/ThemeToggle.astro";
 import SystemStatus from "../components/whimsy/SystemStatus.astro";
-import businessCard from "../assets/img/about/business-card.png";
 
 const SITE = Astro.site?.toString() ?? "https://brokhuli.github.io/";
 
@@ -51,7 +50,7 @@ const {
   title = "Stephen Ullom — brokhuli.github.io",
   description = "Personal portfolio for Stephen Ullom.",
   canonicalUrl,
-  ogImage = new URL(businessCard.src, SITE).href,
+  ogImage = new URL("/business-card.png", SITE).href,
   seoType = "website",
   showSidebar = true,
   project,
