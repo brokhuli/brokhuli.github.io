@@ -27,6 +27,9 @@ function walk(dir: string): string[] {
   if (!existsSync(dir)) return [];
   const out: string[] = [];
   for (const name of readdirSync(dir)) {
+    // Mirror Astro's content-collection convention: ignore "_"-prefixed
+    // files and directories (templates, partials) — they aren't entries.
+    if (name.startsWith("_")) continue;
     const full = join(dir, name);
     const s = statSync(full);
     if (s.isDirectory()) out.push(...walk(full));
