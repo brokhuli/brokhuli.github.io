@@ -1,0 +1,203 @@
+---
+title: "CBTC Train Simulator"
+slug: "cbtc-train-simulator-v2"
+tagline: "Greenfield modernization of real-time train simulator for V&V and customer delivery."
+status: "active"
+featured: true
+cataloged: true
+order: 10
+tech:
+  - "C#"
+  - ".NET"
+  - "Blazor"
+  - "GraphQL"
+  - "Docker"
+  - "CI/CD"
+  - "Playwright"
+  - "unit testing"
+publishedAt: "2026-05-22"
+---
+
+## Professional Disclaimer
+
+This was a product I led as Software Architect and Product Manager for Alstom
+Transportation's simulation team. I don't own the codebase, and this case study
+stays at the architectural level. No code, no proprietary diagrams. Internal
+module names, and sensitive details have been intentionally omitted or generalized.
+
+## Background
+
+**CBTC** (Communications-Based Train Control) is the signaling system that runs
+modern metro lines. It decides where every train is allowed to
+move, and how fast. The simulator stands in for real trains so that signaling
+software can be tested, verified, and trained on without putting hardware on a
+track. It generates virtual trains, runs realistic kinematics, and talks to
+wayside signaling systems the same way real rolling stock would.
+
+Two groups depend on it:
+
+- **Integration and V&V teams** — testing wayside signaling software before it
+  ships to a transit authority.
+- **Customers** — running operator-training systems that look and behave like
+  the real line.
+
+For the train nerds out there, this is **moving block** CBTC.
+
+## Problem
+
+I inherited a long-lived, monolithic product with code dating back to 1995.
+Decades of iterative additions to support successive signaling projects had
+left the architecture difficult to extend without unintended side effects.
+
+| Symptom                             | Consequence                                                           |
+| ----------------------------------- | --------------------------------------------------------------------- |
+| Highly coupled architecture         | Small changes routinely broke unrelated features.                     |
+| Limited automated testing           | Regressions were caught later in the cycle than ideal.                |
+| Simulation fidelity gaps            | Downstream integration teams spent extra effort reconciling behavior. |
+| Dedicated Windows hardware required | No path to containerized or cloud deployment.                         |
+| Heavy maintenance footprint         | Sustaining effort was disproportionate to feature throughput.         |
+
+## Goals
+
+I set the following targets with leadership alignment. They were as much about
+the business as the codebase:
+
+- Reduce sustaining effort so the team could shift toward new work.
+- Improve simulation fidelity to reduce downstream integration friction.
+- Containerize for cloud deployment.
+- Productize core simulation and allow for extensible project-specific logic.
+- Accelerate feature delivery for new signaling projects.
+- Improve the integration/V&V user experience.
+
+## Complexity
+
+The hard parts weren't any single component, they were the constraints that
+had to hold simultaneously:
+
+- **Deterministic real-time core.** — Same inputs must produce the same outputs,
+  while still allowing users to inject faults and interact live.
+- **Behavior beyond the written spec.** — Capturing the full operational
+  behavior required going past the written requirements and reconciling them
+  with observed system behavior in integrated environments.
+- **Clean Internal and External Boundaries.** — Promoted testability, maintainability,
+  and extensibility for project-specific logic, and a clean contract for telemetry
+  and UI clients.
+
+## My Role
+
+As Lead Software Architect I owned the technical direction of the rewrite end
+to end.
+
+| Mine                                      | Delegated to the team                        |
+| ----------------------------------------- | -------------------------------------------- |
+| Technical leadership                      | Physics engine lead                          |
+| Roadmap, strategy, vision                 | Backend-to-frontend architecture             |
+| Overall architecture                      | User experience discovery                    |
+| Translating domain reqs → software design | Frontend component design and implementation |
+| Prototyping core backend components       | CI/CD, automated testing                     |
+| Backend feature development               |                                              |
+| Physics engine support and guidance       |                                              |
+| Code review                               |                                              |
+
+## Architectural Design
+
+### High-Level Approach
+
+A greenfield build, not a piecemeal modernization. The legacy product's tight
+coupling and accumulated technical debt made incremental refactoring more expensive than
+a clean rewrite. The new product was built on a **modular monolith** using a
+hybrid of **Domain-Driven Design** and **Hexagonal Architecture** including clean
+boundaries between data model, simulation, and transport.
+
+### Backend
+
+The backend owns everything that matters: state, timing, logic, and the
+simulation contract. The frontend is a viewer.
+
+The codebase is organized into three concentric layers: datamodel, simulation,
+and API. The following shows an illustrative layout, not the actual directory structure.
+
+```
+/src
+  /DataModel          ← pure data, no behavior
+    /Models
+    /Interfaces
+    /Controllers
+  /SimulationModel
+    /PhysicsModels
+  /SimulationLogic    ← orchestrated by a simulation engine
+    /<behavior-1>
+    /<behavior-2>
+    /...
+  /Api
+    /GraphQL
+    /IntegrationApi
+```
+
+Key properties:
+
+- **Pure data model.** — Models hold data, not logic making them trivially testable and
+  reusable.
+- **Simulation engine.** — Schedules logic sequences with separate timing budgets with
+  tight deterministic loops where physics demands it, and looser cadences for
+  non-critical logic, freeing CPU where it matters.
+- **Headless capable.** — Backend runs without the UI, which unlocked
+  containerized deployment and automated V&V.
+
+### Frontend
+
+After user discovery with integration and V&V engineers, the frontend was
+redesigned around **visual context** rather than the prior form-with-labels
+approach. Blazor renders a 2D track view showing trains in motion where users
+see simulation state at a glance instead of decoding numeric fields effectively
+improving user context and accelerating workflows.
+
+The frontend queries the backend over GraphQL. The backend doesn't push updates, it
+exposes a complete query and command surface, so any client (UI, telemetry,
+test harness) can consume the same contract without backend changes.
+
+### Observability
+
+Simulation faults produce a packaged snapshot: structured logs plus frontend
+screenshots capturing the system state at the moment of failure. Snapshots ship
+to developers and dramatically shorten investigation time.
+
+### CI/CD and Testing
+
+- Unit tests against the pure data model and isolated simulation logic.
+- Playwright end-to-end tests covering full simulation scenarios.
+- CI/CD pipelines automating build, test, and deploy.
+
+## Architectural Tradeoffs
+
+| Choice                                  | Why it fit                                                                                                                              | Tradeoff                                                                                                      |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Greenfield over piecemeal modernization | Legacy coupling and technical debt made incremental refactor more expensive than rewrite.                                               | Higher upfront investment; required parallel maintenance of the old product during transition.                |
+| Modular monolith over microservices     | One product, one team, no inter-service scaling need. Easier to troubleshoot issues.                                                    | Less independent packaging and deployability of subsystems.                                                   |
+| DDD + Hexagonal hybrid                  | Clean domain boundaries, testable seams, and ubiquitous language for non-technical stakeholders.                                        | More upfront design discipline than a layered/Clean approach.                                                 |
+| C# over C++                             | Leveraged the team's existing .NET expertise.                                                                                           | Less determinism in tight physics loops than C++ would allow. With today's AI-assisted tooling, I'd pick C++. |
+| Blazor over WPF/Qt                      | A web frontend was the unlock for containerization and cloud deployment with no OS license per VM.                                      | Less native UI ergonomics than Qt or WPF for an instrument-like view.                                         |
+| Blazor over React/Angular/Vue           | Reused the team's .NET background and kept application logic on the server side, consistent with the team's existing operational model. | Server model requires a stable backend connection.                                                            |
+| GraphQL over REST                       | One flexible contract that telemetry, UI, and test harnesses can all query without backend changes.                                     | More schema design work upfront; pull model means clients are responsible for keeping their views fresh.      |
+
+## Outcome
+
+The rewrite shipped and was well received by both the engineering teams who
+depend on it and the leadership group that sponsored it.
+
+### Measurable Results
+
+The new product delivered:
+
+| Metric                                           | Result     |
+| ------------------------------------------------ | ---------- |
+| Maintenance effort                               | Reduced    |
+| Runtime performance                              | Improved   |
+| Feature delivery velocity                        | Faster     |
+| Mean time to resolution                          | Faster     |
+| Simulation accuracy                              | Improved   |
+| Dedicated hardware / OS licensing per deployment | Eliminated |
+
+The product moved from an aging, infrastructure-constrained platform to a containerized,
+testable, observably-behaving system that the broader signaling organization
+could rely on.

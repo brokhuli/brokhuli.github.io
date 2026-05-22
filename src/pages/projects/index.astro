@@ -7,6 +7,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionHeading from "../../components/primitives/SectionHeading.astro";
+import Icon from "../../components/primitives/Icon.astro";
 import ProjectCard from "../../components/sections/ProjectCard.astro";
 
 const projects = (
@@ -34,6 +35,18 @@ const projects = (
 
     <div class="projects-catalog__grid">
       {projects.map((project) => <ProjectCard project={project} />)}
+      <article class="projects-catalog__coming-soon">
+        <span class="projects-catalog__coming-icon" aria-hidden="true">
+          <Icon name="lucide:plus" size={18} />
+        </span>
+        <h3 class="projects-catalog__coming-title">
+          More case studies in progress
+        </h3>
+        <p class="projects-catalog__coming-copy">
+          More project writeups and technical deep-dives are currently in
+          development.
+        </p>
+      </article>
     </div>
   </article>
 </BaseLayout>
@@ -79,6 +92,42 @@ const projects = (
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: var(--space-4);
+  }
+
+  .projects-catalog__coming-soon {
+    min-height: 220px;
+    background: var(--color-surface-1);
+    border: var(--line-card);
+    border-style: dashed;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-3);
+    color: var(--color-fg-muted);
+  }
+
+  .projects-catalog__coming-icon {
+    display: inline-flex;
+    color: var(--color-accent);
+  }
+
+  .projects-catalog__coming-title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    line-height: var(--text-lg-line);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-fg-default);
+    margin: 0;
+  }
+
+  .projects-catalog__coming-copy {
+    max-width: 42ch;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm-line);
+    margin: 0;
+    color: var(--color-fg-body);
   }
 
   @media (max-width: 640px) {

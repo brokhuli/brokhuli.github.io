@@ -16,8 +16,23 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, tagline, status, tech, media, slug: slugField } = project.data;
+const {
+  title,
+  tagline,
+  status,
+  tech,
+  media,
+  publishedAt,
+  slug: slugField,
+} = project.data;
 const slug = slugField ?? project.id;
+
+const publishedLabel = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+}).format(publishedAt);
+const publishedISO = publishedAt.toISOString().slice(0, 10);
 
 // Inherit level from the tech-stack collection so a "core" tool reads as core
 // wherever it appears. Unknown labels fall back to "working".
@@ -68,6 +83,9 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
     <a class="project-card__cta" href={`/projects/${slug}`}>
       Read case study →
     </a>
+    <time class="project-card__date" datetime={publishedISO}>
+      {publishedLabel}
+    </time>
   </div>
 </article>
 
@@ -199,6 +217,10 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
 
   .project-card__footer {
     padding: var(--space-4) var(--space-6) var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
   }
 
   .project-card__cta {
@@ -206,10 +228,16 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
     font-weight: var(--font-weight-medium);
     color: var(--color-accent);
     text-decoration: none;
-    align-self: flex-start;
   }
 
   .project-card__cta:hover {
     color: var(--color-accent-hover);
+  }
+
+  .project-card__date {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-muted);
+    white-space: nowrap;
   }
 </style>

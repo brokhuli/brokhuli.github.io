@@ -53,6 +53,16 @@ const statusMap: Record<
   archived: { state: "off", label: "Archived" },
 };
 const dot = statusMap[status as string] ?? statusMap.shipped;
+
+const dateFmt = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+const publishedLabel = dateFmt.format(publishedAt);
+const publishedISO = publishedAt.toISOString().slice(0, 10);
+const updatedLabel = updatedAt ? dateFmt.format(updatedAt) : null;
+const updatedISO = updatedAt ? updatedAt.toISOString().slice(0, 10) : null;
 ---
 
 <BaseLayout
@@ -77,6 +87,17 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
         <h1 class="case-study__title">{title}</h1>
       </div>
       <p class="case-study__tagline">{tagline}</p>
+      <p class="case-study__meta">
+        Published <time datetime={publishedISO}>{publishedLabel}</time>
+        {
+          updatedLabel && (
+            <>
+              {" · Updated "}
+              <time datetime={updatedISO!}>{updatedLabel}</time>
+            </>
+          )
+        }
+      </p>
       <ul class="case-study__tech" role="list" aria-label="Technologies used">
         {
           tech.map((t) => (
@@ -202,6 +223,13 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
   .case-study__tagline {
     font-size: var(--text-md);
     color: var(--color-fg-muted);
+    margin: 0;
+  }
+
+  .case-study__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-fg-subtle);
     margin: 0;
   }
 
