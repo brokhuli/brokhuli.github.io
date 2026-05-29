@@ -23,6 +23,9 @@ import Icon from "../primitives/Icon.astro";
         aria-label="Send email"
       >
         <Icon name="lucide:mail" size={18} />
+        <span class="header-card__copied" data-email-copied aria-hidden="true"
+          >Copied</span
+        >
       </a>
       <a
         class="header-card__link"
@@ -90,11 +93,48 @@ import Icon from "../primitives/Icon.astro";
   }
 
   .header-card__link {
+    position: relative;
     display: inline-flex;
     color: var(--color-fg-subtle);
     transition: color var(--motion-quick) var(--ease-out-quart);
   }
   .header-card__link:hover {
     color: var(--color-accent);
+  }
+
+  .header-card__copied {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    padding: var(--space-1) var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-fg-default);
+    background: var(--color-surface-1);
+    border: var(--line-divider);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition:
+      opacity var(--motion-quick) var(--ease-out-quart),
+      transform var(--motion-quick) var(--ease-out-quart);
+    z-index: 10;
+  }
+  .header-card__copied[data-visible="true"] {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header-card__copied {
+      transition: opacity var(--motion-quick) var(--ease-out-quart);
+      transform: translateX(-50%);
+    }
+    .header-card__copied[data-visible="true"] {
+      transform: translateX(-50%);
+    }
   }
 </style>
