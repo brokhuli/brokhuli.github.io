@@ -7,7 +7,7 @@ years:
   end: 2019
 order: 30
 companyIcon: "lucide:train"
-summary: "Senior engineer on transit signaling control systems."
+summary: "Senior engineer on transit signaling and real-time control systems."
 impacts:
   - "Built real-time, deterministic train positioning and motor-response simulation systems"
   - "Designed a hardware-in-the-loop API bridging digital simulation with physical control systems"

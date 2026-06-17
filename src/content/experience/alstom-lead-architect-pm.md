@@ -11,13 +11,14 @@ summary: "Architectural lead for onboard signaling platforms; promoted from arch
 impacts:
   - "Led architecture and product strategy for a global suite of real-time rail simulation systems"
   - "Modernized 4 legacy systems into scalable, containerized platforms (-40% maintenance cost)"
-  - "Implemented AI-augmented engineering workflows (-40-50% SDLC overhead)"
+  - "Implemented AI-native engineering workflows (-40-50% SDLC overhead)"
   - "Improved system observability (-50% MTTR)"
   - "Directed lifecycle and delivery of 7 simulation products used for system validation"
   - "Mentored and scaled a 14-person engineering team with 0% attrition"
+  - "Established cross-team architecture governance and design review practices"
   - "Built a FAISS-based RAG documentation engine to eliminate knowledge silos"
 highlights:
-  - "Team leadership"
+  - "Architecture leadership"
   - "Product strategy"
   - "Platform modernization"
   - "Observability"

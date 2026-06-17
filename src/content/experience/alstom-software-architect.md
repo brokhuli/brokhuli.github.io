@@ -14,6 +14,7 @@ impacts:
   - "Established architecture standards adopted across the simulation product line"
   - "Evaluated and guided architectural tradeoffs (modular monolith vs. services)"
   - "Instituted architectural governance for stakeholder alignment (RFCs / ADRs)"
+  - "Defined modular boundaries with engineering leads to reduce integration friction"
 highlights:
   - "Digital twins"
   - "Real-time"

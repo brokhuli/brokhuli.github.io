@@ -1,11 +1,11 @@
 ---
 headline: "Engineering clarity within complex, real-world problems"
 accentPhrase: "real-world problems"
-subhead: "Software architect with two decades building resilient, scalable systems for high-stakes industries. I translate ambitious ideas into long-lived software products."
+subhead: "Software and platform architect with two decades building resilient, scalable systems for high-stakes industries. I translate ambitious ideas into long-lived software products."
 resumeHref: "/resume"
 ---
 
-I'm Stephen Ullom, a software architect who has spent the last twenty years pulling order out of complex, physical systems. The kind of software where determinism, observability, and the gap between simulation and reality are not abstract concerns.
+I'm Stephen Ullom, a software and platform architect who has spent the last twenty years pulling order out of complex, physical systems. The kind of software where determinism, observability, and the gap between simulation and reality are not abstract concerns.
 
 I work at the seam between business visionaries, domain experts, and software execution. I lead architecture, mentor engineers, align stakeholders, and ship software products built to evolve. I also heavily leverage AI-native workflows, from human-in-the-loop collaboration to fully automated agentic execution loops.
 
