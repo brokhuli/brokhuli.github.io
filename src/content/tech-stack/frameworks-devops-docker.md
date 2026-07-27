@@ -1,6 +1,6 @@
 ---
 label: "Docker"
-group: "frameworks-devops"
-order: 40
+group: "observability-cicd"
+order: 10
 icon: "lucide:container"
 ---

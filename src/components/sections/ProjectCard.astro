@@ -5,7 +5,6 @@
  * Interaction: interaction-spec.md §6 (entry animation, GIF reduced-motion)
  */
 
-import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import StatusDot from "../primitives/StatusDot.astro";
 import TechPill from "../primitives/TechPill.astro";
@@ -34,12 +33,6 @@ const publishedLabel = new Intl.DateTimeFormat("en-US", {
 }).format(publishedAt);
 const publishedISO = publishedAt.toISOString().slice(0, 10);
 
-// Inherit level from the tech-stack collection so a "core" tool reads as core
-// wherever it appears. Unknown labels fall back to "working".
-const techLevels = new Map(
-  (await getCollection("techStack")).map((t) => [t.data.label, t.data.level]),
-);
-
 const statusMap: Record<
   string,
   { state: "ok" | "warn" | "off"; label: string }
@@ -63,7 +56,20 @@ const dot = statusMap[status as string] ?? statusMap.shipped;
       {
         tech.map((t) => (
           <li>
-            <TechPill label={t} level={techLevels.get(t) ?? "working"} />
+            <TechPill
+              level={
+                [
+                  "C#",
+                  ".NET",
+                  "Docker",
+                  "Modular Monolith",
+                  "Service-Oriented",
+                ].includes(t)
+                  ? "core"
+                  : "working"
+              }
+              label={t}
+            />
           </li>
         ))
       }

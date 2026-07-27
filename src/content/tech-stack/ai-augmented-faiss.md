@@ -1,6 +1,6 @@
 ---
-label: "FAISS"
-group: "ai-augmented"
-order: 60
+label: "Vector Search (FAISS)"
+group: "ai-native-engineering"
+order: 40
 icon: "lucide:vector-square"
 ---

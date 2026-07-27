@@ -1,6 +1,6 @@
 ---
 label: "MongoDB"
-group: "data-qa"
-order: 20
+group: "data-messaging"
+order: 40
 icon: "lucide:leaf"
 ---

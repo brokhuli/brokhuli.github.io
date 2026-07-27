@@ -1,6 +1,6 @@
 ---
 label: "WPF"
-group: "web-ui"
-order: 40
+group: "frameworks"
+order: 80
 icon: "lucide:app-window"
 ---

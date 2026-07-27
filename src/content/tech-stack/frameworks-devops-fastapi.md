@@ -1,6 +1,6 @@
 ---
-label: "ASP.Net Core"
+label: "FastAPI"
 group: "frameworks"
-order: 20
+order: 30
 icon: "lucide:server"
 ---

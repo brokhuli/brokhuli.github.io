@@ -1,0 +1,466 @@
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → web-ui-html-css[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\web-ui-html-css.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → frameworks-devops-dotnet[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → web-ui-html-css[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → frameworks-devops-dotnet[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-dotnet.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → frameworks-devops-fastapi[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-fastapi.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → web-ui-react[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → web-ui-blazor[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\web-ui-blazor.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → web-ui-astro[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\web-ui-astro.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → data-qa-postgresql[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'data-messaging'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → web-ui-qt-qml[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\web-ui-qt-qml.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → web-ui-wpf[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'frameworks'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\web-ui-wpf.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → data-qa-sql-server[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'data-messaging'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → data-qa-timescaledb[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'data-messaging'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\data-qa-timescaledb.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → distributed-systems-mqtt[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'data-messaging'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-mqtt.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → data-qa-mongodb[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'data-messaging'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → distributed-systems-rest[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'data-messaging'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-rest.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → distributed-systems-grpc[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'data-messaging'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-grpc.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → distributed-systems-graphql[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'data-messaging'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → frameworks-devops-prometheus-grafana[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'observability-cicd'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-prometheus-grafana.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → frameworks-devops-oidc-keycloak[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'identity-access'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-oidc-keycloak.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → frameworks-devops-docker[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'observability-cicd'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → data-qa-playwright[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'observability-cicd'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\data-qa-playwright.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → ai-augmented-claude-code[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'ai-native-engineering'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\ai-augmented-claude-code.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → ai-augmented-faiss[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'ai-native-engineering'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → ai-augmented-langchain[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'ai-native-engineering'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\ai-augmented-langchain.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → ai-augmented-rag[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'ai-native-engineering'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\ai-augmented-rag.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → ai-augmented-gpt-codex[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'ai-native-engineering'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → ai-native-engineering-pydantic[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'ai-native-engineering'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\ai-native-engineering-pydantic.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m21:57:40[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → identity-access-keycloak[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'web-ui' | 'distributed-systems' | 'data-qa' | 'ai-augmented' | 'frameworks-devops', received 'identity-access'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+[Shiki] 10 instances have been created. Shiki is supposed to be used as a singleton, consider refactoring your code to cache your highlighter instance; Or call `highlighter.dispose()` to release unused instances.
+[31m[1m21:57:41[22m [ERROR][39m [31m[UnknownFilesystemError][39m 
+  [1mHint:[22m
+[33m    It can be caused by many things, eg. missing permissions or a file not existing we attempt to read. Check the error cause for more details.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unknown-filesystem-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\node_modules\astro\dist\content\mutable-data-store.js:337:13
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+  [1mCaused by:[22m
+[2m  EPERM: operation not permitted, rename 'C:\code\projects-portfolio\brokhuli.github.io\.astro\data-store.json.tmp' -> 'C:\code\projects-portfolio\brokhuli.github.io\.astro\data-store.json'
+    at async Object.rename (node:internal/fs/promises:785:10)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:01:17[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → distributed-systems-mqtt[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'identity-access' | 'observability-cicd' | 'ai-native-engineering', received 'distributed-systems'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:01:17[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → distributed-systems-rest[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'identity-access' | 'observability-cicd' | 'ai-native-engineering', received 'distributed-systems'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-rest.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:01:17[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → distributed-systems-graphql[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'identity-access' | 'observability-cicd' | 'ai-native-engineering', received 'distributed-systems'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-graphql.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:01:17[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → distributed-systems-grpc[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'identity-access' | 'observability-cicd' | 'ai-native-engineering', received 'distributed-systems'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:01:17[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → frameworks-devops-oidc-keycloak[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'identity-access' | 'observability-cicd' | 'ai-native-engineering', received 'distributed-systems'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-oidc-keycloak.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:01:17[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → identity-access-keycloak[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'identity-access' | 'observability-cicd' | 'ai-native-engineering', received 'distributed-systems'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\identity-access-keycloak.md
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:05:14[22m [ERROR][39m [31m[UnknownFilesystemError][39m 
+  [1mHint:[22m
+[33m    It can be caused by many things, eg. missing permissions or a file not existing we attempt to read. Check the error cause for more details.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unknown-filesystem-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\node_modules\astro\dist\content\mutable-data-store.js:337:13
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+  [1mCaused by:[22m
+[2m  EPERM: operation not permitted, rename 'C:\code\projects-portfolio\brokhuli.github.io\.astro\data-store.json.tmp' -> 'C:\code\projects-portfolio\brokhuli.github.io\.astro\data-store.json'
+    at async Object.rename (node:internal/fs/promises:785:10)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:09:16[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → architectures-event-driven[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'distributed-systems' | 'observability-cicd' | 'ai-native-engineering', received 'architectures'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:09:16[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → architectures-modular-monolith[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'distributed-systems' | 'observability-cicd' | 'ai-nat[31m[1m22:09:16[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → architectures-event-driven[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'distributed-systems' | 'observability-cicd' | 'ai-native-engineering', received 'architectures'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/invalid-content-entry-data-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at getEntryDataAndImages (file:///C:/code/projects-portfolio/brokhuli.github.io/node_modules/astro/dist/content/utils.js:168:26)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:09:16[22m [ERROR][39m [31m[InvalidContentEntryDataError][39m [1mtechStack → architectures-modular-monolith[22m data does not match collection schema.
+
+  [1mgroup**: **group[22m: Invalid enum value. Expected 'languages' | 'frameworks' | 'data-messaging' | 'distributed-systems' | 'observability-cicd' | 'ai-native-engineering', received 'architectures'
+
+  [1mHint:[22m
+[33m    See [4mhttps://docs.astro.build/en/guides/content-collections/[24m for more information on content schemas.[Shiki] 20 instances have been created. Shiki is supposed to be used as a singleton, consider refactoring your code to cache your highlighter instance; Or call `highlighter.dispose()` to release unused instances.
+[31m[1m22:12:43[22m [ERROR][39m [31m[UnknownFilesystemError][39m 
+  [1mHint:[22m
+[33m    It can be caused by many things, eg. missing permissions or a file not existing we attempt to read. Check the error cause for more details.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unknown-filesystem-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\node_modules\astro\dist\content\mutable-data-store.js:337:13
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+  [1mCaused by:[22m
+[2m  EPERM: operation not permitted, rename 'C:\code\projects-portfolio\brokhuli.github.io\.astro\data-store.json.tmp' -> 'C:\code\projects-portfolio\brokhuli.github.io\.astro\data-store.json'
+    at async Object.rename (node:internal/fs/promises:785:10)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+ stack trace in the browser, or rerun with --verbose.[22m
+[Shiki] 30 instances have been created. Shiki is supposed to be used as a singleton, consider refactoring your code to cache your highlighter instance; Or call `highlighter.dispose()` to release unused instances.
+[31m[1m22:12:19[22m [ERROR][39m [31m[UnknownFilesystemError][39m 
+  [1mHint:[22m
+[33m    It can be caused by many things, eg. missing permissions or a file not existing we attempt to read. Check the error cause for more details.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unknown-filesystem-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\node_modules\astro\dist\content\mutable-data-store.js:337:13
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+  [1mCaused by:[22m
+[2m  ENOENT: no such file or directory, rename 'C:\code\projects-portfolio\brokhuli.github.io\.astro\data-store.json.tmp' -> 'C:\code\projects-portfolio\brokhuli.github.io\.astro\data-store.json'
+    at async Object.rename (node:internal/fs/promises:785:10)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+[31m[1m22:12:43[22m [ERROR][39m [31m[UnknownFilesystemError][39m 
+  [1mHint:[22m
+[33m    It can be caused by many things, eg. missing permissions or a file not existing we attempt to read. Check the error cause for more details.[39m
+  [1mError reference:[22m
+    [36m[4mhttps://docs.astro.build/en/reference/errors/unknown-filesystem-error/[24m[39m
+  [1mStack trace:[22m
+[2m    at C:\code\projects-portfolio\brokhuli.github.io\node_modules\astro\dist\content\mutable-data-store.js:119:13
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m
+  [1mCaused by:[22m
+[2m  EPERM: operation not permitted, rename 'C:\code\projects-portfolio\brokhuli.github.io\.astro\content-modules.mjs.tmp' -> 'C:\code\projects-portfolio\brokhuli.github.io\.astro\content-modules.mjs'
+    at async Object.rename (node:internal/fs/promises:785:10)
+    [...] See full stack trace in the browser, or rerun with --verbose.[22m

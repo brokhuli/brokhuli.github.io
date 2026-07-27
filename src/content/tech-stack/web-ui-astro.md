@@ -1,6 +1,6 @@
 ---
 label: "Astro"
-group: "web-ui"
-order: 25
+group: "frameworks"
+order: 60
 icon: "lucide:rocket"
 ---

@@ -102,7 +102,20 @@ const updatedISO = updatedAt ? updatedAt.toISOString().slice(0, 10) : null;
         {
           tech.map((t) => (
             <li>
-              <TechPill label={t} />
+              <TechPill
+                level={
+                  [
+                    "C#",
+                    ".NET",
+                    "Docker",
+                    "Modular Monolith",
+                    "Service-Oriented",
+                  ].includes(t)
+                    ? "core"
+                    : "working"
+                }
+                label={t}
+              />
             </li>
           ))
         }

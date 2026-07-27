@@ -1,6 +1,6 @@
 ---
-label: "HIL interfaces"
+label: "OIDC"
 group: "distributed-systems"
 order: 50
-icon: "lucide:cpu"
+icon: "lucide:shield-check"
 ---

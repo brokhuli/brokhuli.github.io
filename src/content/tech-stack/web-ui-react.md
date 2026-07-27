@@ -1,7 +1,7 @@
 ---
 label: "React"
-group: "web-ui"
-order: 20
+group: "frameworks"
+order: 40
 icon: "lucide:atom"
 level: "core"
 ---

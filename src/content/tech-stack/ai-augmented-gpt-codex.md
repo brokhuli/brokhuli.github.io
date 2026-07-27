@@ -1,6 +1,6 @@
 ---
 label: "GPT Codex"
-group: "ai-augmented"
-order: 30
+group: "ai-native-engineering"
+order: 20
 icon: "lucide:terminal"
 ---

@@ -1,6 +1,6 @@
 ---
-label: ".NET"
-group: "frameworks-devops"
+label: ".Net"
+group: "frameworks"
 order: 10
 icon: "lucide:layers"
 level: "core"

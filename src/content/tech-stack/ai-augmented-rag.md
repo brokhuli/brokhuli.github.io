@@ -1,6 +1,6 @@
 ---
 label: "RAG"
-group: "ai-augmented"
-order: 50
+group: "ai-native-engineering"
+order: 30
 icon: "lucide:search"
 ---

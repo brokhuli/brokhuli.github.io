@@ -1,0 +1,193 @@
+[2m21:38:38[22m [34m[types][39m Generated [2m3ms[22m
+[2m21:38:39[22m [34m[content][39m Syncing content
+[2m21:38:39[22m [34m[content][39m Synced content
+
+[42m[1m astro [22m[49m [32mv5.18.1[39m [2mready in[22m 5716 [2mms[22m
+
+[2m┃[22m Local    [36mhttp://127.0.0.1:4321/[39m
+
+[2m21:38:39[22m [32mwatching for file changes...[39m
+[2m21:38:48[22m [34m[200][39m / [2m955ms[22m
+[2m21:38:48[22m [34m[200][39m / [2m962ms[22m
+[2m21:38:55[22m [34m[200][39m /projects/medical-injector [2m525ms[22m
+[2m21:40:10[22m [34m[200][39m / [2m141ms[22m
+[2m21:40:13[22m [34m[200][39m / [2m50ms[22m
+[2m21:40:15[22m [34m[200][39m / [2m89ms[22m
+[2m21:40:16[22m [34m[watch][39m src/components/sections/TechStackCard.astro
+[2m21:40:17[22m [34m[200][39m / [2m259ms[22m
+[2m21:41:31[22m [34m[watch][39m src/components/sections/ProjectCard.astro
+[2m21:41:31[22m [34m[watch][39m src/components/sections/ProjectCard.astro
+[2m21:41:31[22m [34m[watch][39m src/pages/projects/[...slug].astro
+[2m21:41:33[22m [34m[200][39m / [2m253ms[22m
+[2m21:42:42[22m [34m[watch][39m src/components/sections/ProjectCard.astro
+[2m21:42:42[22m [34m[watch][39m src/pages/projects/[...slug].astro
+[2m21:42:43[22m [34m[200][39m / [2m195ms[22m
+[2m21:43:18[22m [34m[watch][39m src/content/projects/cbtc-train-simulator.mdx
+[2m21:43:18[22m [34m[watch][39m src/content/projects/medical-injector.mdx
+[2m21:43:18[22m [34m[glob-loader][39m Reloaded data from [32mcbtc-train-simulator.mdx[39m
+[2m21:43:18[22m [34m[glob-loader][39m Reloaded data from [32mmedical-injector.mdx[39m
+[2m21:43:18[22m [34m[200][39m / [2m189ms[22m
+[2m21:43:19[22m [34m[200][39m / [2m100ms[22m
+[2m21:46:09[22m [34m[glob-loader][39m Reloaded data from [32mframeworks-devops-fastapi.md[39m
+[2m21:46:10[22m [34m[200][39m / [2m88ms[22m
+[33m[1m21:46:35[22m [WARN] [glob-loader][39m Duplicate id "frameworks-devops-fastapi" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-fastapi.md. Later items with the same id will overwrite earlier ones.
+[2m21:46:35[22m [34m[glob-loader][39m Reloaded data from [32mframeworks-devops-fastapi.md[39m
+[2m21:46:35[22m [34m[200][39m / [2m37ms[22m
+[2m21:48:01[22m [34m[200][39m / [2m38ms[22m
+[2m21:48:03[22m [34m[200][39m / [2m27ms[22m
+[2m21:48:04[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-mqtt.md[39m
+[2m21:48:04[22m [34m[glob-loader][39m Reloaded data from [32mframeworks-devops-oidc-keycloak.md[39m
+[2m21:48:04[22m [34m[glob-loader][39m Reloaded data from [32mframeworks-devops-prometheus-grafana.md[39m
+[2m21:48:05[22m [34m[200][39m / [2m76ms[22m
+[2m21:48:10[22m [34m[200][39m / [2m32ms[22m
+[2m21:48:14[22m [34m[200][39m / [2m24ms[22m
+[2m21:48:21[22m [34m[200][39m / [2m25ms[22m
+[2m21:57:40[22m [34m[watch][39m src/content/config.ts
+[2m21:57:40[22m [34m[watch][39m src/content/config.ts
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/languages-cpp.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/languages-cpp.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/languages-rust.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/languages-rust.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/languages-python.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/languages-python.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/languages-go.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/languages-go.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-html-css.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-html-css.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/frameworks-devops-dotnet.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/frameworks-devops-dotnet.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-react.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-react.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-blazor.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-blazor.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-astro.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-astro.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-qt-qml.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-qt-qml.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-wpf.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/web-ui-wpf.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/data-qa-postgresql.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/data-qa-postgresql.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/data-qa-timescaledb.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/data-qa-timescaledb.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/data-qa-sql-server.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/data-qa-sql-server.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/data-qa-mongodb.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/data-qa-mongodb.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/distributed-systems-rest.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/distributed-systems-rest.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/distributed-systems-graphql.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/distributed-systems-graphql.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/distributed-systems-grpc.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/distributed-systems-grpc.md
+[2m21:57:40[22m [34m[watch][39m src/content/tech-stack/frameworks-devops-docker.md[33m[1m21:57:40[22m [WARN] [glob-loader][39m Duplicate id "languages-cpp" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\languages-cpp.md. Later items with the same id will overwrite earlier ones.
+[2m21:57:40[22m [34m[glob-loader][39m Reloaded data from [32mlanguages-cpp.md[39m
+[33m[1m21:57:40[22m [WARN] [glob-loader][39m Duplicate id "languages-rust" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\languages-rust.md. Later items with the same id will overwrite earlier ones.
+[2m21:57:40[22m [34m[glob-loader][39m Reloaded data from [32mlanguages-rust.md[39m
+[33m[1m21:57:40[22m [WARN] [glob-loader][39m Duplicate id "languages-python" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\languages-python.md. Later items with the same id will overwrite earlier ones.
+[2m21:57:40[22m [34m[glob-loader][39m Reloaded data from [32mlanguages-python.md[39m
+[33m[1m21:57:40[22m [WARN] [glob-loader][39m Duplicate id "languages-go" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\languages-go.md. Later items with the same id will overwrite earlier ones.
+[2m21:57:40[22m [34m[glob-loader][39m Reloaded data from [32mlanguages-go.md[39m
+[2m21:57:41[22m [34m[content][39m Syncing content
+[2m21:57:41[22m [34m[content][39m Content config changed
+[2m21:57:41[22m [34m[content][39m Clearing content store
+[2m21:57:42[22m [34m[content][39m Synced content
+[2m22:01:17[22m [34m[content][39m Syncing content
+[2m22:01:17[22m [34m[content][39m Content config changed
+[2m22:01:17[22m [34m[content][39m Clearing content store
+[33m[1m22:04:31[22m [WARN] [glob-loader][39m Duplicate id "distributed-systems-rest" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-rest.md. Later items with the same id will overwrite earlier ones.
+[2m22:04:31[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-rest.md[39m
+[33m[1m22:04:31[22m [WARN] [glob-loader][39m Duplicate id "distributed-systems-graphql" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-graphql.md. Later items with the same id will overwrite earlier ones.
+[2m22:04:31[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-graphql.md[39m
+[33m[1m22:04:31[22m [WARN] [glob-loader][39m Duplicate id "distributed-systems-grpc" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-grpc.md. Later items with the same id will overwrite earlier ones.
+[2m22:04:31[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-grpc.md[39m
+[33m[1m22:04:31[22m [WARN] [glob-loader][39m Duplicate id "distributed-systems-mqtt" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-mqtt.md. Later items with the same id will overwrite earlier ones.
+[2m22:04:31[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-mqtt.md[39m
+[33m[1m22:05:13[22m [WARN] [glob-loader][39m Duplicate id "frameworks-devops-docker" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-docker.md. Later items with the same id will overwrite earlier ones.
+[2m22:05:13[22m [34m[glob-loader][39m Reloaded data from [32mframeworks-devops-docker.md[39m
+[33m[1m22:05:13[22m [WARN] [glob-loader][39m Duplicate id "frameworks-devops-prometheus-grafana" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-prometheus-grafana.md. Later items with the same id will overwrite earlier ones.
+[2m22:05:13[22m [34m[glob-loader][39m Reloaded data from [32mframeworks-devops-prometheus-grafana.md[39m
+[33m[1m22:05:13[22m [WARN] [glob-loader][39m Duplicate id "observability-cicd-grafana" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\observability-cicd-grafana.md. Later items with the same id will overwrite earlier ones.
+[2m22:05:13[22m [34m[glob-loader][39m Reloaded data from [32mobservability-cicd-grafana.md[39m
+[2m22:09:16[22m [34m[content][39m Syncing content
+[2m22:09:16[22m [34m[content][39m Content config changed
+[2m22:09:16[22m [34m[content][39m Clearing content store
+[2m22:09:17[22m [34m[content][39m Synced content
+[2m22:12:18[22m [34m[glob-loader][39m Reloaded data from [32mmedical-injector.mdx[39m
+[2m22:12:43[22m [34m[glob-loader][39m Reloaded data from [32mcbtc-train-simulator.mdx[39m
+keycloak.md
+[2m22:01:17[22m [34m[watch][39m src/content/tech-stack/identity-access-keycloak.md
+[2m22:01:17[22m [34m[watch][39m src/components/sections/TechStackCard.astro
+[2m22:01:17[22m [34m[content][39m Syncing content
+[2m22:01:17[22m [34m[content][39m Content config changed
+[2m22:01:17[22m [34m[content][39m Clearing content store
+[2m22:01:18[22m [34m[content][39m Synced content
+[2m22:01:19[22m [34m[200][39m / [2m579ms[22m
+[2m22:01:19[22m [34m[200][39m / [2m581ms[22m
+[2m22:01:19[22m [34m[200][39m / [2m364ms[22m
+[2m22:01:19[22m [34m[200][39m / [2m99ms[22m
+[2m22:02:21[22m [34m[watch][39m src/components/sections/TechStackCard.astro
+[2m22:02:22[22m [34m[200][39m / [2m116ms[22m
+[2m22:03:26[22m [34m[watch][39m src/components/sections/TechStackCard.astro
+[2m22:03:27[22m [34m[200][39m / [2m141ms[22m
+[2m22:04:31[22m [34m[watch][39m src/content/tech-stack/distributed-systems-rest.md
+[2m22:04:31[22m [34m[watch][39m src/content/tech-stack/distributed-systems-rest.md
+[2m22:04:31[22m [34m[watch][39m src/content/tech-stack/distributed-systems-graphql.md
+[2m22:04:31[22m [34m[watch][39m src/content/tech-stack/distributed-systems-graphql.md
+[2m22:04:31[22m [34m[watch][39m src/content/tech-stack/distributed-systems-grpc.md
+[2m22:04:31[22m [34m[watch][39m src/content/tech-stack/distributed-systems-grpc.md
+[2m22:04:31[22m [34m[watch][39m src/content/tech-stack/distributed-systems-mqtt.md
+[2m22:04:31[22m [34m[watch][39m src/content/tech-stack/distributed-systems-mqtt.md
+[33m[1m22:04:31[22m [WARN] [glob-loader][39m Duplicate id "distributed-systems-rest" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-rest.md. Later items with the same id will overwrite earlier ones.
+[2m22:04:31[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-rest.md[39m
+[33m[1m22:04:31[22m [WARN] [glob-loader][39m Duplicate id "distributed-systems-graphql" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-graphql.md. Later items with the same id will overwrite earlier ones.
+[2m22:04:31[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-graphql.md[39m
+[33m[1m22:04:31[22m [WARN] [glob-loader][39m Duplicate id "distributed-systems-grpc" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-grpc.md. Later items with the same id will overwrite earlier ones.
+[2m22:04:31[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-grpc.md[39m
+[33m[1m22:04:31[22m [WARN] [glob-loader][39m Duplicate id "distributed-systems-mqtt" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\distributed-systems-mqtt.md. Later items with the same id will overwrite earlier ones.
+[2m22:04:31[22m [34m[glob-loader][39m Reloaded data from [32mdistributed-systems-mqtt.md[39m
+[2m22:04:31[22m [34m[200][39m / [2m142ms[22m
+[2m22:04:32[22m [34m[200][39m / [2m67ms[22m
+[2m22:05:13[22m [34m[watch][39m src/content/tech-stack/frameworks-devops-docker.md
+[2m22:05:13[22m [34m[watch][39m src/content/tech-stack/frameworks-devops-docker.md
+[2m22:05:13[22m [34m[watch][39m src/content/tech-stack/frameworks-devops-prometheus-grafana.md
+[2m22:05:13[22m [34m[watch][39m src/content/tech-stack/frameworks-devops-prometheus-grafana.md
+[2m22:05:13[22m [34m[watch][39m src/content/tech-stack/observability-cicd-grafana.md
+[2m22:05:13[22m [34m[watch][39m src/content/tech-stack/observability-cicd-grafana.md
+[33m[1m22:05:13[22m [WARN] [glob-loader][39m Duplicate id "frameworks-devops-docker" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-docker.md. Later items with the same id will overwrite earlier ones.
+[2m22:05:13[22m [34m[glob-loader][39m Reloaded data from [32mframeworks-devops-docker.md[39m
+[2m22:05:13[22m [34m[watch][39m src/components/sections/TechStackCard.astro
+[33m[1m22:05:13[22m [WARN] [glob-loader][39m Duplicate id "frameworks-devops-prometheus-grafana" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\frameworks-devops-prometheus-grafana.md. Later items with the same id will overwrite earlier ones.
+[2m22:05:13[22m [34m[glob-loader][39m Reloaded data from [32mframeworks-devops-prometheus-grafana.md[39m
+[33m[1m22:05:13[22m [WARN] [glob-loader][39m Duplicate id "observability-cicd-grafana" found in C:\code\projects-portfolio\brokhuli.github.io\src\content\tech-stack\observability-cicd-grafana.md. Later items with the same id will overwrite earlier ones.
+[2m22:05:13[22m [34m[glob-loader][39m Reloaded data from [32mobservability-cicd-grafana.md[39m
+[2m22:05:14[22m [34m[200][39m / [2m214ms[22m
+[2m22:05:16[22m [34m[200][39m / [2m59ms[22m
+[2m22:05:53[22m [34m[watch][39m src/pages/projects/[...slug].astro
+[2m22:05:54[22m [34m[watch][39m src/components/sections/ProjectCard.astro
+[2m22:05:54[22m [34m[200][39m / [2m170ms[22m
+[2m22:05:54[22m [34m[200][39m / [2m172ms[22m
+[2m22:09:16[22m [34m[watch][39m src/content/config.ts
+[2m22:09:16[22m [34m[watch][39m src/content/config.ts
+[2m22:09:16[22m [34m[watch][39m src/components/sections/TechStackCard.astro
+[2m22:09:16[22m [34m[content][39m Syncing content
+[2m22:09:16[22m [34m[content][39m Content config changed
+[2m22:09:16[22m [34m[content][39m Clearing content store
+[2m22:09:16[22m [34m[content][39m Synced content
+[2m22:09:18[22m [34m[200][39m / [2m310ms[22m
+[2m22:10:17[22m [34m[200][39m / [2m37ms[22m
+[2m22:12:18[22m [34m[watch][39m src/content/projects/medical-injector.mdx
+[2m22:12:18[22m [34m[glob-loader][39m Reloaded data from [32mmedical-injector.mdx[39m
+[2m22:12:19[22m [34m[200][39m / [2m183ms[22m
+[2m22:12:43[22m [34m[watch][39m src/content/projects/cbtc-train-simulator.mdx
+[2m22:12:43[22m [34m[glob-loader][39m Reloaded data from [32mcbtc-train-simulator.mdx[39m
+[2m22:12:43[22m [34m[200][39m / [2m245ms[22m
+[2m22:12:47[22m [34m[200][39m / [2m71ms[22m
+[2m22:13:16[22m [34m[200][39m /projects/cbtc-train-simulator [2m286ms[22m
+[2m22:13:21[22m [34m[200][39m /projects/medical-injector [2m134ms[22m
+[2m22:13:25[22m [34m[200][39m /projects/brokhuli-github-io [2m111ms[22m
+[2m22:14:20[22m [34m[watch][39m src/components/sections/TechStackCard.astro
+[2m22:14:20[22m [34m[watch][39m src/pages/projects/[...slug].astro
+[2m22:14:20[22m [34m[watch][39m src/pages/projects/[...slug].astro
+[2m22:14:20[22m [34m[watch][39m src/components/sections/ProjectCard.astro
+[2m22:15:30[22m [34m[200][39m / [2m219ms[22m

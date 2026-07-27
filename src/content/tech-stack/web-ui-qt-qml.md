@@ -1,6 +1,6 @@
 ---
 label: "Qt/QML"
-group: "web-ui"
-order: 30
+group: "frameworks"
+order: 70
 icon: "lucide:layout-panel-left"
 ---

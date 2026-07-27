@@ -1,6 +1,6 @@
 ---
 label: "Python"
 group: "languages"
-order: 30
+order: 40
 icon: "lucide:code"
 ---

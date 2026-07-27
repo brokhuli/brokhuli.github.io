@@ -13,12 +13,25 @@ const items = await getCollection("techStack");
 
 const groupMeta: Record<string, { label: string; order: number }> = {
   languages: { label: "Languages", order: 1 },
-  "web-ui": { label: "UI & Front-End", order: 2 },
-  "distributed-systems": { label: "Distributed Systems", order: 3 },
-  "data-qa": { label: "Data & QA", order: 4 },
-  "ai-augmented": { label: "AI-Augmented", order: 5 },
-  "frameworks-devops": { label: "Frameworks & DevOps", order: 6 },
+  frameworks: { label: "Frameworks", order: 2 },
+  "ai-native-engineering": { label: "AI-Native Engineering", order: 3 },
+  "data-messaging": { label: "Data Engineering", order: 4 },
+  "distributed-systems": { label: "Distributed Systems", order: 5 },
+  "observability-cicd": { label: "Observability & CI/CD", order: 6 },
+  architectures: { label: "Architectures", order: 7 },
 };
+
+const highlightedTech = new Set([
+  "C#",
+  ".Net",
+  "React",
+  "REST",
+  "PostgreSQL",
+  "Claude Code",
+  "Docker",
+  "Modular Monolith",
+  "Service-Oriented",
+]);
 
 const groups = Object.entries(groupMeta)
   .sort(([, a], [, b]) => a.order - b.order)
@@ -42,7 +55,10 @@ const groups = Object.entries(groupMeta)
           <ul class="tech-stack__pills" role="list">
             {g.items.map((i) => (
               <li>
-                <TechPill label={i.data.label} level={i.data.level} />
+                <TechPill
+                  label={i.data.label}
+                  level={highlightedTech.has(i.data.label) ? "core" : "working"}
+                />
               </li>
             ))}
           </ul>

@@ -1,7 +1,6 @@
 ---
-label: "SQL Server"
+label: "PostgreSQL"
 group: "data-messaging"
-order: 30
+order: 10
 icon: "lucide:database"
-level: "core"
 ---

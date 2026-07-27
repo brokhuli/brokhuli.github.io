@@ -1,7 +1,7 @@
 ---
 label: "Blazor"
-group: "web-ui"
-order: 10
+group: "frameworks"
+order: 50
 icon: "lucide:flame"
 level: "core"
 ---
