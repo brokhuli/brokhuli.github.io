@@ -115,13 +115,13 @@
 [2m22:09:17[22m [34m[content][39m Synced content
 [2m22:12:18[22m [34m[glob-loader][39m Reloaded data from [32mmedical-injector.mdx[39m
 [2m22:12:43[22m [34m[glob-loader][39m Reloaded data from [32mcbtc-train-simulator.mdx[39m
-keycloak.md
-[2m22:01:17[22m [34m[watch][39m src/content/tech-stack/identity-access-keycloak.md
-[2m22:01:17[22m [34m[watch][39m src/components/sections/TechStackCard.astro
-[2m22:01:17[22m [34m[content][39m Syncing content
-[2m22:01:17[22m [34m[content][39m Content config changed
-[2m22:01:17[22m [34m[content][39m Clearing content store
-[2m22:01:18[22m [34m[content][39m Synced content
+[2m22:18:10[22m Configuration file updated. Restarting...
+[2m22:18:11[22m [34m[vite][39m Re-optimizing dependencies because vite config has changed
+[2m22:18:13[22m [34m[content][39m Syncing content
+[2m22:18:13[22m [34m[content][39m Synced content
+[2m22:18:13[22m [34m[types][39m Generated [2m2.37s[22m
+[2m22:18:13[22m [34m[vite][39m Port 4321 is in use, trying another one...
+content
 [2m22:01:19[22m [34m[200][39m / [2m579ms[22m
 [2m22:01:19[22m [34m[200][39m / [2m581ms[22m
 [2m22:01:19[22m [34m[200][39m / [2m364ms[22m
