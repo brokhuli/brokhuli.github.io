@@ -11,6 +11,7 @@ import {
   checkAccentPhrase,
   checkFeaturedCap,
   checkGifExtensions,
+  checkTechStackFilenames,
   checkTechLabels,
   checkUniqueOrder,
   parseFrontmatter,
@@ -74,6 +75,37 @@ describe("checkTechLabels", () => {
   it("returns no errors for projects with no tech array", () => {
     const projects = [{ id: "bare", file: "bare.md", data: {} }];
     expect(checkTechLabels(projects, techStack)).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// checkTechStackFilenames
+// ---------------------------------------------------------------------------
+
+describe("checkTechStackFilenames", () => {
+  it("passes when each filename begins with its group", () => {
+    const techStack = [
+      {
+        id: "frameworks-react",
+        file: "frameworks-react.md",
+        data: { group: "frameworks" },
+      },
+    ];
+    expect(checkTechStackFilenames(techStack)).toEqual([]);
+  });
+
+  it("reports a filename that retains a retired group", () => {
+    const techStack = [
+      {
+        id: "web-ui-react",
+        file: "web-ui-react.md",
+        data: { group: "frameworks" },
+      },
+    ];
+    const errs = checkTechStackFilenames(techStack);
+    expect(errs).toHaveLength(1);
+    expect(errs[0]).toContain("web-ui-react");
+    expect(errs[0]).toContain("frameworks-");
   });
 });
 

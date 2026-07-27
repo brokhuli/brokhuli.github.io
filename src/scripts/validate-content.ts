@@ -81,6 +81,22 @@ export function checkTechLabels(
   return errs;
 }
 
+// Check 1b: tech-stack filenames use their current group as a prefix.
+// This keeps file IDs intelligible when a taxonomy is renamed.
+export function checkTechStackFilenames(techStack: Entry[]): string[] {
+  const errs: string[] = [];
+  for (const tech of techStack) {
+    const group = tech.data.group;
+    if (typeof group !== "string") continue;
+    if (!tech.id.startsWith(`${group}-`)) {
+      errs.push(
+        `tech-stack/${tech.id}.md: filename must start with "${group}-" to match its group`,
+      );
+    }
+  }
+  return errs;
+}
+
 // Check 4: media.kind === "gif" iff extension is .gif
 export function checkGifExtensions(projects: Entry[]): string[] {
   const errs: string[] = [];
@@ -152,6 +168,7 @@ const experience = loadCollection("experience", [".md"]);
 const about = loadCollection("about", [".md"]);
 
 for (const err of checkTechLabels(projects, techStack)) fail(err);
+for (const err of checkTechStackFilenames(techStack)) fail(err);
 
 // Checks 2–3: asset paths resolve relative to the .mdx file's directory.
 for (const p of projects) {

@@ -1,6 +1,6 @@
 ---
 label: "PostgreSQL"
-group: "data-messaging"
+group: "data-engineering"
 order: 10
 icon: "lucide:database"
 ---

@@ -281,11 +281,12 @@ const techStack = defineCollection({
     label: z.string().max(40),
     group: z.enum([
       "languages",
-      "web-ui",
+      "frameworks",
+      "data-engineering",
       "distributed-systems",
-      "data-qa",
-      "ai-augmented",
-      "frameworks-devops",
+      "observability-cicd",
+      "ai-native-engineering",
+      "architectures",
     ]),
     order: z.number().int().nonnegative(),
     icon: iconName.optional(),
@@ -297,12 +298,13 @@ const techStack = defineCollection({
 
 | Group | Items |
 |---|---|
-| `languages` | C#, C++, Python, Java, CUDA |
-| `web-ui` | Blazor, React, Qt/QML, WPF, HTML5/CSS |
-| `distributed-systems` | gRPC, REST, GraphQL, OPC, HIL interfaces |
-| `data-qa` | SQL Server, MongoDB, V&V automation, unit testing |
-| `ai-augmented` | Claude Code, GitHub Copilot, GPT-5.X Codex, Anthropic 4.X Opus, RAG, FAISS |
-| `frameworks-devops` | .NET, Git, Docker, CI/CD |
+| `languages` | C#, C++, Rust, Python, Go, TypeScript |
+| `frameworks` | .Net, ASP.Net Core, FastAPI, React, Blazor, Astro, Qt/QML, WPF |
+| `data-engineering` | PostgreSQL, TimescaleDB, SQL Server, MongoDB |
+| `distributed-systems` | REST, GraphQL, gRPC, MQTT, OIDC, Keycloak |
+| `observability-cicd` | Docker, Prometheus, Grafana, Playwright |
+| `ai-native-engineering` | Claude Code, GPT Codex, RAG, Vector Search (FAISS), LangChain, Pydantic |
+| `architectures` | Modular Monolith, Service-Oriented, Event-Driven |
 
 ### Build-time cross-reference check
 
@@ -397,6 +399,7 @@ A standalone Node script invoked from `package.json` as `npm run validate:conten
 | # | Check                                     | Failure message format                                                                          |
 | - | ----------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | 1 | `projects[].tech[]` ⊆ `techStack[].label` | `projects/<slug>.mdx: tech "<label>" not found in tech-stack/`                                  |
+| 1b | `techStack` filename begins with its `group` | `tech-stack/<filename>.md: filename must start with "<group>-" to match its group`             |
 | 2 | `projects[].cover.src` resolves           | `projects/<slug>.mdx: cover.src "<path>" does not exist`                                        |
 | 3 | `projects[].media.src` resolves           | `projects/<slug>.mdx: media.src "<path>" does not exist`                                        |
 | 4 | `media.kind === "gif"` ↔ `.gif` extension | `projects/<slug>.mdx: media.kind="<kind>" but src extension is "<ext>"`                         |

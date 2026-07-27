@@ -168,7 +168,7 @@ const techStack = defineCollection({
     group: z.enum([
       "languages",
       "frameworks",
-      "data-messaging",
+      "data-engineering",
       "distributed-systems",
       "observability-cicd",
       "ai-native-engineering",
