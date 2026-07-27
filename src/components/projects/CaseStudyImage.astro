@@ -2,7 +2,8 @@
 /*
  * CaseStudyImage - plain image renderer for Markdown case-study bodies.
  *
- * Animated GIFs bypass astro:assets so Sharp does not try to optimize them.
+ * Local Markdown image paths are resolved through Vite so the generated URL
+ * remains valid from nested project routes. GIFs continue to bypass Sharp.
  */
 
 interface Props {
@@ -13,15 +14,18 @@ interface Props {
 
 const { src, alt, maxWidth = "100%" } = Astro.props;
 
-const gifModules = import.meta.glob<string>("/src/**/*.gif", {
-  query: "?url",
-  import: "default",
-});
+const imageModules = import.meta.glob<string>(
+  "/src/**/*.{avif,gif,jpeg,jpg,png,svg,webp}",
+  {
+    query: "?url",
+    import: "default",
+  },
+);
 
 const normaliseSuffix = (value: string) => value.replace(/^(?:\.\.\/)+/, "");
 const suffix = normaliseSuffix(src);
-const matchKey = Object.keys(gifModules).find((key) => key.endsWith(suffix));
-const resolvedSrc = matchKey ? await gifModules[matchKey]() : src;
+const matchKey = Object.keys(imageModules).find((key) => key.endsWith(suffix));
+const resolvedSrc = matchKey ? await imageModules[matchKey]() : src;
 ---
 
 <img

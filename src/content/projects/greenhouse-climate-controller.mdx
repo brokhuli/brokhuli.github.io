@@ -1,0 +1,201 @@
+---
+title: "Greenhouse Climate Controller"
+slug: "greenhouse-climate-controller"
+tagline: "A deterministic Rust edge controller that turns greenhouse sensor data into safe, local climate actions."
+status: "shipped"
+featured: true
+cataloged: true
+order: 10
+tech:
+  - "Rust"
+  - "MQTT"
+  - "REST"
+  - "Docker"
+media:
+  src: "../../assets/img/projects/greenhouse-climate-controller/greenhouse-details-page.png"
+  alt: "Greenhouse dashboard showing climate telemetry, actuator states, and controller health."
+  kind: "image"
+  caption: "Greenhouse detail page showing live climate state and controller health."
+  aspect: "16:9"
+repo:
+  url: "https://github.com/brokhuli/greenhouse-climate-controller"
+  entryPoints:
+    - label: "Fixed-tick control pipeline"
+      path: "climate-controller/src/pipeline.rs"
+    - label: "Hardware abstraction and simulator"
+      path: "climate-controller/src/hal/sim.rs"
+    - label: "Climate control loops"
+      path: "climate-controller/src/control"
+    - label: "Safety interlocks"
+      path: "climate-controller/src/safety/interlocks.rs"
+    - label: "Controller REST API"
+      path: "climate-controller/src/rest.rs"
+    - label: "MQTT telemetry publisher"
+      path: "climate-controller/src/mqtt.rs"
+    - label: "Deterministic safety scenarios"
+      path: "climate-controller/tests/scenarios.rs"
+publishedAt: "2026-07-27"
+---
+
+## Problem
+
+Greenhouse control is not a collection of independent thermostats. Heating can
+change humidity, opening a vent can cool the air while flushing CO₂, and grow
+lights add both usable light and heat. A controller has to respond to those
+coupled effects without trusting every sensor or assuming its upstream services
+are available.
+
+I built the climate controller as the local, deterministic control product in a
+larger greenhouse platform. It reads temperature, humidity, CO₂, light, and
+per-zone soil moisture; resolves crop targets; and operates heaters, fans,
+vents, misters, irrigation, CO₂ injection, lights, and shade.
+
+The important constraint was local authority: the greenhouse must keep
+sensing, deciding, and protecting the crop even if the dashboard, database, or
+MQTT broker is unavailable. The controller therefore owns the real-time
+edge loop and safety behavior rather than delegating either upstream.
+
+## Complexity
+
+### Coupled Control at the Edge
+
+The system runs a fixed 1 Hz pipeline. Every tick consumes a consistent sensor
+snapshot and completes its decision before the next begins. That predictability
+matters: it gives the controller a clear order of operations, a bounded path to
+an interlock response, and telemetry that describes a committed state rather
+than work in progress.
+
+| Dimension                     | Design response                                                                                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Coupled climate variables     | A simulated plant models delayed, cross-variable actuator effects: vents, fans, lights, and misters affect more than one outcome.                     |
+| Unreliable inputs and outputs | Three temperature probes use median voting; sensor faults, actuator readback divergence, and no-response conditions are detected and surfaced.        |
+| Conflicting intent            | Control loops propose actions, manual overrides may replace them, safety interlocks override both, and actuator limits shape the final command.       |
+| Headless operation            | Telemetry publishing is decoupled from control, so a slow or disconnected broker creates an observable data gap rather than stopping climate control. |
+
+### Safety Is an Ordering Problem
+
+Safety is not a separate alert after an actuator decision. It is part of the
+command path. A critical-temperature or CO₂-ceiling condition takes final
+priority over normal control and a manual override. The controller also enforces
+slew rates and minimum on/off cycles, with safe moves allowed to bypass dwell
+when waiting would be harmful.
+
+> The controller may accept an operator's target, but it never accepts an
+> operator's authority to bypass a local safety interlock.
+
+That rule prevents the rest of the system from accidentally becoming a remote
+hardware-control surface.
+
+## Architectural Design
+
+### A Deterministic Control Pipeline
+
+The Rust controller separates domain logic from I/O behind a hardware
+abstraction layer (HAL). The current HAL is a seeded simulation with
+first-order-lag dynamics and hidden disturbances, but the control pipeline only
+knows how to read sensors and write actuator commands. A real hardware module
+can implement the same boundary without rewriting the control logic.
+
+{/* Export docs/specs/artifacts/arch-controller.excalidraw to the asset path below. */}
+
+<CaseStudyImage
+  src="../../assets/img/projects/greenhouse-climate-controller/greenhouse-climate-controller-architecture.svg"
+  alt="Architecture diagram of the Rust climate controller, showing the fixed-tick pipeline, HAL, MQTT telemetry, and REST control boundary."
+/>
+
+_The controller architecture: state moves forward through one fixed-tick
+pipeline, and safety has the final say before commands reach the HAL._
+
+The pipeline is deliberately simple to reason about:
+
+```text
+sense + validate → resolve setpoints → control loops → manual override
+→ safety interlocks → actuator constraints → command plant → publish snapshot
+```
+
+This sequence makes several decisions explicit:
+
+- Temperature uses PID control with anti-windup; humidity derives an RH target
+  from VPD and uses a hysteresis band; CO₂ enrichment stops while vents are
+  open; irrigation is independently scheduled and moisture-gated per zone.
+- Temperature sensing uses three probes, so one bad reading can be excluded
+  without losing control. When readings or actuator behavior cannot be trusted,
+  affected loops fail closed or hold a safe state instead of guessing.
+- Every REST write is latched for the next tick. MQTT is telemetry-only and
+  publishes the post-tick snapshot, so neither can mutate a decision halfway
+  through the pipeline.
+- Manual overrides expire automatically and remain downstream of the loops but
+  upstream of safety. They are useful for local diagnostics without becoming a
+  permanent, unsafe operating mode.
+
+### Where the Controller Fits
+
+The controller is one product in a deliberately bounded three-part system.
+
+| Component              | Responsibility                                                                                                                                | What it cannot do                                                                           |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **Climate controller** | Sense locally, run control loops, enforce interlocks, command actuators, and publish telemetry.                                               | Surrender safety authority or rely on cloud/platform availability to keep controlling.      |
+| **Platform**           | Register greenhouses, ingest MQTT telemetry, persist and present fleet state, resolve crop-profile intent, and reconcile setpoints over REST. | Command individual actuators or override controller safety.                                 |
+| **Optimizer**          | Read bounded planning context and propose safe refinements to setpoints.                                                                      | Write to a controller directly, command actuators, or override the controller's interlocks. |
+
+The platform is the single setpoint authority. Operators use its greenhouse
+detail page, and the optimizer submits its refinements to the same platform
+write path. The platform then delivers the intended setpoints to a controller
+over REST. In the other direction, the controller publishes readings, actuator
+state, faults, and system state over MQTT for the platform to ingest and stream
+to the UI.
+
+That separation is intentional: an optimizer outage leaves the platform's
+baseline targets in place, and a platform or broker outage leaves the local
+controller operating safely. Each layer can add value without becoming a single
+point of failure for crop protection.
+
+### Verification Through Simulation
+
+The simulator is not just a demo layer. Given the same seed, initial state, and
+command log, it produces the same sequence of ticks. That made it practical to
+test behavioral scenarios that would be hard or risky to reproduce against a
+physical greenhouse:
+
+- a temperature-probe outlier is rejected while the other probes sustain control
+- total temperature disagreement holds a safe state
+- an unresponsive irrigation valve disables only its affected zone
+- critical temperature forces cooling within the next tick
+- open vents suppress wasteful CO₂ enrichment
+- a forgotten manual override expires and returns authority to the controller
+
+The same contract-shaped telemetry and REST payloads are used at the system
+boundary, so the simulator, platform, and dashboard integrate against the same
+interfaces as the controller itself.
+
+## Architectural Tradeoffs
+
+| Choice                                                            | Why it fit                                                                                                                                                          | Tradeoff                                                                                                                                                                                          |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Rust instead of C++, Go, or C#                                    | It provides predictable native performance and memory safety without a garbage collector, making the controller's ownership, concurrency, and fault paths explicit. | C++ has a deeper embedded ecosystem, while Go and C# can be quicker for teams already fluent in their managed runtimes; Rust adds a steeper learning curve and more deliberate modeling up front. |
+| Fixed 1 Hz tick instead of event-driven control                   | A single cadence makes ordering, replay, telemetry, and interlock latency easy to reason about for this slow-moving physical domain.                                | It is not suitable for sub-second actuator control without changing the scheduling model.                                                                                                         |
+| Coupled first-order simulation instead of full greenhouse physics | It creates realistic lag and actuator interaction while remaining deterministic and testable.                                                                       | It is a control test harness, not a high-fidelity agronomic model.                                                                                                                                |
+| Local safety authority instead of platform-mediated actuation     | The controller keeps protecting the greenhouse through network, broker, and platform failures.                                                                      | Upstream services must influence the house indirectly through setpoints.                                                                                                                          |
+| MQTT telemetry and REST writes as separate paths                  | The split makes observation fan-out simple and prevents the broker from becoming a command dependency.                                                              | It requires explicit contracts and reconciliation rather than a single bidirectional protocol.                                                                                                    |
+| HAL trait instead of coding directly to the simulator             | It isolates control logic from device I/O and creates a path to real hardware.                                                                                      | The abstraction adds interfaces and simulator maintenance before physical hardware exists.                                                                                                        |
+
+## Outcome
+
+The result is an inspectable edge controller, not a dashboard mockup. It runs a
+complete greenhouse decision cycle locally: trusted sensing, climate and
+irrigation control, fault detection, safety interlocks, actuator constraints,
+and telemetry publication.
+
+It delivers:
+
+- deterministic, seed-replayable control and fault scenarios
+- local operation that continues through MQTT or platform outages
+- redundant temperature sensing and actuator-health checks
+- crop-protective interlocks that cannot be bypassed by remote intent
+- a clean MQTT/REST boundary that integrates with the platform dashboard
+- a setpoint-only seam for the optimizer, without giving it actuator or safety authority
+
+Most importantly, the boundaries make the whole system easier to trust: the
+platform makes controller behavior visible and manageable, the optimizer can
+improve targets, and the controller remains the last local authority on what is
+safe to do inside the greenhouse.
