@@ -3,7 +3,7 @@ title: "Greenhouse Climate Controller"
 slug: "greenhouse-climate-controller"
 tagline: "A deterministic Rust edge controller that turns greenhouse sensor data into safe, local climate actions."
 status: "shipped"
-featured: true
+featured: false
 cataloged: true
 order: 10
 tech:
@@ -16,7 +16,7 @@ media:
   alt: "Greenhouse dashboard showing climate telemetry, actuator states, and controller health."
   kind: "image"
   caption: "Greenhouse detail page showing live climate state and controller health."
-  aspect: "16:9"
+  aspect: "5:3"
 repo:
   url: "https://github.com/brokhuli/greenhouse-climate-controller"
   entryPoints:
@@ -132,11 +132,11 @@ This sequence makes several decisions explicit:
 
 The controller is one product in a deliberately bounded three-part system.
 
-| Component              | Responsibility                                                                                                                                | What it cannot do                                                                           |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **Climate controller** | Sense locally, run control loops, enforce interlocks, command actuators, and publish telemetry.                                               | Surrender safety authority or rely on cloud/platform availability to keep controlling.      |
-| **Platform**           | Register greenhouses, ingest MQTT telemetry, persist and present fleet state, resolve crop-profile intent, and reconcile setpoints over REST. | Command individual actuators or override controller safety.                                 |
-| **Optimizer**          | Read bounded planning context and propose safe refinements to setpoints.                                                                      | Write to a controller directly, command actuators, or override the controller's interlocks. |
+| Component                                           | Responsibility                                                                                                                                | What it cannot do                                                                           |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **Climate controller**                              | Sense locally, run control loops, enforce interlocks, command actuators, and publish telemetry.                                               | Surrender safety authority or rely on cloud/platform availability to keep controlling.      |
+| **[Platform](/projects/greenhouse-fleet-platform)** | Register greenhouses, ingest MQTT telemetry, persist and present fleet state, resolve crop-profile intent, and reconcile setpoints over REST. | Command individual actuators or override controller safety.                                 |
+| **Optimizer**                                       | Read bounded planning context and propose safe refinements to setpoints.                                                                      | Write to a controller directly, command actuators, or override the controller's interlocks. |
 
 The platform is the single setpoint authority. Operators use its greenhouse
 detail page, and the optimizer submits its refinements to the same platform
