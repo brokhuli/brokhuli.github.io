@@ -89,7 +89,7 @@ const projects = defineCollection({
           kind: z.enum(["image", "gif"]).default("image"),
           caption: z.string().max(120).optional(),
           aspect: z
-            .enum(["16:9", "4:3", "1:1", "3:2", "5:3", "2:1"])
+            .enum(["16:9", "4:3", "1:1", "3:2", "5:3", "11:6", "2:1"])
             .default("16:9"),
         })
         .optional(),

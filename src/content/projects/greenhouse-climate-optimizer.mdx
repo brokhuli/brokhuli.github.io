@@ -1,0 +1,186 @@
+---
+title: "Greenhouse Climate Optimizer"
+slug: "greenhouse-climate-optimizer"
+tagline: "An LLM-orchestrated planning service that refines greenhouse climate setpoints."
+status: "shipped"
+featured: true
+cataloged: true
+order: 30
+tech:
+  - "Python"
+  - "FastAPI"
+  - "LangChain"
+  - "Docker"
+repo:
+  url: "https://github.com/brokhuli/greenhouse-climate-controller"
+  entryPoints:
+    - label: "Planning-cycle orchestration"
+      path: "climate-optimizer/src/climate_optimizer/orchestration/cycle.py"
+    - label: "Digital twin and fidelity checks"
+      path: "climate-optimizer/src/climate_optimizer/domain/twin.py"
+    - label: "Constraint and application gate"
+      path: "climate-optimizer/src/climate_optimizer/domain/constraints.py"
+    - label: "LLM planning chain"
+      path: "climate-optimizer/src/climate_optimizer/planner"
+    - label: "Platform read and write client"
+      path: "climate-optimizer/src/climate_optimizer/infra/dataaccess.py"
+    - label: "Scheduler and plan-outcome lifecycle"
+      path: "climate-optimizer/src/climate_optimizer/orchestration"
+media:
+  src: "../../assets/img/projects/greenhouse-optimizer/optimizer-page.png"
+  alt: "Optimizer dashboard showing greenhouse plans in various states."
+  kind: "image"
+  aspect: "11:6"
+  caption: "Optimizer dashboard showing greenhouse plans in various states."
+publishedAt: "2026-07-28"
+---
+
+## Problem
+
+Greenhouse climate targets are coupled decisions, not independent thermostat
+settings. A temperature adjustment can affect humidity and VPD; ventilation can
+trade cooling for lost CO₂; and a plan that looks plausible in isolation can
+still be inappropriate for the crop, the current greenhouse state, or the live
+system's health.
+
+I built the optimizer as a planning layer for the greenhouse platform. It reads
+the platform's bounded planning context, projects the greenhouse forward with a
+digital twin, and asks an LLM for a structured setpoint-refinement plan. The
+optimizer can improve targets, but it never commands actuators, writes directly
+to a controller, or bypasses controller safety interlocks.
+
+## Complexity
+
+### AI Without Operational Authority
+
+An LLM can offer useful synthesis and rationale, but its output must not become
+an unreviewed control command. The system therefore treats the model as one
+stage in a larger deterministic pipeline. Data-quality gates decide whether it
+is safe to plan at all; a digital twin establishes the expected trajectory; and
+a constraint engine decides whether the proposed refinement can be applied.
+
+| Risk                                    | Design response                                                                                                            |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Stale, incomplete, or faulted telemetry | Hold the current platform baseline and record a held outcome instead of planning from untrusted inputs.                    |
+| Hallucinated or malformed model output  | Require a versioned structured plan contract, then validate the candidate before it reaches the write path.                |
+| Crop-unsafe or inconsistent targets     | Check crop-safe bounds and cross-field consistency in a deterministic constraint engine.                                   |
+| Optimizer or platform failure           | Keep the last accepted setpoints in force; the edge controller continues local climate control and safety enforcement.     |
+| Repeated failures                       | Record a failed outcome without changing intended setpoints; the next scheduled cycle can retry from the current baseline. |
+
+### Planning Across a Live Fleet
+
+The scheduler runs on a fixed 30-minute cadence, with cycles concurrent across
+greenhouses but single-flight within each greenhouse. That gives a fleet useful
+parallelism without allowing two optimizer runs to race over one greenhouse's
+setpoints. A state-change gate also suppresses an LLM call when the new twin
+forecast is materially unchanged from the last planning forecast, avoiding
+unnecessary cost and target churn.
+
+## Architectural Design
+
+### A Digital Twin to Forecast Trajectory
+
+The Python twin uses a seeded, first-order model of coupled greenhouse dynamics
+to project temperature, humidity, CO₂, and light over the planning horizon. It
+is deliberately an explainable planning model rather than a claim of perfect
+agronomic fidelity. The service checks divergence and sustained prediction
+residuals; when the twin no longer tracks reality well enough, it withholds the
+plan and makes that limitation observable.
+
+### A Guarded Planning Pipeline
+
+Each cycle begins with the platform's current setpoints, telemetry history,
+actuator health, freshness signals, faults, and crop-safe bounds. The optimizer
+models the baseline trajectory before it asks the planner for bounded deltas.
+The candidate plan is then validated independently of the LLM and either
+submitted through the platform's existing setpoint API or recorded as held or
+failed with the existing baseline unchanged.
+
+<CaseStudyImage
+  src="../../assets/img/projects/greenhouse-optimizer/greenhouse-optimizer-architecture.svg"
+  alt="Architecture diagram showing the optimizer's planning pipeline, platform API boundary, and controller safety boundary."
+/>
+
+_The guarded planning pipeline: forecast and LLM proposals pass through deterministic gates before the platform receives a setpoint refinement._
+
+```text
+read planning context → input gate → simulate forecast → state-change gate
+→ LLM structured plan → constraints + confidence gate → outcome
+  applied → platform setpoint write
+  held / failed → baseline unchanged
+```
+
+The platform remains the single authority for intended setpoints and delivers
+them to the controller. The controller, in turn, owns actuator commands, slew
+limits, and live safety interlocks. This makes an optimizer outage a loss of
+refinement, not a loss of climate control.
+
+### Inspectable Outcomes
+
+Every branch yields a plan record rather than disappearing into logs. Each
+record includes an optimizer run ID and a canonical status and reason. When the
+planner produces a candidate, the record also captures its rationale,
+confidence, model, and prompt version. The FastAPI service exposes health,
+plan, and fleet data through the platform's operator-facing proxy, where a user
+can inspect the proposed setpoint diff and latest planning outcome.
+
+<CaseStudyImage
+  src="../../assets/img/projects/greenhouse-optimizer/optimizer-page-fail.png"
+  alt="Optimizer dashboard showing failed plan outcome."
+/>
+
+_A failed planning outcome remains visible to the operator while the existing platform baseline stays in effect._
+
+<CaseStudyImage
+  src="../../assets/img/projects/greenhouse-optimizer/greenhouse-details-optimizer-card.png"
+  alt="Greenhouse details page showing the optimizer card, plan status, and setpoint changes."
+/>
+
+_The greenhouse detail view surfaces the latest optimizer plan, its status, and the resulting setpoint changes._
+
+## Architectural Tradeoffs
+
+| Choice                                              | Why it fit                                                                                                 | Tradeoff                                                                               |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Python instead of Go or C#                          | Its numerical, validation, and LLM ecosystems fit the planning layer.                                      | More dependency and runtime overhead than Go or C#.                                    |
+| LangChain instead of custom LLM orchestration       | Provides prompt composition, structured output, and provider routing.                                      | Adds framework dependency and reduces low-level control.                               |
+| LLM proposes setpoint deltas, not actuator commands | Keeps the flexible reasoning layer inside a narrow, reviewable authority boundary.                         | The optimizer cannot directly optimize low-level actuator behavior.                    |
+| Deterministic gates around the LLM                  | Makes data trust, bounds, confidence, and application outcomes testable.                                   | More pipeline stages and failure states than a direct model-to-controller integration. |
+| Local Ollama by default, cloud models optional      | Supports an offline, key-free local stack while retaining a configurable path to stronger hosted models.   | Local inference can be slower and less capable for complex plans.                      |
+| In-memory plans and outcomes                        | Keeps the service simple and makes restart behavior explicit; Phase 2 remains authoritative for setpoints. | Operational history inside the optimizer is not durable across a restart.              |
+| Platform-mediated writes                            | Preserves one audited setpoint authority and prevents direct optimizer-to-controller coupling.             | Adds a network boundary and reconciliation work to every accepted plan.                |
+
+## Outcome
+
+The result is an LLM-orchestrated planning service with deliberately limited
+power. It turns recent greenhouse behavior into an explainable, bounded
+refinement of climate targets, while unsafe, stale, low-confidence, or failed
+planning paths leave the existing baseline in place and remain visible to an
+operator.
+
+It delivers:
+
+- digital-twin forecasts and state-change-aware planning
+- versioned, structured LLM plans with prompt and model traceability
+- deterministic freshness, health, constraint, and confidence gates
+- concurrent per-greenhouse scheduling without same-greenhouse write races
+- held and failed outcomes that preserve the platform baseline rather than
+  mutating intended state
+- a platform-mediated write path that leaves actuator authority and final safety
+  enforcement with the edge controller
+
+## Lessons Learned
+
+The LLM planner provided quick initial development to reason setpoints
+from the digital twin's forecast. However, it took a fair amount of extra effort
+downstream to refine the LLM's prompt, manage hallucinations, manage token/compute
+usage and ensure that the output was structured and valid.
+
+For this use case, the LLM integration was a useful experiment, but for production
+use, a more deterministic control strategy like MPC (model predictive control) is
+likely preferable. Determinism is king for control systems.
+
+However, I would consider using an LLM to generate reports or
+assist operators with troubleshooting. Using it to either make sense of semantic
+language or generate semantic language from structured data is where LLMs
+really shine.
