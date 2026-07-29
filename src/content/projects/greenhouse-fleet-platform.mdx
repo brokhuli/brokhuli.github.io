@@ -1,7 +1,7 @@
 ---
 title: "Greenhouse Fleet Platform"
 slug: "greenhouse-fleet-platform"
-tagline: "A cloud-native fleet platform that turns crop intent into reconciled greenhouse setpoints and makes distributed climate operations visible."
+tagline: "A cloud-native platform for visualizing greenhouse fleets and applying crop-specific setpoints."
 status: "active"
 featured: true
 cataloged: true
@@ -157,7 +157,7 @@ separate:
 | Component                                                     | How the platform works with it                                                                                        | Boundary                                                                                                                                  |
 | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | [Climate controller](/projects/greenhouse-climate-controller) | Ingests its telemetry and delivers the platform's intended setpoints through its REST API.                            | The platform never commands individual actuators or overrides local safety behavior.                                                      |
-| Climate optimizer                                             | Provides bounded planning context and accepts its proposed setpoint refinements through the same platform write path. | The optimizer never connects to a controller directly; the platform validates accepted refinements against the active crop-safe envelope. |
+| [Climate optimizer](/projects/greenhouse-climate-optimizer)   | Provides bounded planning context and accepts its proposed setpoint refinements through the same platform write path. | The optimizer never connects to a controller directly; the platform validates accepted refinements against the active crop-safe envelope. |
 
 This makes the platform the single setpoint authority. It can show controller
 health and optimizer activity in one place, but it does not absorb either

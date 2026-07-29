@@ -1,6 +1,6 @@
 ---
 label: "Business Vision & Product Taste"
 icon: "lucide:sparkles"
-order: 90
+order: 100
 group: "leadership"
 ---

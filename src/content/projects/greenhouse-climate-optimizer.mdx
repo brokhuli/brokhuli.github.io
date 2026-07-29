@@ -2,8 +2,8 @@
 title: "Greenhouse Climate Optimizer"
 slug: "greenhouse-climate-optimizer"
 tagline: "An LLM-orchestrated planning service that refines greenhouse climate setpoints."
-status: "shipped"
-featured: true
+status: "active"
+featured: false
 cataloged: true
 order: 30
 tech:
@@ -115,6 +115,22 @@ them to the controller. The controller, in turn, owns actuator commands, slew
 limits, and live safety interlocks. This makes an optimizer outage a loss of
 refinement, not a loss of climate control.
 
+### Where the Optimizer Fits
+
+The optimizer is one product in a deliberately bounded three-part system.
+
+| Component                                                         | Responsibility                                                                                                                   | What it cannot do                                                                          |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Climate optimizer**                                             | Read bounded planning context, forecast likely outcomes, and propose validated setpoint refinements.                             | Write directly to a controller, command actuators, or override crop-safe and safety gates. |
+| **[Platform](/projects/greenhouse-fleet-platform)**               | Register greenhouses, retain intended state, validate accepted refinements, and deliver setpoints through the shared write path. | Command individual actuators or bypass controller safety.                                  |
+| **[Climate controller](/projects/greenhouse-climate-controller)** | Run local control loops, enforce interlocks, command actuators, and publish telemetry.                                           | Depend on the optimizer or platform to continue protecting the crop.                       |
+
+The optimizer reads its planning context from the platform and submits only a
+bounded refinement through the platform's API. The platform decides whether to
+accept and reconcile that refinement, then delivers intended setpoints to the
+controller. Telemetry, health, faults, and actual controller state flow back
+through the platform for the next planning cycle.
+
 ### Inspectable Outcomes
 
 Every branch yields a plan record rather than disappearing into logs. Each
@@ -134,6 +150,7 @@ _A failed planning outcome remains visible to the operator while the existing pl
 <CaseStudyImage
   src="../../assets/img/projects/greenhouse-optimizer/greenhouse-details-optimizer-card.png"
   alt="Greenhouse details page showing the optimizer card, plan status, and setpoint changes."
+  maxWidth="360px"
 />
 
 _The greenhouse detail view surfaces the latest optimizer plan, its status, and the resulting setpoint changes._

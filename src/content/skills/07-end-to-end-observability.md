@@ -1,6 +1,6 @@
 ---
 label: "End-to-End Observability"
 icon: "lucide:radar"
-order: 60
+order: 70
 group: "architecture"
 ---
