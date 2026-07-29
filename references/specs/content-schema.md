@@ -153,7 +153,7 @@ const projects = defineCollection({
     // Tech tags rendered as <Pill> on the card.
     // Must reference labels that exist in the techStack collection
     // (validated by a build-time check, not Zod).
-    tech: z.array(z.string()).min(1).max(8),
+    tech: z.array(z.string()).min(1).max(10),
 
     // Card media — author-provided image or animated GIF that
     // visually represents the project. Rendered inside ProjectCard.

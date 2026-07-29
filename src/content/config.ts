@@ -80,7 +80,7 @@ const projects = defineCollection({
       cataloged: z.boolean().default(false),
       order: z.number().int().nonnegative(),
 
-      tech: z.array(z.string()).min(1).max(8),
+      tech: z.array(z.string()).min(1).max(10),
 
       media: z
         .object({

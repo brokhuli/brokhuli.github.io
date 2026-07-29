@@ -14,7 +14,7 @@ impacts:
   - "Implemented AI-native engineering workflows (-40-50% SDLC overhead)"
   - "Improved system observability (-50% MTTR)"
   - "Directed lifecycle and delivery of 7 simulation products used for system validation"
-  - "Mentored and scaled a 14-person engineering team with 0% attrition"
+  - "Mentored and scaled a 14-person engineering team with near-zero attrition"
   - "Established cross-team architecture governance and design review practices"
   - "Built a FAISS-based RAG documentation engine to eliminate knowledge silos"
 highlights:
