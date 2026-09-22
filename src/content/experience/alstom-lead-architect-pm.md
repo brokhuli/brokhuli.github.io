@@ -1,5 +1,5 @@
 ---
-role: "Lead Software Architect & Product Manager"
+role: "Technical Lead"
 company: "Alstom Transportation"
 location: "Pittsburgh, PA"
 years:
@@ -7,7 +7,7 @@ years:
   end: 2026
 order: 10
 companyIcon: "lucide:train-front"
-summary: "Architectural lead for onboard signaling platforms; promoted from architect to also own product direction across multiple programs."
+summary: "Technical Lead for onboard signaling platforms; promoted from architect to also own product direction across multiple programs."
 impacts:
   - "Led architecture and product strategy for a global suite of real-time rail simulation systems"
   - "Modernized 4 legacy systems into scalable, containerized platforms (-40% maintenance cost)"
